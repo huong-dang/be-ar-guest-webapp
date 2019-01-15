@@ -1,0 +1,25 @@
+{
+  "name": "be-ar-guest-webapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "build": "next build",
+    "start": "NODE_ENV=production nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@material-ui/core": "^3.5.1",
+    "async": "^2.6.1",
+    "dotenv-webpack": "^1.5.7",
+    "express": "^4.16.4",
+    "lodash": "^4.17.11",
+    "moment": "^2.22.2",
+    "next": "^7.0.2",
+    "react": "16.7.0-alpha.2",
+    "react-dom": "16.7.0-alpha.2"
+  }
+}
