@@ -1,5 +1,5 @@
 const Index = () => {
-    return <div>Hello! {process.env.HELLO_WORLD}</div>;
+    return <div>Hello!</div>;
 };
 
 export default Index;
