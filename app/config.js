@@ -6,10 +6,11 @@ const async = require('async');
 const dotenv = require('dotenv').config();
 const DB_SCHEMA_PATH = path.join(__dirname, 'group54.sql');
 const DB_POPULATION = path.join(__dirname, 'insertData.sql');
+
 const pool = mysql.createPool({
     host: process.env.HOST,
     user: process.env.USERNAME,
-    password: process.env.PASSWORD
+    password: process.env.PASSWORD,
 });
 
 const initializeLocalDevEnvironment = async () => {
@@ -130,16 +131,4 @@ const readSchemaFile = (fileName) => {
     });
 }
 
-const dropDatabase = async () => {
-    try {
-        const query = 'DROP DATABASE ' + process.env.DB_NAME + ';';
-        const drop = await runQuery(query);
-        console.log(`Success! Database ${process.env.DB_NAME} dropped.`);
-    } catch(e) {
-        throw e;
-    }
-}
-
 exports.initializeLocalDevEnvironment = initializeLocalDevEnvironment;
-exports.pool = pool;
-exports.dropDatabase = dropDatabase;
