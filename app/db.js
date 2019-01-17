@@ -1,3 +1,10 @@
+/**
+ * This module provides a singleton instance to the mysql database. 
+ * Here is where basic query operations should be defined and made public
+ * to be used by other modules. 
+ */
+'use strict';
+
 const mysql = require('mysql');
 const dotenv = require('dotenv').config();
 
@@ -37,13 +44,15 @@ const DB = (function () {
         async function dropDatabase() {
             try {
                 const query = 'DROP DATABASE ' + process.env.DB_NAME + ';';
-                const drop = await runQuery(query);
+                const result = await runQuery(query);
                 console.log(`Success! Database ${process.env.DB_NAME} dropped.`);
             } catch(e) {
                 throw e;
             }
         }
-
+        
+        // Export public methods that can be used by calling 
+        // DB.methodName();
         return { runQuery, dropDatabase };
     }
 
@@ -59,3 +68,4 @@ const DB = (function () {
 })();
 
 module.exports = DB.getInstance();
+module.exports.dropDatabase = DB.getInstance().dropDatabase;
