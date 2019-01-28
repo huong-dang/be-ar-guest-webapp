@@ -17,7 +17,6 @@ const client = new Client({
 
 client.connect();
 
-
 app.prepare()
     .then(async () => {
         try {
@@ -27,10 +26,12 @@ app.prepare()
             
             const server = express();
             
-            server.post('/createDatabase', (req, res) => {
+            server.get('/createDatabase', (req, res) => {
+                console.log('createDatabase is called');
                 client.query('SHOW DATABASES;', (err, response) => {
+                    console.log('a response is given');
                     if (err) {
-                        res.status(500).send('An error occurred.');
+                        res.status(500).json('An error occurred.');
                     } else {
                         res.json(response);
                     }
