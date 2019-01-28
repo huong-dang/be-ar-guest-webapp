@@ -8,14 +8,35 @@ const handle = app.getRequestHandler();
 const doInitializeLocalEnvironment = dev;
 const PORT = process.env.PORT || 3000;
 
+const { Client } = require('pg');
+
+const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: true
+});
+
+client.connect();
+
+
 app.prepare()
     .then(async () => {
         try {
-            if (doInitializeLocalEnvironment) {
-                const setUpResult = await localConfig.initializeLocalDevEnvironment();
-            }
+            // if (doInitializeLocalEnvironment) {
+            //     const setUpResult = await localConfig.initializeLocalDevEnvironment();
+            // }
             
             const server = express();
+            
+            server.post('/createDatabase', (req, res) => {
+                client.query('SHOW DATABASES;', (err, response) => {
+                    if (err) {
+                        res.status(500).send('An error occurred.');
+                    } else {
+                        res.json(response);
+                    }
+                    client.end();
+                });
+            });
 
             server.get('*', (req, res) => {
                 return handle(req, res);
