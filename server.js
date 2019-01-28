@@ -6,7 +6,7 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 const doInitializeLocalEnvironment = dev;
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.prepare()
     .then(async () => {
@@ -23,7 +23,7 @@ app.prepare()
 
             server.listen(PORT, err => {
                 if (err) throw err;
-                console.log('> Ready on http://localhost:3000');
+                console.log(`> Ready on port ${PORT}`);
             });
         } catch(e) {
             throw e;

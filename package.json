@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon server.js",
     "build": "next build",
-    "start": "NODE_ENV=production nodemon server.js",
+    "start": "NODE_ENV=production node server.js",
+    "heroku-postbuild": "next build",
     "dropDatabase": "node -e 'require(\"./app/db.js\").dropDatabase()'"
   },
   "keywords": [],
