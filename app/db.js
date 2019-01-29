@@ -1,7 +1,7 @@
 /**
- * This module provides a singleton instance to the mysql database. 
+ * This module provides a singleton instance to the mysql database.
  * Here is where basic query operations should be defined and made public
- * to be used by other modules. 
+ * to be used by other modules.
  */
 'use strict';
 
@@ -50,8 +50,8 @@ const DB = (function () {
                 throw e;
             }
         }
-        
-        // Export public methods that can be used by calling 
+
+        // Export public methods that can be used by calling
         // DB.methodName();
         return { runQuery, dropDatabase };
     }
@@ -68,4 +68,4 @@ const DB = (function () {
 })();
 
 module.exports = DB.getInstance();
-module.exports.dropDatabase = DB.getInstance().dropDatabase;
+// module.exports.dropDatabase = DB.getInstance().dropDatabase;
