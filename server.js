@@ -8,6 +8,7 @@ const handle = app.getRequestHandler();
 const doInitializeLocalEnvironment = dev;
 const PORT = process.env.PORT || 3000;
 const Restaurant = require('./app/model/Retaurant');
+const bodyParser = require('body-parser');
 
 app.prepare()
     .then(async () => {
@@ -19,6 +20,7 @@ app.prepare()
             const setUpResult = await localConfig.initializeLocalDevEnvironment();
 
             const server = express();
+            server.use(bodyParser.json());
             server.use('/restaurants', Restaurant);
 
             server.get('/showDatabases', (req, res) => {

@@ -17,6 +17,7 @@
     "@material-ui/core": "^3.5.1",
     "async": "^2.6.1",
     "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
     "dotenv-webpack": "^1.5.7",
     "express": "^4.16.4",
     "lodash": "^4.17.11",
