@@ -7,8 +7,11 @@ const app = next({dev});
 const handle = app.getRequestHandler();
 const doInitializeLocalEnvironment = dev;
 const PORT = process.env.PORT || 3000;
+
+const Land = require('./app/model/Land');
 const Restaurant = require('./app/model/Restaurant');
 const RestaurantType = require('./app/model/RestaurantType');
+
 const bodyParser = require('body-parser');
 
 app.prepare()
@@ -22,6 +25,8 @@ app.prepare()
 
             const server = express();
             server.use(bodyParser.json());
+
+            server.use('/land', Land);
             server.use('/restaurants', Restaurant);
             server.use('/restaurantType', RestaurantType);
 
