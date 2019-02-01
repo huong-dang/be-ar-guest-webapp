@@ -79,7 +79,7 @@ VALUES ((SELECT `landID` FROM `Land` WHERE `landName` = 'Frontierland' AND `park
 INSERT INTO
 `Restaurant` (`landID`, `restaurantTypeID`, `restaurantName`, `restaurantStatus`)
 VALUES ((SELECT `landID` FROM `Land` WHERE `landName` = 'Liberty Square' AND `parkID` = (SELECT `parkID` FROM `Park` WHERE `parkName` = 'Magic Kingdom Park')),
-        (SELECT `restaurantTypeID` FROM `RestaurantType` WHERE `restaurantTypeName` = 'Quick Service'), 'Columbia Harbor House', 'AVAILABLE');
+        (SELECT `restaurantTypeID` FROM `RestaurantType` WHERE `restaurantTypeName` = 'Table Service'), 'Columbia Harbor House', 'AVAILABLE');
 
 INSERT INTO
 `Restaurant` (`landID`, `restaurantTypeID`, `restaurantName`, `restaurantStatus`)
@@ -99,4 +99,4 @@ VALUES ((SELECT `landID` FROM `Land` WHERE `landName` = 'Tomorrowland' AND `park
 INSERT INTO
 `Restaurant` (`landID`, `restaurantTypeID`, `restaurantName`, `restaurantStatus`)
 VALUES ((SELECT `landID` FROM `Land` WHERE `landName` = 'Tomorrowland' AND `parkID` = (SELECT `parkID` FROM `Park` WHERE `parkName` = 'Magic Kingdom Park')),
-        (SELECT `restaurantTypeID` FROM `RestaurantType` WHERE `restaurantTypeName` = 'Quick Service'), 'The Lunching Pad', 'AVAILABLE');
+        (SELECT `restaurantTypeID` FROM `RestaurantType` WHERE `restaurantTypeName` = 'Cart'), 'The Lunching Pad', 'AVAILABLE');
