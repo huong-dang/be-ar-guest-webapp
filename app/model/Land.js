@@ -5,7 +5,6 @@ var _       = require('lodash');
 
 // Get all of a land's restaurants
 // bearguest.com/Land/getRestaurants needs landID
-
 router.post('/getRestaurants', async (req, res) => {
     const {landID} = req.body;
 

@@ -10,6 +10,8 @@ const PORT = process.env.PORT || 3000;
 
 const Item = require('./app/model/Item');
 const Land = require('./app/model/Land');
+const Park = require('./app/model/Park');
+const Profile = require('./app/model/Profile');
 const Restaurant = require('./app/model/Restaurant');
 const RestaurantType = require('./app/model/RestaurantType');
 
@@ -29,6 +31,8 @@ app.prepare()
 
             server.use('/item', Item);
             server.use('/land', Land);
+            server.use('/park', Park);
+            server.use('/profile', Profile);
             server.use('/restaurants', Restaurant);
             server.use('/restaurantType', RestaurantType);
 

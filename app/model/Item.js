@@ -6,8 +6,7 @@ const mysql = require('mysql');
 
 // Get an item's information based on it's name
 // Needs exact name
-
-router.post('/getItem', async (req, res) => {
+router.post('/get', async (req, res) => {
     const {itemName} = req.body;
     if (_.isNil(itemName)) {
         res.status(401).send('Bad request');

@@ -155,3 +155,50 @@ VALUES ((SELECT `restaurantID` FROM `Restaurant` where `restaurantName` = 'Colum
 		'Request with no oyster crackers.',
 		'AVAILABLE');
 
+INSERT INTO 
+`TripPlan` (`userID`, `startDate`, `endDate`)
+VALUES ((SELECT `userID` FROM `Profile` where `email` = 'user1@user.com'),
+		'2018-01-01',
+		'2018-01-15');
+		
+INSERT INTO 
+`TripPlan` (`userID`, `startDate`, `endDate`)		
+VALUES ((SELECT `userID` FROM `Profile` where `email` = 'user1@user.com'),
+		'2019-03-10',
+		'2019-03-17');
+		
+INSERT INTO 
+`TripPlan` (`userID`, `startDate`, `endDate`)		
+VALUES ((SELECT `userID` FROM `Profile` where `email` = 'user2@user.com'),
+		'2019-12-25',
+		'2019-12-29');
+		
+INSERT INTO 
+`TripPlan` (`userID`, `startDate`, `endDate`)		
+VALUES ((SELECT `userID` FROM `Profile` where `email` = 'user1@user.com'),
+		'2018-10-01',
+		'2018-10-13');
+
+INSERT INTO
+`Bookmark` (`userID`, `restaurantID`, `dateBookmarked`)
+VALUES ((SELECT `userID` FROM `Profile` WHERE `email` = 'user1@user.com'),
+		(SELECT `restaurantID` FROM `Restaurant` WHERE `restaurantName` = 'Casey\'s Corner'),
+		'2019-02-09');
+		
+INSERT INTO
+`Bookmark` (`userID`, `restaurantID`, `dateBookmarked`)
+VALUES ((SELECT `userID` FROM `Profile` WHERE `email` = 'user1@user.com'),
+		(SELECT `restaurantID` FROM `Restaurant` WHERE `restaurantName` = 'Be Our Guest'),
+		'2018-11-09');
+		
+INSERT INTO
+`Bookmark` (`userID`, `restaurantID`, `dateBookmarked`)
+VALUES ((SELECT `userID` FROM `Profile` WHERE `email` = 'user2@user.com'),
+		(SELECT `restaurantID` FROM `Restaurant` WHERE `restaurantName` = 'Be Our Guest'),
+		'2018-10-09');
+		
+INSERT INTO
+`Bookmark` (`userID`, `restaurantID`, `dateBookmarked`)
+VALUES ((SELECT `userID` FROM `Profile` WHERE `email` = 'user3@user.com'),
+		(SELECT `restaurantID` FROM `Restaurant` WHERE `restaurantName` = 'Columbia Harbor House'),
+		'2018-08-09');
