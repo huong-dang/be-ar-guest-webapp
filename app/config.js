@@ -24,7 +24,7 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-const initializeLocalDevEnvironment = async () => {
+const initializeDatabase = async () => {
     try {
         const dbIsSet = await dbIsSetUp();
         if (!dbIsSet) {
@@ -34,7 +34,7 @@ const initializeLocalDevEnvironment = async () => {
             console.log('Local database is already set up.');
         }
     } catch (e) {
-        console.log('An error occurred in initializeLocalDevEnvironment()', e);
+        console.log('An error occurred in initializeDatabase()', e);
     }
 }
 
@@ -142,4 +142,4 @@ const readSchemaFile = (fileName) => {
     });
 }
 
-exports.initializeLocalDevEnvironment = initializeLocalDevEnvironment;
+exports.initializeDatabase = initializeDatabase;
