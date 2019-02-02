@@ -100,3 +100,58 @@ INSERT INTO
 `Restaurant` (`landID`, `restaurantTypeID`, `restaurantName`, `restaurantStatus`)
 VALUES ((SELECT `landID` FROM `Land` WHERE `landName` = 'Tomorrowland' AND `parkID` = (SELECT `parkID` FROM `Park` WHERE `parkName` = 'Magic Kingdom Park')),
         (SELECT `restaurantTypeID` FROM `RestaurantType` WHERE `restaurantTypeName` = 'Cart'), 'The Lunching Pad', 'AVAILABLE');
+
+INSERT INTO
+`Item` (`restaurantID`, `itemName`, `itemDescription`, `secret`, `vegan`, `substitution`, `itemStatus`)
+VALUES ((SELECT `restaurantID` FROM `Restaurant` where `restaurantName` = 'Casey\'s Corner'),'Plant-Based Loaded Slaw Dog',
+	'Plant-based sausage topped with pickled slaw, BBQ vegan aioli & roasted corn relish. Served with french fries or apple slices.',
+        1, 0, null,'AVAILABLE');
+
+INSERT INTO
+`Item` (`restaurantID`, `itemName`, `itemDescription`, `secret`, `vegan`, `substitution`, `itemStatus`)
+VALUES ((SELECT `restaurantID` FROM `Restaurant` where `restaurantName` = 'Casey\'s Corner'),'Plant-Based Dog',
+		'Plant-based sausage in a potato bun. Served with french fries or apple slices.',
+		1,
+		0,
+		null,
+		'AVAILABLE');
+INSERT INTO
+`Item` (`restaurantID`, `itemName`, `itemDescription`, `secret`, `vegan`, `substitution`, `itemStatus`)
+VALUES ((SELECT `restaurantID` FROM `Restaurant` where `restaurantName` = 'Pecos Bill Tall Tale Cafe'),
+		'Plant-Based Southwest Cheese Burger',
+		'Plant-based Southwest cheese burger topped with vegan jalapeno jack and vegan avocado aioli on a toasted bun',
+		1,
+		0,
+		null,
+		'AVAILABLE');
+		
+INSERT INTO
+`Item` (`restaurantID`, `itemName`, `itemDescription`, `secret`, `vegan`, `substitution`, `itemStatus`)
+VALUES ((SELECT `restaurantID` FROM `Restaurant` where `restaurantName` = 'Pecos Bill Tall Tale Cafe'),
+		'Veggie Rice Bowl',
+		'Plant-based sausage in a potato bun. Served with french fries or apple slices.',
+		1,
+		0,
+		null,
+		'AVAILABLE');
+	
+INSERT INTO
+`Item` (`restaurantID`, `itemName`, `itemDescription`, `secret`, `vegan`, `substitution`, `itemStatus`)
+VALUES ((SELECT `restaurantID` FROM `Restaurant` where `restaurantName` = 'Columbia Harbor House'),
+		'Lighthouse Sandwich',
+		'Hummus with tomato and broccoli slaw, served on toasted multigrain bread with house-made potato chips.',
+		1,
+		1,
+		'Request with no broccoli slaw.',
+		'AVAILABLE');
+
+INSERT INTO
+`Item` (`restaurantID`, `itemName`, `itemDescription`, `secret`, `vegan`, `substitution`, `itemStatus`)
+VALUES ((SELECT `restaurantID` FROM `Restaurant` where `restaurantName` = 'Columbia Harbor House'),
+		'Vegetarian Chili',
+		null,
+		1,
+		1,
+		'Request with no oyster crackers.',
+		'AVAILABLE');
+
