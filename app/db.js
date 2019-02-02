@@ -12,12 +12,19 @@ const DB = (function () {
     let instance;
 
     function init() {
-        const pool = mysql.createPool({
-            host: process.env.HOST,
-            user: process.env.USERNAME,
-            password: process.env.PASSWORD,
-            database: process.env.DB_NAME
-        });
+        const pool = process.env.NODE_ENV === 'production' ?
+            mysql.createPool({
+                                 host:     process.env.RDS_HOSTNAME,
+                                 user:     process.env.RDS_USERNAME,
+                                 password: process.env.RDS_PASSWORD,
+                                 port:     process.env.RDS_PORT
+                             })
+            : mysql.createPool({
+                                   host:     process.env.HOST,
+                                   user:     process.env.USERNAME,
+                                   password: process.env.PASSWORD,
+                                   database: process.env.DB_NAME
+                               });
 
         function runQuery(query) {
             return new Promise ((resolve, reject) => {
