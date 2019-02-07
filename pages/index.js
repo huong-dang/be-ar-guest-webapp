@@ -1,20 +1,21 @@
 import axios from 'axios';
+import Button from '@material-ui/core/Button';
+import Link from 'next/link';
 
 class Index extends React.Component {
-    state = {
-        restaurants: []
-    }
-
-    // async componentDidMount() {
-    //     const result = await axios.get('/restaurants/getAll');
-    //     console.log('result', result);
-    //     this.setState({restaurants: result.data});
-    // }
-
     render() {
         return (
             <div>
-                hello!
+                <Link href={'/signUp'}>
+                    <Button color={'primary'} variant={'outlined'}>
+                        Sign Up
+                    </Button>
+                </Link>
+                <Link href={'/signIn'}>
+                    <Button color={'secondary'} variant={'outlined'}>
+                        Sign In
+                    </Button>
+                </Link>
             </div>
         )
     }
