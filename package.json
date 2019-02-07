@@ -14,18 +14,24 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@material-ui/core": "^3.5.1",
+    "@material-ui/core": "^3.9.2",
+    "@material-ui/icons": "^3.0.2",
     "async": "^2.6.1",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
+    "classnames": "^2.2.6",
     "dotenv-webpack": "^1.5.7",
     "express": "^4.16.4",
+    "firebase": "^5.8.2",
+    "jss": "^9.8.7",
     "lodash": "^4.17.11",
-    "moment": "^2.22.2",
+    "moment": "^2.24.0",
     "mysql": "^2.16.0",
     "next": "^7.0.2",
     "react": "16.7.0-alpha.2",
-    "react-dom": "16.7.0-alpha.2"
+    "react-dom": "16.7.0-alpha.2",
+    "react-jss": "^8.6.1",
+    "sqlstring": "^2.3.1"
   },
   "devDependencies": {
     "nodemon": "^1.18.9"
