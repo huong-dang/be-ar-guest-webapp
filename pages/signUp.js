@@ -174,7 +174,7 @@ class SignUp extends React.Component {
                             color="primary"
                             className={classes.submit}
                             onClick={this.handleSubmit}>
-                            Sign In
+                            Sign Up
                         </Button>
                     </form>
                 </Paper>
