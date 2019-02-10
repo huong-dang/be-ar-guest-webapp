@@ -1,8 +1,10 @@
 import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import Link from 'next/link';
+import Grid from '@material-ui/core/Grid';
 import Menu from '../components/Menu';
 import Header from '../components/Header';
+import ItemCard from '../components/ItemCard';
 
 class Index extends React.Component {
     render() {
@@ -20,8 +22,11 @@ class Index extends React.Component {
             //     </Link>
             // </div>
             <div>
-                <Header />
-                <Menu />
+                <Grid container direction="column" justify="space-between" alignItems="center">
+                    <Header />
+                    <Menu />
+                    <ItemCard />
+                </Grid>
             </div>
         )
     }
