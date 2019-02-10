@@ -23,6 +23,7 @@
     "dotenv-webpack": "^1.5.7",
     "express": "^4.16.4",
     "firebase": "^5.8.2",
+    "jss": "^9.8.7",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
     "mysql": "^2.16.0",
@@ -30,7 +31,8 @@
     "react": "16.7.0-alpha.2",
     "react-dom": "16.7.0-alpha.2",
     "sqlstring": "^2.3.1",
-    "typeface-roboto": "0.0.54"
+    "typeface-roboto": "0.0.54",
+    "react-jss": "^8.6.1"
   },
   "devDependencies": {
     "nodemon": "^1.18.9"
