@@ -15,7 +15,7 @@ const styles = theme => ({
   function Menu(props) {
     const { classes } = props;
     return (
-      <div>
+      <div style={{marginBottom: 10}}>
         <Button size="small" className={classes.button}>
           Home
         </Button>

@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 
 function Header() {
     return (
-        <div>
+        <div style={{marginTop: 15}}>
             <Grid container direction="column" justify="flex-start" alignItems="center">
                 <img src="../static/images/logo.png" alt="Logo"
                 style={{width: "15%", height: "15%"}}/>

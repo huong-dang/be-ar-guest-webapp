@@ -13,7 +13,8 @@ const styles = {
     card:         {
         width:        250,
         height:       250,
-        borderRadius: 20
+        borderRadius: 20,
+        position: 'relative'
     },
     title:        {
         fontSize:   16,
@@ -31,7 +32,9 @@ const styles = {
         marginTop:  5,
     },
     favoriteIcon: {
-        // position: 'absolute',
+        position: 'absolute',
+        top: 15,
+        right: 15
     }
 };
 
@@ -41,18 +44,15 @@ function ItemCard(props) {
     return (
         <Card className={classes.card}>
             <CardContent>
-                {/* <Typography className={classes.title} color="textSecondary" gutterBottom>
-          Word of the Day
-        </Typography> */}
                 <Grid container direction="row" justify="space-between" alignItems="center">
                     <Grid container direction="row" alignItems="center">
-                        <Grid item>
-                            <FavoriteIcon className={classes.favoriteIcon}/>
-                        </Grid>
                         <Grid item xs>
                             <Typography className={classes.title} gutterBottom>
-                                Plant-Based Loaded Slaw Dog
+                                Slaw Dog
                             </Typography>
+                        </Grid>
+                        <Grid item>
+                            <FavoriteIcon className={classes.favoriteIcon}/>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -60,7 +60,7 @@ function ItemCard(props) {
                     Plant-based sausage topped with pickled slaw, BBQ vegan aioli, & roasted corn relish.
                 </Typography>
                 <Typography className={classes.description} color="textSecondary">
-                    <br/> Served with french fries or apple slices.
+                    Served with french fries or apple slices.
                 </Typography>
                 {/* <Typography component="p">
           well meaning and kindly.
