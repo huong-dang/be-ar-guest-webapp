@@ -9,36 +9,16 @@ const PORT       = process.env.PORT || 3000;
 const bodyParser = require('body-parser');
 const DB         = require('./app/db');
 const Profile    = require('./app/model/Profile');
+const Restaurant = require('./app/model/Retaurant');
 
 app.prepare()
    .then(async () => {
        try {
            const setUpResult = await localConfig.initializeDatabase();
-
            const server = express();
            server.use(bodyParser.json());
            server.use('/profile', Profile);
-
-           server.get('/showDatabases', async (req, res) => {
-               try {
-                   const result = await DB.runQuery(`show databases;`);
-                   res.json(result);
-               } catch (e) {
-                   console.log('Error showing database:', e);
-                   res.status(500).send('An error occurred.');
-               }
-           });
-
-           server.get('/getAllRestaurants', async (req, res) => {
-               try {
-                   const result = await DB.runQuery(`select * from Restaurant;`);
-                   res.json(result);
-               } catch (e) {
-                   console.log('Error showing database:', e);
-                   res.status(500).send('An error occurred.');
-               }
-           });
-
+           server.use('/restaurant', Restaurant);
            server.get('*', (req, res) => {
                return handle(req, res);
            });
