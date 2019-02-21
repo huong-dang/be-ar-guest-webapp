@@ -32,6 +32,17 @@ router.post('/getAllItems', async (req, res) => {
     }
 });
 
+router.get('/getAllRestaurantsInfo', async (req, res) => {
+    try {
+        const query  = `Select L.landName, R.restaurantID, R.restaurantName from Restaurant R, Land L WHERE L.landID = R.landID;`;
+        const result = await DB.runQuery(query);
+        res.json(result);
+    } catch (e) {
+        console.log('Error getting all restaurant info:', e);
+        res.status(500).send('Check server logs for more info');
+    }
+});
+
 // /restaurants/
 
 module.exports = router;

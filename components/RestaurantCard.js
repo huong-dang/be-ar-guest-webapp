@@ -8,13 +8,24 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import BookmarkIcon from '@material-ui/icons/BookmarkBorderOutlined';
+import classNames from 'classnames';
 
-const styles = {
+const RESTAURANT_IMAGE = {
+    1: "url('../static/images/RestaurantImages/caseys-corner.jpg')",
+    2: "url('../static/images/RestaurantImages/pecos-bill.jpg')",
+    3: "url('../static/images/RestaurantImages/default-restaurant.jpg')",
+    4: "url('../static/images/RestaurantImages/default-restaurant.jpg')",
+    5: "url('../static/images/RestaurantImages/default-restaurant.jpg')",
+    6: "url('../static/images/RestaurantImages/default-restaurant.jpg')",
+    7: "url('../static/images/RestaurantImages/default-restaurant.jpg')",
+    8: "url('../static/images/RestaurantImages/default-restaurant.jpg')",
+    9: "url('../static/images/RestaurantImages/default-restaurant.jpg')",
+}
+const styles = prop => ({
     baseCard:         {
         width:        250,
         height:       250,
         borderRadius: 20,
-        backgroundImage: "url('../static/images/caseys-corner.jpg')",
         backgroundSize: 'cover',
         position: 'relative',
         marginLeft: "5%",
@@ -44,7 +55,6 @@ const styles = {
     },
     description:  {
         fontSize:   12.5,
-        // marginBotton: 10,
         textAlign:  'center',
         lineHeight: 1.4,
         marginTop:  5,
@@ -58,26 +68,26 @@ const styles = {
         overflow:'hidden',
         backgroundSize: 'cover',
     },
-};
+});
 
 function RestaurantCard(props) {
     const {classes} = props;
-
+//, {backgroundImage: `url(${RESTAURANT_IMAGE[props.key]} )`}
+    console.log(props);
+//className={classes(RESTAURANT_IMAGE[props.key]).baseCard}
     return (
-        <Card className={classes.baseCard}>
+        <Card 
+        style={{backgroundImage: RESTAURANT_IMAGE[props.restaurantID],...classes.baseCard}}>
             <CardContent>
-                {/* <img src="../static/images/caseys-corner.jpg" alt="caseys-corner"
-                className={classes.RestaurantImage}
-                /> */}
                 <Grid container direction="row" justify="space-between" alignItems="center">
                     <Grid container direction="row" alignItems="center">
                         <Grid item xs>
                             <Card className={classes.titleCard} >
                                 <Typography className={classes.restaurantName} gutterBottom>
-                                    Casey's Corner
+                                    {props.restaurantName}
                                 </Typography>
                                 <Typography className={classes.landName} gutterBottom>
-                                    Main Street USA
+                                    {props.restaurantLand}
                                 </Typography>
                             </Card>
                         </Grid>
@@ -93,6 +103,9 @@ function RestaurantCard(props) {
 
 RestaurantCard.propTypes = {
     classes: PropTypes.object.isRequired,
+    restaurantName: PropTypes.string.isRequired,
+    restaurantLand: PropTypes.string.isRequired,
+    restaurantID: PropTypes.number.isRequired,
 };
 
 export default withStyles(styles)(RestaurantCard);

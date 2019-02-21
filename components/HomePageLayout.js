@@ -12,7 +12,7 @@ class HomePage extends React.Component {
         return (
             <div>
                 {/* Header Grid */}
-                <Grid container direction="column" justify="flex-start" alignItems="center"
+                {/* <Grid container direction="column" justify="flex-start" alignItems="center"
                 style={{
                     width: "auto"
                 }}>
@@ -21,7 +21,9 @@ class HomePage extends React.Component {
                         <Menu />
                     </Grid>
                     <HomeImageList />
-                </Grid>
+                </Grid> */}
+                <Header />
+                <HomeImageList />
                 {/* First Row of Info Grid */}
                 <Grid container direction="row" justify="center" alignItems="flex-start"
                 style={{
@@ -85,7 +87,7 @@ class HomePage extends React.Component {
                 }}> */}
                 <Grid container spacing={40}
                 style={{
-                    
+
                 }}>
                     {/* View Menus Component */}
                     <Grid item>

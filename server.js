@@ -9,6 +9,7 @@ const PORT       = process.env.PORT || 3000;
 const bodyParser = require('body-parser');
 const DB         = require('./app/db');
 const Profile    = require('./app/model/Profile');
+const Restaurant = require('./app/model/Restaurant');
 
 app.prepare()
    .then(async () => {
@@ -18,6 +19,7 @@ app.prepare()
            const server = express();
            server.use(bodyParser.json());
            server.use('/profile', Profile);
+           server.use('/restaurant', Restaurant);
 
            server.get('/showDatabases', async (req, res) => {
                try {
