@@ -10,16 +10,23 @@ import RestaurantCard from '../components/RestaurantCard';
 import ItemCard from '../components/ItemCard';
 import HomeImageList from '../components/HomeImageList';
 
-const styles = {
-    gridList: {
-        flexWrap: 'wrap',
-        cols: 3,
-        spacing: 10
-    },
-    footer: {
+import { Typography } from '@material-ui/core';
+// import PeopleIcon from '../@material-ui/icons/PeopleSharp';
+import Card from '@material-ui/core/Card';
+
+import HomePage from '../components/HomePage';
+import HomePageLayout from '../components/HomePageLayout';
+
+// const styles = {
+//     gridList: {
+//         flexWrap: 'wrap',
+//         cols: 3,
+//         spacing: 10
+//     },
+//     footer: {
        
-    },
-};
+//     },
+// };
 class Index extends React.Component {
     
     render() {
@@ -48,7 +55,7 @@ class Index extends React.Component {
                 <Grid container direction="column" justify="space-between" alignItems="center">
                     <Header />
                     <Menu />
-                    <Grid container direction="row" justify="space-evenly" alignItems="flex-start">
+                    <Grid container direction="row" justify="flex-start" alignItems="flex-start">
                         <RestaurantCard />
                         {/* <GridList style={{
                             flexWrap: 'wrap',
@@ -56,33 +63,44 @@ class Index extends React.Component {
                             // cols: 3,
                             // spacing: 5
                         }} cols={2.5} padding={5}> */}
-                            
-                            <ItemCard />
-                            <ItemCard />
-                            <ItemCard />
-                            <ItemCard />
+                        <div style={{
+                            // width: "auto",
+                            position: "relative",
+                            marginLeft: "28%",
+                            marginTop: -250,
+                            marginRight: "5%",
+                            marginBottom: 30,
+                        }}>
+                            <Grid container spacing={32}>
+                                <Grid item>
+                                    <ItemCard />
+                                    {/* <ItemCard />
+                                    <ItemCard />
+                                    <ItemCard />
+                                    <ItemCard /> */}
+                                </Grid>
+                                <Grid item>
+                                    <ItemCard />
+                                </Grid>
+                                <Grid item>
+                                    <ItemCard />
+                                </Grid>
+                                <Grid item>
+                                    <ItemCard />
+                                </Grid>
+                            </Grid>
+                        </div>
                         {/* </GridList> */}
                     </Grid>
+                    <Footer marginTop="50"/>
                 </Grid>
             </div>
 
-            /**
-             *  HOME PAGE
-             */
-            // <div>
-            //     <Grid container direction="column" justify="flex-start" alignItems="center">
-            //         <Grid container direction="column" justify="space-between" alignItems="center">
-            //             <Header />
-            //             <Menu />
-            //         </Grid>
-            //         <HomeImageList />
-            //     </Grid>
-            //         <Footer style={{
-            //             position: "relative",
-            //             top: "-180px",
-            //             height: "150px"
-            //         }}/>
-            // </div>
+            // /**
+            //  *  HOME PAGE
+            //  */
+            // <HomePageLayout />
+
         )
     }
 }

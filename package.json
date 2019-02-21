@@ -29,9 +29,10 @@
     "moment": "^2.24.0",
     "mysql": "^2.16.0",
     "next": "^7.0.2",
-    "react": "16.7.0-alpha.2",
+    "react": "^16.7.0-alpha.2",
     "react-dom": "16.7.0-alpha.2",
     "react-jss": "^8.6.1",
+    "react-star-rating-component": "^1.4.1",
     "sqlstring": "^2.3.1",
     "typeface-roboto": "0.0.54"
   },

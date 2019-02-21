@@ -17,6 +17,7 @@ const styles = {
         backgroundImage: "url('../static/images/caseys-corner.jpg')",
         backgroundSize: 'cover',
         position: 'relative',
+        marginLeft: "5%",
     },
     titleCard:      {
         backgroundColor: 'rgb(255,255,255)',
