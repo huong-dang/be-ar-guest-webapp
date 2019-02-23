@@ -18,6 +18,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import classNames from 'classnames';
 import isNil from 'lodash/isNil';
 import Loading from '../components/Loading';
+import axios from "axios/index";
 
 const styles = theme => ({
     main:   {
@@ -63,17 +64,33 @@ class SignIn extends React.Component {
         }
     }
 
+    userIsAdmin = async (uid) => {
+        try {
+            const admin = await axios.post('profile/isAdmin', {uid: uid});
+            return admin.data;
+        } catch (e) {
+            throw e;
+        }
+    };
+
+    authorizedUser = async () => {
+        try {
+            const user  = await getCurrentUser();
+            return user && user.uid === localStorage.uid;
+        } catch (e) {
+            throw e;
+        }
+    };
+
     async componentDidMount() {
         try {
-            if (!isNil(localStorage.uid)) {
-                const user = await getCurrentUser();
-                if (user && user.uid === localStorage.uid) {
-                    Router.push(`/home`);
-                } else {
-                    this.setState({loading: false});
-                }
+            if (!isNil(localStorage.uid) && this.authorizedUser()) {
+                const uid = localStorage.uid;
+                Router.push(`${this.userIsAdmin(uid) ? '/adminPortal' : '/userPortal'}`);
             } else {
                 localStorage.clear();
+                // User is not logged in
+                await signOut();
                 this.setState({loading: false});
             }
         } catch (e) {
@@ -89,7 +106,13 @@ class SignIn extends React.Component {
         try {
             const result = await signIn(this.state.email, this.state.password);
             localStorage.setItem('uid', result.user.uid);
-            Router.push(`/home`);
+
+            const admin = await axios.post('profile/isAdmin', {uid: localStorage.uid});
+            if (admin.data) {
+                Router.push('/adminPortal');
+            } else {
+                Router.push('/userPortal');
+            }
         } catch (err) {
             if (err.code === 'auth/user-not-found') {
                 this.setState({

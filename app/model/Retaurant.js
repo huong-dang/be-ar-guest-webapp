@@ -25,8 +25,6 @@ router.get('/getAllRestaurantsInfo', async (req, res) => {
     }
 });
 
-// bearguest.com/restaurants/getAllItems need restaurantID
-// req = { body: { name: 'Casey's Corner', restaurantID: 2 } }
 router.post('/getAllItems', async (req, res) => {
     const {restaurantID} = req.body;
     if (_.isNil(restaurantID)) {

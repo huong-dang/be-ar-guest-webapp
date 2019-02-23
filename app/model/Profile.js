@@ -54,7 +54,7 @@ router.post('/create', async (req, res) => {
 
 router.post('/getProfileById', async (req, res) => {
     const {uid} = req.body;
-    if (!uid) {
+    if (_.isNil(uid)) {
         return res.status(500).json({
                                         error: `Cannot get profile because no ID was provided.`,
                                     });
@@ -75,7 +75,7 @@ router.post('/getProfileById', async (req, res) => {
 
 router.post('/isAdmin', async (req, res) => {
     const {uid} = req.body;
-    if (!uid) {
+    if (_.isNil(uid)) {
         return res.send(false);
     } else {
         try {
