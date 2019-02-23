@@ -11,6 +11,7 @@ const DB         = require('./app/db');
 const Profile    = require('./app/model/Profile');
 const Park       = require('./app/model/Park');
 const Land       = require('./app/model/Land');
+const Restaurant = require('./app/model/Retaurant');
 
 app.prepare()
    .then(async () => {
@@ -22,6 +23,7 @@ app.prepare()
            server.use('/profile', Profile);
            server.use('/park', Park);
            server.use('/land', Land);
+           server.use('/restaurant', Restaurant);
            server.get('*', (req, res) => {
                return handle(req, res);
            });
