@@ -9,6 +9,8 @@ const PORT       = process.env.PORT || 3000;
 const bodyParser = require('body-parser');
 const DB         = require('./app/db');
 const Profile    = require('./app/model/Profile');
+const Park       = require('./app/model/Park');
+const Land       = require('./app/model/Land');
 const Restaurant = require('./app/model/Retaurant');
 
 app.prepare()
@@ -18,6 +20,8 @@ app.prepare()
            const server = express();
            server.use(bodyParser.json());
            server.use('/profile', Profile);
+           server.use('/park', Park);
+           server.use('/land', Land);
            server.use('/restaurant', Restaurant);
            server.get('*', (req, res) => {
                return handle(req, res);
