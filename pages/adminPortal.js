@@ -19,6 +19,7 @@ class AdminPortal extends React.Component {
     userIsAdmin = async (uid) => {
         try {
             const admin = await axios.post('profile/isAdmin', {uid: uid});
+            console.log('admin', admin);
             return admin.data;
         } catch (e) {
             throw e;
@@ -36,7 +37,9 @@ class AdminPortal extends React.Component {
 
     async componentDidMount() {
         try {
-            if (!isNil(localStorage.uid) && this.authorizedUser() && this.userIsAdmin(localStorage.uid)) {
+            const isAuthorizedUser = await this.authorizedUser();
+            const isAdmin = await this.userIsAdmin(localStorage.uid);
+            if (!isNil(localStorage.uid) && isAuthorizedUser && isAdmin) {
                 this.setState({loading: false});
             } else {
                 localStorage.clear();
@@ -45,7 +48,7 @@ class AdminPortal extends React.Component {
                 Router.push('/signIn');
             }
         } catch (e) {
-            console.log('e', e);
+            console.log('An error occurred', e);
         }
     }
 

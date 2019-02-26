@@ -84,9 +84,11 @@ class SignIn extends React.Component {
 
     async componentDidMount() {
         try {
-            if (!isNil(localStorage.uid) && this.authorizedUser()) {
+            const isAuthorizedUser = await this.authorizedUser();
+            if (!isNil(localStorage.uid) && isAuthorizedUser) {
                 const uid = localStorage.uid;
-                Router.push(`${this.userIsAdmin(uid) ? '/adminPortal' : '/userPortal'}`);
+                const isAdmin = await this.userIsAdmin(uid);
+                Router.push(`${isAdmin ? '/adminPortal' : '/userPortal'}`);
             } else {
                 localStorage.clear();
                 // User is not logged in
