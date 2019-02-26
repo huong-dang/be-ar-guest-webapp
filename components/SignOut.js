@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import {signOut} from '../services/accounts';
 
 function SignOut() {
-    const handleSubmit = async () => {
+    const handleSignOut = async () => {
         try {
             localStorage.clear();
             await signOut();
@@ -14,7 +14,7 @@ function SignOut() {
     };
 
     return (
-        <Button color={'secondary'} variant={'outlined'} onClick={handleSubmit}>
+        <Button color={'secondary'} variant={'outlined'} onClick={handleSignOut}>
             Sign Out
         </Button>
     )

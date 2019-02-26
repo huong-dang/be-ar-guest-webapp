@@ -98,9 +98,12 @@ const styles = theme => ({
 });
 
 class Dashboard extends React.Component {
-    state = {
-        open: true,
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            open: true
+        }
+    }
 
     handleDrawerOpen = () => {
         this.setState({ open: true });
