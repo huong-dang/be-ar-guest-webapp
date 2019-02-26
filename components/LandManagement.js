@@ -1,26 +1,24 @@
 import classNames from "classnames";
 import React from 'react';
 import PropTypes from 'prop-types';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import FormControl from '@material-ui/core/FormControl';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {signIn, signOut, getCurrentUser} from '../services/accounts';
-import Router from 'next/router';
-import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import isNil from 'lodash/isNil';
 import Loading from '../components/Loading';
 import axios from "axios/index";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
 
 const styles = theme => ({
     main:   {
@@ -59,11 +57,13 @@ class LandManagement extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            parks:     [],
-            land_name: '',
-            park_id:   '',
-            loading:   true,
-            message:   '',
+            parks:      [],
+            land_name:  '',
+            park_id:    '',
+            loading:    true,
+            message:    '',
+            dialogOpen: false,
+            messageTitle: ''
         }
     }
 
@@ -72,7 +72,7 @@ class LandManagement extends React.Component {
             const result = await axios.post('/park/getAll');
             this.setState({loading: false, parks: result.data});
         } catch (e) {
-            this.setState({loading: false, message: 'Could not get parks'});
+            this.setState({loading: false, message: 'Could not get parks', dialogOpen: true});
         }
     }
 
@@ -89,12 +89,41 @@ class LandManagement extends React.Component {
                 park_id:   this.state.park_id,
                 land_name: this.state.land_name
             });
-            this.setState({loading: false, message: 'Successfully added land!'});
+            this.setState({loading: false, message: 'Successfully added land!', dialogOpen: true});
         } catch (e) {
             console.log('Error occurred while adding a new land', e);
-            this.setState({loading: false, message: e.message});
+            this.setState({loading: false, message: 'Could not add land', dialogOpen: true});
         }
     };
+
+    handleClose = () => {
+        this.setState({dialogOpen: false});
+    };
+
+    renderAlertDialog() {
+        return (
+            <div>
+                <Dialog
+                    open={this.state.dialogOpen}
+                    onClose={this.handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{this.state.messageTitle}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            {this.state.message}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleClose} color="primary" autoFocus>
+                            Close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
+        );
+    }
 
     renderAddLand() {
         if (this.state.loading) {
@@ -105,7 +134,7 @@ class LandManagement extends React.Component {
             const parkMenuItems = this.state.parks.map(function (park) {
                 return <MenuItem key={park.parkID} value={park.parkID}>{park.parkName}</MenuItem>
             });
-            console.log(this.state);
+
             return (
                 <main className={classes.main}>
                     <CssBaseline/>
@@ -140,9 +169,9 @@ class LandManagement extends React.Component {
                                 onClick={this.handleAddLand}>
                                 Add Land
                             </Button>
-                            {this.state.message}
                         </form>
                     </Paper>
+                    {this.renderAlertDialog()}
                 </main>
             );
         }

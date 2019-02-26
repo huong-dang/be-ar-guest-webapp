@@ -1,7 +1,8 @@
-var express = require('express');
-var router  = express.Router();
-var DB      = require('../db');
-var _       = require('lodash');
+var express   = require('express');
+var router    = express.Router();
+var DB        = require('../db');
+var _         = require('lodash');
+var sqlstring = require('sqlstring');
 
 router.get('/getAll', async (req, res) => {
     try {
@@ -31,7 +32,7 @@ router.post('/getAllItems', async (req, res) => {
         res.status(401).send('Bad request');
     } else {
         try {
-            const query  = `select * from Item as I where I.restaurantID = ${escape(restaurantID)};`;
+            const query  = `select * from Item as I where I.restaurantID = ${sqlstring.escape(restaurantID)};`;
             const result = await DB.runQuery(query);
             res.json(result);
         } catch (e) {
