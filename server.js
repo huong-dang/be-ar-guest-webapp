@@ -12,17 +12,19 @@ const Profile    = require('./app/model/Profile');
 const Park       = require('./app/model/Park');
 const Land       = require('./app/model/Land');
 const Restaurant = require('./app/model/Retaurant');
+const Item       = require('./app/model/Item');
 
 app.prepare()
    .then(async () => {
        try {
            const setUpResult = await localConfig.initializeDatabase();
-           const server = express();
+           const server      = express();
            server.use(bodyParser.json());
            server.use('/profile', Profile);
            server.use('/park', Park);
            server.use('/land', Land);
            server.use('/restaurant', Restaurant);
+           server.use('/item', Item);
            server.get('*', (req, res) => {
                return handle(req, res);
            });
