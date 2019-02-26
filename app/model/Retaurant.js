@@ -31,7 +31,7 @@ router.post('/getAllItems', async (req, res) => {
         res.status(401).send('Bad request');
     } else {
         try {
-            const query  = `select * from Items as I where I.restaurantID = ${escape(restaurantID)};`;
+            const query  = `select * from Item as I where I.restaurantID = ${escape(restaurantID)};`;
             const result = await DB.runQuery(query);
             res.json(result);
         } catch (e) {
@@ -40,7 +40,6 @@ router.post('/getAllItems', async (req, res) => {
         }
     }
 });
-
 
 // /restaurants/
 
