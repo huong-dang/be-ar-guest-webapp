@@ -20,6 +20,9 @@ import Card from '@material-ui/core/Card';
 import HomePage from '../components/HomePage';
 import HomePageLayout from '../components/HomePageLayout';
 import RestaurantWrapper from  '../components/RestaurantWrapper';
+
+import FAQDrawer from '../components/FAQDrawer';
+
 const styles = theme => ({
     button: {
       margin: theme.spacing.unit,
@@ -27,7 +30,81 @@ const styles = theme => ({
     input: {
       display: 'none',
     },
+    navigationBar:  {
+        [theme.breakpoints.down('sm')]: {
+            marginBottom: -33,
+        },
+        [theme.breakpoints.up('md')]: {
+            marginBottom: 10,
+        },
+    },
+    homeGridRowLayout: {
+        marginLeft: "10%",
+        marginRight: "10%",
+        width: "99%",
+        [theme.breakpoints.down('sm')]: {
+            marginTop: 15,
+        },
+        [theme.breakpoints.up('md')]: {
+            marginTop: 35,
+        },
+    },
+    homeHeaderText:   {
+        fontFamily: "Avenir",
+        overflowWrap: "break-word",
+    },
+    homeBodyText:   {
+        fontFamily: "Avenir",
+        overflowWrap: "break-word",
+        [theme.breakpoints.down('sm')]: {
+            width: 265,
+            fontSize: 14,
+            textAlign: 'justify',
+        },
+        [theme.breakpoints.up('md')]: {
+            height: 225,
+            width: 425,
+        },
+    },
+    homeCardComponents: {
+        borderRadius: 20,
+        [theme.breakpoints.down('sm')]: {
+            width: 250,
+            height: 200,
+            display: 'none',
+        },
+        [theme.breakpoints.up('md')]: {
+            height: 200,
+            width: 425,
+        },
+    },
+    faqHeaderCard: {
+        backgroundColor: 'rgb(68,68,68)',
+        borderRadius: 10,
+        width: "100%",
+        height: 'auto',
+
+        [theme.breakpoints.down('sm')]: {
+            height: 48,
+        },
+        [theme.breakpoints.up('md')]: {
+            height: 69,
+        },
+    },
+    faqHeader: {
+        marginBottom: 20,
+        color: 'rgb(255,255,255)',
+        textAlign: "center",
+        overflowWrap: "break-word",
+        [theme.breakpoints.down('sm')]: {
+            fontSize: 16,
+        },
+        [theme.breakpoints.up('md')]: {
+            fontSize: 25,
+        },
+    },
 });
+
 class Index extends React.Component {
     constructor(props) {
         super(props);
@@ -41,7 +118,7 @@ class Index extends React.Component {
     renderNavigationBar() {
         const {classes} = this.props;
         return (
-            <div style={{marginBottom: 10}}>
+            <div className={classes.navigationBar}>
             <Button size="small" className={classes.button} onClick={this.handleNavigationChange("HOME")}>
                 Home
             </Button>
@@ -51,7 +128,7 @@ class Index extends React.Component {
             <Button size="small" className={classes.button} onClick={this.handleNavigationChange("MENUS")}>
                 Menus
             </Button>
-            <Button size="small" className={classes.button}>
+            <Button size="small" className={classes.button} onClick={this.handleNavigationChange("FAQ")}>
                 FAQ
             </Button>
             </div>
@@ -66,6 +143,8 @@ class Index extends React.Component {
                 return this.renderMenus();
             case "RESTAURANTS":
                 return this.renderRestaurants();
+            case "FAQ":
+                return this.renderFAQ();
             default:
                 return this.renderHome();
         }
@@ -82,48 +161,22 @@ class Index extends React.Component {
         return (
             <div>
             <HomeImageList />
+            <Grid container direction="column" justify="flex-start" alignItems="center">
                 {/* First Row of Info Grid */}
-                <Grid container direction="row" justify="center" alignItems="flex-start"
-                style={{
-                    flexWrap: "nowrap",
-                }}>
                 {/* What We Do Grid Component*/}
-                {/* <Grid container direction="column" justify="flex-start" alignItems="flex-start"> */}
-                <Grid container spacing={40}>
-                    <Grid item
-                    style={{
-                        marginLeft: "10%",
-                        marginRight: "5%",
-                    }}>
-                        <Typography variant="h5"
-                        style={{
-                            marginTop: 35,
-                            fontFamily: "Avenir",
-                            overflowWrap: "break-word",
-                        }}>
+                <Grid container spacing={40} className={classes.homeGridRowLayout}>
+                    <Grid item>
+                        <Typography variant="h5" className={classes.homeHeaderText}>
                             What We Do
                         </Typography>
-                        <Typography variant="body1"
-                        style={{
-                            height: 250,
-                            width: 450,
-                            marginTop: 5,
-                            fontFamily: "Avenir",
-                            overflowWrap: "break-word",
-                        }}>
+                        <Typography variant="body1" className={classes.homeBodyText}>
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
                         </Typography>
                     </Grid>
                     {/* What We Do Grid Component*/}
                     {/* Download Our App Component */}
                     <Grid item>
-                        <Card style={{
-                            height: 200,
-                            width: 400,
-                            marginRight: 100,
-                            marginTop: 35,
-                            borderRadius: 20,
-                        }}>
+                        <Card className={classes.homeCardComponents}>
                             <Typography style={{
                                 fontFamily: "Avenir",
                                 textAlign: "center",
@@ -134,33 +187,15 @@ class Index extends React.Component {
                     </Grid>
                     </Grid>
                     {/* Download Our App Component */}
-                </Grid>
+                {/* </Grid> */}
                 {/* First Row of Info Grid */}
-
                 
                 {/* Second Row of Info Grid */}
-                {/* <Grid container direction="row" justify="center" alignItems="flex-start"
-                style={{
-                    flexWrap: "nowrap",
-                }}> */}
-                <Grid container spacing={40}
-                style={{
-
-                }}>
+                <Grid container spacing={40} className={classes.homeGridRowLayout}>
                     {/* View Menus Component */}
-                    <Grid item>
-                    <Card style={{
-                        height: 200,
-                        width: 400,
-                        marginLeft: 100,
-                        marginRight:"10%",
-                        marginTop: 30,
-                        borderRadius: 20,
-                    }}>
-                        <Typography style={{
-                            fontFamily: "Avenir",
-                            textAlign: "center",
-                        }}>
+                    <Grid item style={{marginRight: '10%'}}>
+                    <Card className={classes.homeCardComponents}>
+                        <Typography className={classes.homeHeaderText}>
                         View Our Menus & Data
                         </Typography>
                     </Card>
@@ -169,32 +204,23 @@ class Index extends React.Component {
                     {/* Our Motivation Grid Component*/}
                     <Grid item
                     style={{
-                        marginRight: "5%",
+                        marginRight: "10%",
                     }}>
                         <Grid container direction="column" justify="flex-start" alignItems="flex-start">
                             <Typography variant="h5"
                             style={{
-                                marginRight: 100,
-                                //marginTop: 30,
                                 fontFamily: "Avenir",
                                 overflowWrap: "break-word",
                             }}>
                                 Our Motivation
                             </Typography>
-                            <Typography variant="body1"
-                            style={{
-                                height: 250,
-                                width: 450,
-                                marginRight: 100,
-                                //marginTop: 5,
-                                fontFamily: "Avenir",
-                                overflowWrap: "break-word",
-                            }}>
+                            <Typography variant="body1" className={classes.homeBodyText}>
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
                             </Typography>
                         </Grid>
                     </Grid>
                     {/* Our Motivation Component*/}
+                </Grid>
                 </Grid>
             </div>
         )
@@ -235,6 +261,35 @@ class Index extends React.Component {
                             </Grid>
                         </div>
                     </Grid>
+                </Grid>
+            </div>
+        )
+    }
+
+    renderFAQ() {
+        const {classes} = this.props;
+        return (
+            <div
+            style={{
+                width: "80%",
+                height: 'auto',
+                marginBottom: 30,
+            }}>
+                <Grid container direction="column" justify="flex-start" alignItems="center">
+                <Card className={classes.faqHeaderCard}>
+                    <Typography variant="overline" className={classes.faqHeader}>
+                        Frequently Asked Questions
+                    </Typography>
+                </Card>
+                    <Typography variant="overline"
+                    style={{
+                        marginTop: 15,
+                        marginBottom: 20,
+                        fontSize: 15,
+                    }}>
+                        We're here to help.
+                    </Typography>
+                    <FAQDrawer />
                 </Grid>
             </div>
         )
@@ -311,23 +366,11 @@ class Index extends React.Component {
             //  *  HOME PAGE
             //  */
             <div>
-                {/* Header Grid */}
-                {/* <Grid container direction="column" justify="flex-start" alignItems="center"
-                style={{
-                    width: "auto"
-                }}>
-                    <Grid container direction="column" justify="space-between" alignItems="center">
-                        <Header />
-                        <Menu />
-                    </Grid>
-                    <HomeImageList />
-                </Grid> */}
                 <Grid container direction="column" justify="center" alignItems="center">
-                <Header />
-                {this.renderNavigationBar()}
-                {this.renderBodyContent()}
-                {/* Second Row of Info Grid */}
-                <Footer />
+                    <Header />
+                    {this.renderNavigationBar()}
+                    {this.renderBodyContent()}
+                    <Footer />
                 </Grid>
             </div>
 

@@ -22,7 +22,7 @@ class RestaurantWrapper extends React.Component {
 
     render () {
         console.log(this.state.restaurants);
-        const restaurantsInfo = this.state.restaurants.map((restaurant) => 
+        const restaurantsInfo = this.state.restaurants.map((restaurant, index) => 
             {
                 return <RestaurantCard  key={restaurant.restaurantID} 
                                         restaurantID={restaurant.restaurantID}

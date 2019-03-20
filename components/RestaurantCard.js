@@ -77,7 +77,9 @@ function RestaurantCard(props) {
 //className={classes(RESTAURANT_IMAGE[props.key]).baseCard}
     return (
         <Card 
-        style={{backgroundImage: RESTAURANT_IMAGE[props.restaurantID],...classes.baseCard}}>
+        style={{backgroundImage: RESTAURANT_IMAGE[props.restaurantID]}}
+        className={classes.baseCard}
+        >
             <CardContent>
                 <Grid container direction="row" justify="space-between" alignItems="center">
                     <Grid container direction="row" alignItems="center">

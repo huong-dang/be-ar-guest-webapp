@@ -4,7 +4,7 @@ import {withStyles} from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Grid from '@material-ui/core/Grid';
 
-const styles = {
+const styles = theme => ({
     cardOne:         {
         width:        300,
         height:       150,
@@ -41,29 +41,56 @@ const styles = {
         backgroundSize: 'cover',
         position: 'relative',
     },
-};
+    imageOuterContainer: {
+        height: 150,
+        width: "screen.width",
+        [theme.breakpoints.down('sm')]: {
+            // overflow: 'scroll',
+            // width: screen.width,
+            display: 'none'
+        },
+        [theme.breakpoints.up('md')]: {
+            overflow: 'hidden',
+        },
+    },
+    imageInnerContainer:    {
+        [theme.breakpoints.down('sm')]: {
+            width: "200%",
+        },
+        [theme.breakpoints.down('md')]: {
+            width: "screen.width",
+        },
+    }
+});
 
 function HomeImageList(props) {
     const {classes} = props;
 
     return (
-        <Grid container direction="row" justify="space-between" alignItems="center" style={{overflow: 'hidden'}}>
-            <Card
-                className={classes.cardOne}
-            />
-            <Card 
-                className={classes.cardTwo}
-            />
-            <Card 
-                className={classes.cardThree}
-            />
-            <Card 
-                className={classes.cardFour}
-            />
-            {/* <Card 
-                className={classes.cardFive}
-            /> */}
-        </Grid>
+        <div className={classes.imageOuterContainer}>
+            <Grid 
+                container direction="row" 
+                justify="space-between" 
+                alignItems="center" 
+                className={classes.imageInnerContainer}
+            >
+                <Card
+                    className={classes.cardOne}
+                />
+                <Card 
+                    className={classes.cardTwo}
+                />
+                <Card 
+                    className={classes.cardThree}
+                />
+                <Card 
+                    className={classes.cardFour}
+                />
+                {/* <Card 
+                    className={classes.cardFive}
+                /> */}
+            </Grid>
+        </div>
     );
 }
 
