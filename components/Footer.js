@@ -13,14 +13,17 @@ const styles = theme => ({
     backgroundColor: 'rgb(220,220,220)',
     // margin: 0,
     [theme.breakpoints.between('xs','sm')]: {
-      height: 250,
+      height: 225,
       marginTop: 30,
+      visibility: 'hidden',
     },
     [theme.breakpoints.between('sm','md')]: {
-      height: 275,
+      height: 225,
+      marginTop: 155,
     },
     [theme.breakpoints.up('md')]: {
-      height: 275,
+      height: 225,
+      marginTop: 155,
     },
   },
   footerGridLayout: {
@@ -30,7 +33,7 @@ const styles = theme => ({
     },
     [theme.breakpoints.up('md')]: {
       marginLeft: 200,
-      marginTop: 40,
+      marginTop: 20,
     },
   },
   descriptionText:  {
@@ -53,7 +56,7 @@ const styles = theme => ({
     [theme.breakpoints.down('sm')]: {
       width: "25%",
     },
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.up('md')]: {
       width: "9%",
     },
   },
@@ -69,7 +72,7 @@ const styles = theme => ({
       marginTop: 50,
     },
     [theme.breakpoints.up('md')]: {
-      //marginTop: -29,
+      marginTop: -29,
     },
   },
   buttonText: {
@@ -93,7 +96,7 @@ function Footer(props) {
           <Typography className={classes.descriptionText}>
             An augmented reality mobile application powered by computer vision that helps vegans find suitable food and drink at Walt Disney World.
             </Typography>
-            <Grid container direction="column" justify="flex-start" alignItems="center" className={classes.footerLinksLayout}>
+            {/* <Grid container direction="column" justify="flex-start" alignItems="center" className={classes.footerLinksLayout}>
               <Typography style={{
                 fontFamily: "Avenir",
                 fontSize: 25,
@@ -114,7 +117,7 @@ function Footer(props) {
               <Button size="small" className={classes.buttonText}>
                 FAQ
               </Button>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Card>
   );

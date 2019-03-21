@@ -19,9 +19,11 @@ import Card from '@material-ui/core/Card';
 
 import HomePage from '../components/HomePage';
 import HomePageLayout from '../components/HomePageLayout';
+import MenuIcon from '@material-ui/icons/ImportContacts';
 import RestaurantWrapper from  '../components/RestaurantWrapper';
 
 import FAQDrawer from '../components/FAQDrawer';
+import AboutUs from '../components/AboutUs';
 
 const styles = theme => ({
     button: {
@@ -34,18 +36,19 @@ const styles = theme => ({
         [theme.breakpoints.down('sm')]: {
             marginBottom: -33,
         },
-        [theme.breakpoints.up('md')]: {
+        [theme.breakpoints.between('sm','md')]: {
             marginBottom: 10,
         },
     },
     homeGridRowLayout: {
-        marginLeft: "10%",
-        marginRight: "10%",
-        width: "99%",
+        marginLeft: "8%",
+        overFlowX: 'hidden',
+        // marginRight: "10%",
+       // width: "99%",
         [theme.breakpoints.down('sm')]: {
             marginTop: 15,
         },
-        [theme.breakpoints.up('md')]: {
+        [theme.breakpoints.between('sm','lg')]: {
             marginTop: 35,
         },
     },
@@ -115,6 +118,12 @@ class Index extends React.Component {
         this.setState({tab: prop});
     };
 
+    changeOpacity() {
+        this.state = {
+            opacity: 0.7
+        }
+    }
+
     renderNavigationBar() {
         const {classes} = this.props;
         return (
@@ -122,11 +131,11 @@ class Index extends React.Component {
             <Button size="small" className={classes.button} onClick={this.handleNavigationChange("HOME")}>
                 Home
             </Button>
-            <Button size="small" className={classes.button} onClick={this.handleNavigationChange("RESTAURANTS")}>
-                Restaurants
-            </Button>
             <Button size="small" className={classes.button} onClick={this.handleNavigationChange("MENUS")}>
                 Menus
+            </Button>
+            <Button size="small" className={classes.button} onClick={this.handleNavigationChange("RESTAURANTS")}>
+                Restaurants
             </Button>
             <Button size="small" className={classes.button} onClick={this.handleNavigationChange("FAQ")}>
                 FAQ
@@ -193,18 +202,58 @@ class Index extends React.Component {
                 {/* Second Row of Info Grid */}
                 <Grid container spacing={40} className={classes.homeGridRowLayout}>
                     {/* View Menus Component */}
-                    <Grid item style={{marginRight: '10%'}}>
-                    <Card className={classes.homeCardComponents}>
-                        <Typography className={classes.homeHeaderText}>
-                        View Our Menus & Data
-                        </Typography>
+                    <Grid item >
+                    <Card 
+                    onClick={this.handleNavigationChange("MENUS")}
+                    onMouseOver={this.changeOpacity()}
+                    className={classes.homeCardComponents}
+                    style=
+                    {{
+                        backgroundImage: "url('../static/images/HomePageImages/restaurantstock.jpg')",
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        backgroundSize: 'cover',
+                        opacity: 1.0,
+                    }}
+                    >
+                    <Grid container direction="row" justify="center" alignItems="center">
+                        {/* <Card
+                        style=
+                        {{
+                            backgroundColor: 'black',
+                            height: 25,
+                            width: 
+                        }}> */}
+                            <Typography 
+                            variant="h6"
+                            className={classes.homeHeaderText}
+                            style=
+                            {{
+                                position: 'relative',
+                                color: 'white',
+                                marginTop: 85,
+                                opacity: 1.0, 
+                            }}
+                            >
+                            View Our Menus
+                            </Typography>
+                            <MenuIcon 
+                            style=
+                            {{ 
+                                color: 'white',
+                                position: 'relative',
+                                marginLeft: 5,
+                                marginTop: 85,
+                                opacity: 1.0,
+                            }}/>
+                        {/* </Card> */}
+                    </Grid>
                     </Card>
                     </Grid>
                     {/* View Menus Component */}
                     {/* Our Motivation Grid Component*/}
                     <Grid item
                     style={{
-                        marginRight: "10%",
+                        // marginRight: "10%",
                     }}>
                         <Grid container direction="column" justify="flex-start" alignItems="flex-start">
                             <Typography variant="h5"
@@ -221,6 +270,10 @@ class Index extends React.Component {
                     </Grid>
                     {/* Our Motivation Component*/}
                 </Grid>
+                </Grid>
+
+                <Grid container spacing={40} className={classes.homeGridRowLayout}>
+                    <AboutUs />
                 </Grid>
             </div>
         )
