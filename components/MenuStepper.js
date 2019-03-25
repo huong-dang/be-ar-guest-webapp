@@ -29,6 +29,16 @@ import Button from "@material-ui/core/Button";
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ItemCard from '../components/ItemCard';
+
 const styles = theme => ({
   root: {
     width: "80%",
@@ -74,10 +84,35 @@ const styles = theme => ({
     marginRight: 10,
     marginTop: 5,
     marginBottom: 5
-  }
+  },
+  restaurantName: {
+    fontSize: 'larger'
+  },
 });
 
 class MenuStepper extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {tab: "RESTAURANTS"};
+  }
+
+  handleContentChange = prop => event => {
+    this.setState({tab: prop});
+  };
+
+  renderDividerContent() {
+    switch (this.state.tab) {
+      case "PARKS":
+        return this.renderParks();
+      case "LANDS":
+        return this.renderLands();
+      case "RESTAURANTS":
+        return this.renderRestaurants();
+      default:
+        return this.renderParks();
+    }
+  }
+
   renderParks() {
     const { classes } = this.props;
     return (
@@ -87,7 +122,7 @@ class MenuStepper extends React.Component {
         <Grid container spacing={24} className={classes.grid}>
           <Grid item xs={12} md={6}>
             <Card
-              className={classes.parkImage}
+              className={classes.parkImage} onClick={this.handleContentChange("LANDS")}
               style={{
                 backgroundImage:
                   "url('../static/images/ParkImages/MagicKingdom.jpg')"
@@ -149,6 +184,46 @@ class MenuStepper extends React.Component {
       </div>
     );
   }
+  
+  renderLands() {
+    const { classes } = this.props;
+    return (
+      <List>
+        <ListItem button onClick={this.handleContentChange("RESTAURANTS")}>
+          <ListItemText primary="Land1" />
+        </ListItem>
+      </List>
+    )
+  }
+
+  renderRestaurants() {
+    const { classes } = this.props;
+    return (
+      <ExpansionPanel>
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h4" className={classes.restaurantName}>
+            Restaurant1
+          </Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <Grid container spacing={24}>
+            <Grid item xs={12} sm={4}>
+              <ItemCard />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <ItemCard />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <ItemCard />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <ItemCard />
+            </Grid>
+          </Grid>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+    )
+  }
 
   render() {
     const { classes, theme } = this.props;
@@ -157,7 +232,7 @@ class MenuStepper extends React.Component {
       <div className={classes.root}>
         <Card>
           <Typography>hello</Typography>
-          {this.renderParks()}
+          {this.renderDividerContent()}
         </Card>
       </div>
     );
