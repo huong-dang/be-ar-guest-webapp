@@ -19,9 +19,10 @@ import Card from '@material-ui/core/Card';
 
 import HomePage from '../components/HomePage';
 import HomePageLayout from '../components/HomePageLayout';
+import PhoneIcon from '@material-ui/icons/PhoneAndroid';
 import MenuIcon from '@material-ui/icons/ImportContacts';
 import RestaurantWrapper from  '../components/RestaurantWrapper';
-
+import MenuStepper from '../components/MenuStepper';
 import FAQDrawer from '../components/FAQDrawer';
 import AboutUs from '../components/AboutUs';
 
@@ -34,22 +35,10 @@ const styles = theme => ({
     },
     navigationBar:  {
         [theme.breakpoints.down('sm')]: {
-            marginBottom: -33,
+            marginBottom: 0,
         },
         [theme.breakpoints.between('sm','md')]: {
             marginBottom: 10,
-        },
-    },
-    homeGridRowLayout: {
-        marginLeft: "8%",
-        overFlowX: 'hidden',
-        // marginRight: "10%",
-       // width: "99%",
-        [theme.breakpoints.down('sm')]: {
-            marginTop: 15,
-        },
-        [theme.breakpoints.between('sm','lg')]: {
-            marginTop: 35,
         },
     },
     homeHeaderText:   {
@@ -59,27 +48,53 @@ const styles = theme => ({
     homeBodyText:   {
         fontFamily: "Avenir",
         overflowWrap: "break-word",
+        // marginLeft: 'auto',
+        // marginRight: 'auto',
         [theme.breakpoints.down('sm')]: {
             width: 265,
             fontSize: 14,
             textAlign: 'justify',
         },
-        [theme.breakpoints.up('md')]: {
+        [theme.breakpoints.up('sm')]: {
             height: 225,
             width: 425,
         },
     },
     homeCardComponents: {
         borderRadius: 20,
+        // marginLeft:'auto',
+        // marginRight:'auto',
+        height: 200,
+        width: 425,
         [theme.breakpoints.down('sm')]: {
-            width: 250,
-            height: 200,
             display: 'none',
         },
-        [theme.breakpoints.up('md')]: {
-            height: 200,
-            width: 425,
-        },
+    },
+    pictureCard:    {
+        //display: 'block',
+        // marginLeft: 'auto',
+        // marginRight: 'auto',
+        width: 110,
+        height: 110,
+        borderRadius: 70,
+        backgroundSize: 'cover',
+        borderStyle: 'solid',
+        borderWidth: 'thin',
+        borderColor: 'grey',
+    },
+    nameText:   {
+        marginTop: 13,
+        fontFamily: "Avenir",
+        fontSize: 'larger',
+        textAlign: 'center',
+        fontWeight: 500,
+    },
+    positionText:   {
+        marginTop: 0,
+        fontFamily: 'Avenir',
+        fontSize: 16,
+        color: 'dimgray',
+        textAlign: 'center',
     },
     faqHeaderCard: {
         backgroundColor: 'rgb(68,68,68)',
@@ -111,7 +126,7 @@ const styles = theme => ({
 class Index extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {tab: "HOME"}
+        this.state = {tab: "RESTAURANTS"}
     }
 
     handleNavigationChange = prop => event => {
@@ -161,7 +176,8 @@ class Index extends React.Component {
 
     renderRestaurants() {
         return (
-            <RestaurantWrapper />
+            // <RestaurantWrapper />
+            <MenuStepper />
         )
     }
 
@@ -170,11 +186,11 @@ class Index extends React.Component {
         return (
             <div>
             <HomeImageList />
-            <Grid container direction="column" justify="flex-start" alignItems="center">
+            <Grid container spacing={8} style={{marginLeft: '7%',}}>
                 {/* First Row of Info Grid */}
                 {/* What We Do Grid Component*/}
-                <Grid container spacing={40} className={classes.homeGridRowLayout}>
-                    <Grid item>
+                {/* <Grid container spacing={40} className={classes.homeGridRowLayout}> */}
+                    <Grid item xs={12} sm={6}>
                         <Typography variant="h5" className={classes.homeHeaderText}>
                             What We Do
                         </Typography>
@@ -184,25 +200,39 @@ class Index extends React.Component {
                     </Grid>
                     {/* What We Do Grid Component*/}
                     {/* Download Our App Component */}
-                    <Grid item>
-                        <Card className={classes.homeCardComponents}>
-                            <Typography style={{
+                    <Grid item xs={12} sm={6}>
+                        <Card 
+                        className={classes.homeCardComponents}
+                        style={{
+                            backgroundColor: 'rgb(41,41,41)',
+                        }}>
+                            <Grid container direction="row" justify="center" alignItems="center">
+                            <Typography variant="h6" style={{
                                 fontFamily: "Avenir",
                                 textAlign: "center",
+                                // fontSize: 24,
+                                fontWeight: 400,
+                                color: 'rgb(252,252,252)',
+                                marginTop: 85,
                             }}>
                             Download Our App
                             </Typography>
+                            <PhoneIcon style={{
+                                marginTop: 85,
+                                color: 'rgb(252,252,252)',
+                            }}/>
+                            </Grid>
                         </Card>
                     </Grid>
-                    </Grid>
+                {/* </Grid> */}
                     {/* Download Our App Component */}
                 {/* </Grid> */}
                 {/* First Row of Info Grid */}
                 
                 {/* Second Row of Info Grid */}
-                <Grid container spacing={40} className={classes.homeGridRowLayout}>
+                {/* <Grid container spacing={40} className={classes.homeGridRowLayout}> */}
                     {/* View Menus Component */}
-                    <Grid item >
+                    <Grid item xs={12} sm={6}>
                     <Card 
                     onClick={this.handleNavigationChange("MENUS")}
                     onMouseOver={this.changeOpacity()}
@@ -251,10 +281,11 @@ class Index extends React.Component {
                     </Grid>
                     {/* View Menus Component */}
                     {/* Our Motivation Grid Component*/}
-                    <Grid item
+                    {/* <Grid item
                     style={{
                         // marginRight: "10%",
-                    }}>
+                    }}> */}
+                    <Grid item xs={12} sm={6}>
                         <Grid container direction="column" justify="flex-start" alignItems="flex-start">
                             <Typography variant="h5"
                             style={{
@@ -268,13 +299,103 @@ class Index extends React.Component {
                             </Typography>
                         </Grid>
                     </Grid>
+                    {/* End of 2nd row */}
                     {/* Our Motivation Component*/}
-                </Grid>
+                    
+                    {/* <Grid container direction="column" justify="flex-start" alignItems="flex-start"> */}
+                    <Grid item xs={6}>
+                        <Typography variant="h5" 
+                            style={{
+                                fontFamily: "Avenir",
+                                marginBottom: 20,
+                            }}>
+                            Our Team
+                        </Typography>
+                    </Grid>
+                    <Grid container spacing={0} style={{}}>
+                        <Grid item xs={12} sm={2}>
+                            <Grid container direction="column" justify="flex-start" alignItems="center"
+                            className={classes.profileTile}>
+                                <Card 
+                                style={{backgroundImage: "url('../static/images/PeopleImages/RS.jpg')"}}
+                                className={classes.pictureCard}
+                                />
+                                <Typography variant="h5" className={classes.nameText}>
+                                    Rachael Sera
+                                </Typography>
+                                <Typography className={classes.positionText}>
+                                    Augmented Reality
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={12} sm={2}>
+                            <Grid container direction="column" justify="flex-start" alignItems="center"
+                            className={classes.profileTile}>
+                                <Card 
+                                style={{backgroundImage: "url('../static/images/PeopleImages/BB.jpg')"}}
+                                className={classes.pictureCard}
+                                />
+                                <Typography variant="h5" className={classes.nameText}>
+                                    Bailey Brooks
+                                </Typography>
+                                <Typography className={classes.positionText}>
+                                    Computer Vision
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={12} sm={2}>
+                            <Grid container direction="column" justify="flex-start" alignItems="center"
+                            className={classes.profileTile}>
+                                <Card 
+                                style={{backgroundImage: "url('../static/images/PeopleImages/LY.jpg')"}}
+                                className={classes.pictureCard}
+                                />
+                                <Typography variant="h5" className={classes.nameText}>
+                                    Lorraine Yerger
+                                </Typography>
+                                <Typography className={classes.positionText}>
+                                    Mobile Developer
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={12} sm={2}>
+                            <Grid container direction="column" justify="flex-start" alignItems="center"
+                            className={classes.profileTile}>
+                                <Card 
+                                style={{backgroundImage: "url('../static/images/PeopleImages/HD.jpg')"}}
+                                className={classes.pictureCard}
+                                />
+                                <Typography variant="h5" className={classes.nameText}>
+                                    Huong Dang
+                                </Typography>
+                                <Typography className={classes.positionText}>
+                                    Web Developer
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={12} sm={2}>
+                            <Grid container direction="column" justify="flex-start" alignItems="center"
+                            className={classes.profileTile}>
+                                <Card 
+                                style={{backgroundImage: "url('../static/images/PeopleImages/JL.jpg')"}}
+                                className={classes.pictureCard}
+                                />
+                                <Typography variant="h5" className={classes.nameText}>
+                                    Jacquelyn Law
+                                </Typography>
+                                <Typography className={classes.positionText}>
+                                    Web Developer
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    {/* </Grid> */}
+                {/* </Grid> */}
                 </Grid>
 
-                <Grid container spacing={40} className={classes.homeGridRowLayout}>
-                    <AboutUs />
-                </Grid>
+                {/* <Grid container spacing={40}> */}
+                    
+                {/* </Grid> */}
             </div>
         )
     }

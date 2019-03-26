@@ -11,16 +11,12 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 
 const styles = {
-    gridList:   {
-        width: '80%',
-        // height: 500,
-    },
     profileTile:    {
-        width: 200,
-        height: 100,
+        // width: 200,
+        // height: 100,
     },
     pictureCard:    {
-        display: 'block',
+        //display: 'block',
         marginLeft: 'auto',
         marginRight: 'auto',
         width: 110,
@@ -60,10 +56,10 @@ function AboutUs(props) {
                     }}>
                     Our Team
                 </Typography>
-                <Grid container direction="row" justify="flex-start" alignItems="center">
+                <Grid container spacing={16}>
                     <Grid container direction="column" justify="flex-start" alignItems="center"
                           className={classes.profileTile}>
-                        <Grid item>
+                        <Grid item xs={12} sm={3}>
                             <Card 
                             style={{backgroundImage: "url('../static/images/PeopleImages/RS.jpg')"}}
                             className={classes.pictureCard}
@@ -79,7 +75,7 @@ function AboutUs(props) {
                     </Grid>
                     <Grid container direction="column" justify="flex-start" alignItems="center"
                           className={classes.profileTile}>
-                        <Grid item>
+                        <Grid item xs={12} sm={3}>
                             <Card 
                             style={{backgroundImage: "url('../static/images/PeopleImages/BB.jpg')"}}
                             className={classes.pictureCard}
@@ -94,7 +90,7 @@ function AboutUs(props) {
                     </Grid>
                     <Grid container direction="column" justify="flex-start" alignItems="center"
                           className={classes.profileTile}>
-                        <Grid item>
+                        <Grid item xs={12} sm={3}>
                             <Card 
                             style={{backgroundImage: "url('../static/images/PeopleImages/LY.jpg')"}}
                             className={classes.pictureCard}
@@ -109,7 +105,7 @@ function AboutUs(props) {
                     </Grid>
                     <Grid container direction="column" justify="flex-start" alignItems="center"
                           className={classes.profileTile}>
-                        <Grid item>
+                        <Grid item xs={12} sm={3}>
                             <Card 
                             style={{backgroundImage: "url('../static/images/PeopleImages/HD.jpg')"}}
                             className={classes.pictureCard}
@@ -124,7 +120,7 @@ function AboutUs(props) {
                     </Grid>
                     <Grid container direction="column" justify="flex-start" alignItems="center"
                           className={classes.profileTile}>
-                        <Grid item>
+                        <Grid item xs={12} sm={3}>
                             <Card 
                             style={{backgroundImage: "url('../static/images/PeopleImages/JL.jpg')"}}
                             className={classes.pictureCard}

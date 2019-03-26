@@ -51,6 +51,7 @@ const styles = theme => ({
         },
         [theme.breakpoints.up('md')]: {
             overflow: 'hidden',
+            marginBottom: 30,
         },
     },
     imageInnerContainer:    {
