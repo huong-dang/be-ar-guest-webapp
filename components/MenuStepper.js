@@ -38,6 +38,9 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ItemCard from '../components/ItemCard';
+import RestaurantPanel from '../components/RestaurantPanel';
+
+import axios from 'axios';
 
 const styles = theme => ({
   root: {
@@ -93,7 +96,23 @@ const styles = theme => ({
 class MenuStepper extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {tab: "RESTAURANTS"};
+    this.state = {
+      tab: "PARKS",
+      restaurants:[],
+      lands: [],
+    };
+  }
+
+  // Fetch restaurant names
+  async componentDidMount() {
+    try {
+      const result = await axios.get('/restaurant/getAllRestaurantsInfo');
+      this.setState({
+        restaurants: result.data
+      })
+    } catch (e) {
+      console.log('Error', e);
+    }
   }
 
   handleContentChange = prop => event => {
@@ -197,31 +216,24 @@ class MenuStepper extends React.Component {
   }
 
   renderRestaurants() {
+    console.log(this.state.restaurants);
     const { classes } = this.props;
+    const restaurantsInfo = this.state.restaurants.map((restaurant, index) =>
+      {
+        return (
+          <div>
+            <RestaurantPanel key={restaurant.restaurantID}
+                             restaurantID={restaurant.restaurantID}
+                             restaurantName={restaurant.restaurantName}
+                             restaurantLand={restaurant.landName} />
+          </div>
+        )
+      }
+    )
     return (
-      <ExpansionPanel>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h4" className={classes.restaurantName}>
-            Restaurant1
-          </Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <Grid container spacing={24}>
-            <Grid item xs={12} sm={4}>
-              <ItemCard />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <ItemCard />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <ItemCard />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <ItemCard />
-            </Grid>
-          </Grid>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+      <div>
+        {restaurantsInfo}
+      </div>
     )
   }
 
