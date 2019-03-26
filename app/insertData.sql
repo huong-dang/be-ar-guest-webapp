@@ -113,8 +113,10 @@ values ((select restaurantID from Restaurant where restaurantName = 'Casey\'s Co
 insert into Item (`restaurantID`, `itemName`, `itemDescription`, `secret`, `vegan`, `substitution`, `itemStatus`)
 values ((select restaurantID from Restaurant where restaurantName = 'Pecos Bill Tall Tale Cafe'), 'Plant-based Southwest Cheeseburger', 'Topped with Vegan Jalapeno Jack and Vegan Avocado Aioli on a Toasted Bun', false, true, 'None', 'AVAILABLE');
 
-insert into Item (`restaurantID`, `itemName`, `itemDescription`, `secret`, `vegan`, `substitution`, `itemStatus`)
-values ((select restaurantID from Restaurant where restaurantName = 'Pecos Bill Tall Tale Cafe'), 'Veggie Rice Bowl', 'Yellow Rice topped with Black Beans and Roasted Vegetables', false, false, 'Substitute plain white rice', 'AVAILABLE');
+insert into Item (`restaurantID`, `itemName`, `itemDescription`, `secret`, `vegan`, `substitution`, `itemStatus`, `x`, `y`, `z`)
+values ((select restaurantID from Restaurant where restaurantName = 'Pecos Bill Tall Tale Cafe'), 'Veggie Rice Bowl',
+ 'Yellow Rice topped with Black Beans and Roasted Vegetables', false, false, 'Substitute plain white rice',
+ 'AVAILABLE', 2.0, 2.0, 2.0);
 
 insert into Item (`restaurantID`, `itemName`, `itemDescription`, `secret`, `vegan`, `substitution`, `itemStatus`, `x`, `y`, `z`)
 values ((select restaurantID from Restaurant where restaurantName = 'Pecos Bill Tall Tale Cafe'), 'Veggie Nachos', 'Tortilla Chips topped with Queso, Zucchini and Squash', false, false, 'Order without chese', 'AVAILABLE', 1.0, 2.0, 3.0);
