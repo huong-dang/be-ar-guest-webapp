@@ -26,13 +26,31 @@ router.get('/getAllRestaurantsInfo', async (req, res) => {
     }
 });
 
-router.post('/getAllItems', async (req, res) => {
+router.post('/getAllItemsByRestaurantID', async (req, res) => {
     const {restaurantID} = req.body;
     if (_.isNil(restaurantID)) {
         res.status(401).send('Bad request');
     } else {
         try {
             const query  = `select * from Item as I where I.restaurantID = ${sqlstring.escape(restaurantID)};`;
+            const result = await DB.runQuery(query);
+            res.json(result);
+        } catch (e) {
+            console.log('An error occurred when querying the database', e);
+            res.status(500).send('Check server logs for errors.');
+        }
+    }
+});
+
+router.post('/getAllItemsByRestaurantName', async (req, res) => {
+    const {restaurantName} = req.body;
+    if (_.isNil(restaurantName)) {
+        res.status(401).send('Bad request');
+    } else {
+        try {
+            const query  = `SELECT * FROM Item I, Restaurant R 
+                            WHERE R.restaurantName = ${sqlstring.escape(restaurantName)} 
+                            AND R.restaurantID = I.restaurantID`;
             const result = await DB.runQuery(query);
             res.json(result);
         } catch (e) {
