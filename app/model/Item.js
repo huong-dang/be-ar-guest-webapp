@@ -23,7 +23,7 @@ router.post('/getAllItemsWithNonNullCoordinatesFromRestaurantName', async (req, 
         console.log('restaurantName', restaurantName);
         const query  = `SELECT * FROM Item I, Restaurant R 
         WHERE R.restaurantName = ${sqlstring.escape(restaurantName)} 
-        AND R.restaurantID = I.restaurantID AND I.x IS NOT NULL AND I.y IS NOT NULL AND I.z IS NOT NULL;`;
+        AND R.restaurantID = I.restaurantID AND I.x IS NOT NULL AND I.z IS NOT NULL;`;
 
         const result = await DB.runQuery(query);
         res.json(result);
