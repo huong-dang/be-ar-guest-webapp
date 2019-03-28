@@ -51,7 +51,7 @@ const dbIsSetUp = async () => {
 
 const getQueries = (arrayOfRawQueries) => {
     return arrayOfRawQueries.reduce((accum, currQuery) => {
-        if (currQuery !== '') {
+        if (currQuery !== '' && currQuery !== '\n') {
             accum.push(currQuery + ';');
         }
         return accum;
