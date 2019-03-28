@@ -4,8 +4,6 @@ var DB        = require('../db');
 var _         = require('lodash');
 var sqlstring = require('sqlstring');
 
-
-// TODO: Code here
 router.post('/getAll', async (req, res) => {
     try {
         const query  = `SELECT * FROM Land;`;
@@ -37,6 +35,23 @@ router.post('/add', async (req, res) => {
         } catch (e) {
             console.log('Error adding a new land to the database:', e);
             res.json({success: false});
+
+        }
+    }
+});
+
+router.post('/getLands', async (req, res) => {
+    const {parkID} = req.body;
+    if (_.isNil(parkID)) {
+        res.status(401).send('Bad request');
+    } else {
+        try {
+            const query  = `select * from Land as L where L.parkID = ${escape(parkID)};`;
+            const result = await DB.runQuery(query);
+            res.json(result);
+        } catch (e) {
+            console.log('An error occurred when querying the database', e);
+            res.status(500).send('Check server logs for errors.');
         }
     }
 });
