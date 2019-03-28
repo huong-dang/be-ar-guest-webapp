@@ -7,12 +7,12 @@ const app        = next({dev});
 const handle     = app.getRequestHandler();
 const PORT       = process.env.PORT || 3000;
 const bodyParser = require('body-parser');
-const DB         = require('./app/db');
 const Profile    = require('./app/model/Profile');
 const Park       = require('./app/model/Park');
 const Land       = require('./app/model/Land');
 const Restaurant = require('./app/model/Restaurant');
 const Item       = require('./app/model/Item');
+const Review     = require('./app/model/Review');
 
 app.prepare()
    .then(async () => {
@@ -25,6 +25,7 @@ app.prepare()
            server.use('/land', Land);
            server.use('/restaurant', Restaurant);
            server.use('/item', Item);
+           server.use('/review', Review);
            server.get('*', (req, res) => {
                return handle(req, res);
            });
