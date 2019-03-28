@@ -83,6 +83,9 @@ CREATE TABLE `Item` (
   `vegan` BOOLEAN NOT NULL,
   `substitution` TEXT,
   `itemStatus` VARCHAR(50) NOT NULL,
+  `x` FLOAT,
+  `y` FLOAT,
+  `z` FLOAT,
   PRIMARY KEY (`itemID`),
   FOREIGN KEY (`restaurantID`) REFERENCES `Restaurant` (`restaurantID`)
 );
