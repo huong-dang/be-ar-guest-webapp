@@ -8,7 +8,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {signIn} from '../services/accounts';
+import {signIn, signOut, getCurrentUser} from '../services/accounts';
 import Router from 'next/router';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -16,9 +16,12 @@ import TextField from '@material-ui/core/TextField';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import classNames from 'classnames';
+import isNil from 'lodash/isNil';
+import Loading from '../components/Loading';
+import axios from "axios/index";
 
 const styles = theme => ({
-    main:      {
+    main:   {
         width:                                                    'auto',
         display:                                                  'block', // Fix IE 11 issue.
         marginLeft:                                               theme.spacing.unit * 3,
@@ -29,22 +32,22 @@ const styles = theme => ({
             marginRight: 'auto',
         },
     },
-    paper:     {
+    paper:  {
         marginTop:     theme.spacing.unit * 8,
         display:       'flex',
         flexDirection: 'column',
         alignItems:    'center',
         padding:       `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
     },
-    avatar:    {
+    avatar: {
         margin:          theme.spacing.unit,
         backgroundColor: theme.palette.secondary.main,
     },
-    form:      {
+    form:   {
         width:     '100%', // Fix IE 11 issue.
         marginTop: theme.spacing.unit,
     },
-    submit:    {
+    submit: {
         marginTop: theme.spacing.unit * 3,
     },
 });
@@ -57,6 +60,43 @@ class SignIn extends React.Component {
             password:     '',
             error:        '',
             showPassword: false,
+            loading:      true
+        }
+    }
+
+    userIsAdmin = async (uid) => {
+        try {
+            const admin = await axios.post('profile/isAdmin', {uid: uid});
+            return admin.data;
+        } catch (e) {
+            throw e;
+        }
+    };
+
+    authorizedUser = async () => {
+        try {
+            const user  = await getCurrentUser();
+            return user && user.uid === localStorage.uid;
+        } catch (e) {
+            throw e;
+        }
+    };
+
+    async componentDidMount() {
+        try {
+            const isAuthorizedUser = await this.authorizedUser();
+            if (!isNil(localStorage.uid) && isAuthorizedUser) {
+                const uid = localStorage.uid;
+                const isAdmin = await this.userIsAdmin(uid);
+                Router.push(`${isAdmin ? '/adminPortal' : '/userPortal'}`);
+            } else {
+                localStorage.clear();
+                // User is not logged in
+                await signOut();
+                this.setState({loading: false});
+            }
+        } catch (e) {
+            console.log('e', e);
         }
     }
 
@@ -67,8 +107,14 @@ class SignIn extends React.Component {
     handleSubmit = async () => {
         try {
             const result = await signIn(this.state.email, this.state.password);
-            console.log('result is', result);
-            Router.push(`/home`);
+            localStorage.setItem('uid', result.user.uid);
+
+            const admin = await axios.post('profile/isAdmin', {uid: localStorage.uid});
+            if (admin.data) {
+                Router.push('/adminPortal');
+            } else {
+                Router.push('/userPortal');
+            }
         } catch (err) {
             if (err.code === 'auth/user-not-found') {
                 this.setState({
@@ -88,67 +134,75 @@ class SignIn extends React.Component {
         this.setState(state => ({showPassword: !state.showPassword}));
     };
 
-    render() {
+    renderSignIn() {
         const {classes} = this.props;
-        return (
-            <main className={classes.main}>
-                <CssBaseline/>
-                <Paper className={classes.paper}>
-                    <Avatar className={classes.avatar}>
-                        <LockOutlinedIcon/>
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        Sign in
-                    </Typography>
-                    <form className={classes.form}>
-                        <FormControl margin="normal" required fullWidth>
-                            <TextField
-                                label="Email"
-                                className={classNames(classes.textField)}
-                                type="email"
-                                name="email"
-                                autoComplete="email"
-                                value={this.state.email}
-                                onChange={this.handleChange('email')}
-                            />
-                        </FormControl>
-                        <FormControl margin="normal" required fullWidth>
-                            <TextField
-                                className={classNames(classes.textField)}
-                                type={this.state.showPassword ? 'text' : 'password'}
-                                label="Password"
-                                value={this.state.password}
-                                onChange={this.handleChange('password')}
-                                InputProps={{
-                                    endAdornment: (
-                                                      <InputAdornment position="end">
-                                                          <IconButton
-                                                              aria-label="Toggle password visibility"
-                                                              onClick={this.handleClickShowPassword}
-                                                          >
-                                                              {this.state.showPassword ? (
-                                                                  <VisibilityOff/>
-                                                              ) : (
-                                                                  <Visibility/>
-                                                              )}
-                                                          </IconButton>
-                                                      </InputAdornment>
-                                                  ),
-                                }}
-                            />
-                        </FormControl>
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            className={classes.submit}
-                            onClick={this.handleSubmit}>
-                            Sign In
-                        </Button>
-                    </form>
-                </Paper>
-            </main>
-        );
+        if (this.state.loading) {
+            return <Loading/>;
+        } else {
+            return (
+                <main className={classes.main}>
+                    <CssBaseline/>
+                    <Paper className={classes.paper}>
+                        <Avatar className={classes.avatar}>
+                            <LockOutlinedIcon/>
+                        </Avatar>
+                        <Typography component="h1" variant="h5">
+                            Sign in
+                        </Typography>
+                        <form className={classes.form}>
+                            <FormControl margin="normal" required fullWidth>
+                                <TextField
+                                    label="Email"
+                                    className={classNames(classes.textField)}
+                                    type="email"
+                                    name="email"
+                                    autoComplete="email"
+                                    value={this.state.email}
+                                    onChange={this.handleChange('email')}
+                                />
+                            </FormControl>
+                            <FormControl margin="normal" required fullWidth>
+                                <TextField
+                                    className={classNames(classes.textField)}
+                                    type={this.state.showPassword ? 'text' : 'password'}
+                                    label="Password"
+                                    value={this.state.password}
+                                    onChange={this.handleChange('password')}
+                                    InputProps={{
+                                        endAdornment: (
+                                                          <InputAdornment position="end">
+                                                              <IconButton
+                                                                  aria-label="Toggle password visibility"
+                                                                  onClick={this.handleClickShowPassword}
+                                                              >
+                                                                  {this.state.showPassword ? (
+                                                                      <VisibilityOff/>
+                                                                  ) : (
+                                                                      <Visibility/>
+                                                                  )}
+                                                              </IconButton>
+                                                          </InputAdornment>
+                                                      ),
+                                    }}
+                                />
+                            </FormControl>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                className={classes.submit}
+                                onClick={this.handleSubmit}>
+                                Sign In
+                            </Button>
+                        </form>
+                    </Paper>
+                </main>
+            );
+        }
+    }
+
+    render() {
+        return this.renderSignIn();
     }
 }
 
