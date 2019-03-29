@@ -123,6 +123,19 @@ class MenuStepper extends React.Component {
     this.setState({tab: prop});
   };
 
+  renderNavigationButton() {
+    switch (this.state.tab) {
+      case "PARKS":
+        return (<div></div>);
+      case "LANDS":
+        return this.renderNavigateToParks();
+      case "RESTAURANTS":
+        return this.renderNavigateToLands();
+      default:
+        return this.renderNavigateToParks();
+    }
+  }
+
   renderDividerContent() {
     switch (this.state.tab) {
       case "PARKS":
@@ -134,6 +147,28 @@ class MenuStepper extends React.Component {
       default:
         return this.renderParks();
     }
+  }
+
+  renderNavigateToParks() {
+    return (
+      <div>
+          <Button onClick={this.handleContentChange("PARKS")}>
+            <KeyboardArrowLeft />
+            Back to parks
+          </Button>
+      </div>
+    );
+  }
+
+  renderNavigateToLands() {
+    return (
+      <div>
+        <Button variant="text" onClick={this.handleContentChange("LANDS")}>
+          <KeyboardArrowLeft />
+          Back to lands
+        </Button>
+      </div>
+    );
   }
 
   renderParks() {
@@ -214,12 +249,7 @@ class MenuStepper extends React.Component {
     const { classes } = this.props;
     return (
       <div>
-        <div>
-          <Button onClick={this.handleContentChange("PARKS")}>
-            <KeyboardArrowLeft />
-            Back to parks
-          </Button>
-        </div>
+        
         <Divider variant="middle" />
         <List>
           <ListItem button onClick={this.handleContentChange("RESTAURANTS")}>
@@ -236,12 +266,7 @@ class MenuStepper extends React.Component {
       {
         return (
           <div>
-            <div>
-              <Button variant="text" onClick={this.handleContentChange("LANDS")}>
-                <KeyboardArrowLeft />
-                Back to lands
-              </Button>
-            </div>
+            
             <Divider variant="middle" />
             <div>
               <RestaurantPanel key={restaurant.restaurantID}
@@ -266,6 +291,7 @@ class MenuStepper extends React.Component {
     return (
       <div className={classes.root}>
         <Card>
+          {this.renderNavigationButton()}
           {this.renderDividerContent()}
         </Card>
       </div>
@@ -279,155 +305,3 @@ MenuStepper.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(MenuStepper);
-
-// import React from 'react';
-// import PropTypes from 'prop-types';
-// import { withStyles } from '@material-ui/core/styles';
-// import Card from '@material-ui/core/Card';
-// import Typography from '@material-ui/core/Typography';
-// import Divider from '@material-ui/core/Divider';
-// import Grid from '@material-ui/core/Grid';
-// import Button from '@material-ui/core/Button';
-// import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-// import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-
-// const styles = theme => ({
-//   root: {
-//     width: '80%',
-//     height: 'auto',
-//     // flexGrow: 1,
-//   },
-//   header: {
-//     fontSize: 18,
-//     fontFamily: 'Avenir',
-//     fontWeight: 400,
-//     marginRight: '5%',
-//   },
-//   grid: {
-//     position: 'relative',
-//     marginLeft: '5%',
-//     marginRight: '5%',
-//     marginTop: '5%',
-//     marginBottom: '5%',
-//     width: 'auto',
-//   },
-//   parkImage: {
-//     width: '40%',
-//     height: 300,
-//     backgroundSize: 'cover',
-//   },
-//   parkImageHover: {
-//     opacity: 0.4,
-//   },
-//   textCard: {
-//     width: 'max-content',
-//     height: 'auto',
-//     // backgroundColor: 'rgb(69,69,69)',
-//     backgroundColor: 'white',
-//     borderRadius: 16,
-//     margin: 'auto',
-//     position: 'relative',
-//     marginTop: '33%',
-//   },
-//   parkName: {
-//     fontSize: 18,
-//     fontFamily: 'Roboto',
-//     fontWeight: 400,
-//     color: 'black',
-//     textAlign: 'center',
-//     position: 'relative',
-//     marginLeft: 10,
-//     marginRight: 10,
-//     marginTop: 5,
-//     marginBottom: 5,
-//   }
-// });
-
-// class MenuStepper extends React.Component {
-//   renderParks() {
-//     const {classes} = this.props;
-//     return (
-//       <div>
-//         <Typography className={classes.header}>
-//           Select a park
-//         </Typography>
-//         <Divider variant="middle"/>
-//         <Grid container direction="column" justify="flex-start" alignItems="center" className={classes.grid}>
-//           {/* <div> */}
-//           <Grid container direction="row" justify="center" alignItems="flex-start">
-//             <Card className={classes.parkImage}
-//             style={{
-//               backgroundImage: "url('../static/images/ParkImages/MagicKingdom.jpg')",
-//             }}>
-//               <Card className={classes.textCard} elevation={0}>
-//                 <Typography className={classes.parkName}>
-//                   Magic Kingdom
-//                 </Typography>
-//               </Card>
-//             </Card>
-//             <Card className={classes.parkImage}
-//             style={{
-//               backgroundImage: "url('../static/images/ParkImages/MGMStudios.jpg')",
-//               marginLeft: '3%',
-//             }}>
-//               <Card className={classes.textCard} elevation={0}>
-//                 <Typography className={classes.parkName}>
-//                   Hollywood Studios
-//                 </Typography>
-//               </Card>
-//             </Card>
-//           </Grid>
-//           {/* </div> */}
-
-//           {/* <div> */}
-//           <Grid container direction="row" justify="center" alignItems="flex-start" style={{ marginTop: '3%',}}>
-//             <Card className={classes.parkImage}
-//             style={{
-//               backgroundImage: "url('../static/images/ParkImages/Epcot.jpg')",
-//             }}>
-//               <Card className={classes.textCard} elevation={0}>
-//                 <Typography className={classes.parkName}>
-//                   Epcot
-//                 </Typography>
-//               </Card>
-//             </Card>
-//             <Card className={classes.parkImage}
-//             style={{
-//               backgroundImage: "url('../static/images/ParkImages/AnimalKingdom.jpg')",
-//               marginLeft: '3%',
-//             }}>
-//               <Card className={classes.textCard} elevation={0}>
-//                 <Typography className={classes.parkName}>
-//                   Animal Kingdom
-//                 </Typography>
-//               </Card>
-//             </Card>
-//           </Grid>
-//           {/* </div> */}
-//         </Grid>
-//       </div>
-//     )
-//   }
-
-//   render() {
-//     const { classes, theme } = this.props;
-
-//     return (
-//       <div className={classes.root}>
-//         <Card>
-//           <Typography>
-//             hello
-//           </Typography>
-//           {this.renderParks()}
-//         </Card>
-//       </div>
-//     );
-//   }
-// }
-
-// MenuStepper.propTypes = {
-//   classes: PropTypes.object.isRequired,
-//   theme: PropTypes.object.isRequired,
-// };
-
-// export default withStyles(styles, { withTheme: true })(MenuStepper);
