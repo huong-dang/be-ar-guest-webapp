@@ -15,7 +15,7 @@ var sqlstring = require('sqlstring');
 
 router.post('/getAll', async (req, res) => {
     try {
-        const query  = `SELECT * FROM Item;`;
+        const query  = `select I.*, R.restaurantName, P.parkName, L.landName  from Item I, Restaurant R, Park P, Land L where I.restaurantID = R.restaurantID and R.landID = L.landID and L.parkID = P.parkID;`;
         const result = await DB.runQuery(query);
         res.json(result);
     } catch (e) {

@@ -17,26 +17,37 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Items from './Items';
 
 
 const styles = theme => ({
-    main:   {
-        width:                                                    1000,
+    main:  {
+        width:                                                    'auto',
         display:                                                  'block', // Fix IE 11 issue.
         marginLeft:                                               theme.spacing.unit * 2,
         marginRight:                                              theme.spacing.unit * 2,
         [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
-            width:       400,
+            width:       '100%',
             marginLeft:  'auto',
             marginRight: 'auto',
         },
     },
-    paper:  {
-        // marginTop:     theme.spacing.unit * 8,
+    paper: {
         display:       'flex',
         flexDirection: 'column',
         alignItems:    'center',
         padding:       `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+        overflowX:     'auto'
+    },
+    navigationBar:  {
+        [theme.breakpoints.down('sm')]: {
+            marginBottom: 0,
+        },
+        [theme.breakpoints.between('sm','md')]: {
+            marginBottom: 10,
+        },
     },
     // avatar: {
     //     margin:          theme.spacing.unit,
@@ -51,10 +62,48 @@ const styles = theme => ({
     // },
 });
 
+const tab_options = {
+    0: 'View',
+    1: 'Add'
+}
 class MenuItemManagement extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            tab: 0
+        }
     }
+
+    handleTabSelection = (event, value) => {
+        this.setState({tab: value});
+    };
+
+    renderContent = () => {
+        switch (tab_options[this.state.tab]) {
+            case 'View':
+                return <Items/>;
+                break;
+            case 'Add':
+                return <div>tab_options[this.state.tab]</div>;
+                break;
+            default:
+                return <div>Something</div>
+        }
+    };
+
+    renderTabOptions = () => {
+        const {classes} = this.props;
+        return (
+            <div className={classes.navigationBar}>
+                <Button size="small" className={classes.button} onClick={this.handleTabSelection('View')}>
+                    View
+                </Button>
+                <Button size="small" className={classes.button} onClick={this.handleTabSelection("Add")}>
+                    Add
+                </Button>
+            </div>
+        );
+    };
 
     render() {
         const {classes} = this.props;
@@ -63,8 +112,18 @@ class MenuItemManagement extends React.Component {
                 <CssBaseline/>
                 <Paper className={classes.paper}>
                     <Typography component="h1" variant="h5">
-                        Add a new land
+                        Menu Items
                     </Typography>
+                    <Tabs
+                        value={this.state.tab}
+                        onChange={this.handleTabSelection}
+                        indicatorColor="primary"
+                        textColor="primary"
+                    >
+                        <Tab label={tab_options[0]} />
+                        <Tab label={tab_options[1]} />
+                    </Tabs>
+                    {this.renderContent()}
                 </Paper>
             </main>
         );
