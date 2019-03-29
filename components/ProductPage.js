@@ -45,7 +45,7 @@ const styles = theme => ({
       width: 360,
     },
     [theme.breakpoints.up('sm')]: {
-      width: 900,
+      width: 1175,
     },
   },
   productHeader: {
@@ -55,6 +55,7 @@ const styles = theme => ({
     textAlign: 'start',
     [theme.breakpoints.between('xs','sm')]: {
       marginLeft: 5,
+      fontSize: 26,
     },
     [theme.breakpoints.up('sm')]: {
       marginLeft: 150,
@@ -66,6 +67,34 @@ const styles = theme => ({
   mobileCaption: {
     width: 230,
     textAlign: 'center',
+  },
+  middleBackground: {
+    backgroundColor: 'rgb(220,220,220)',
+    borderBottomLeftRadius: 20,
+    borderTopLeftRadius: 20,
+    marginTop: '2%',
+    [theme.breakpoints.between('xs','sm')]: {
+      width: 360,
+    },
+    [theme.breakpoints.up('sm')]: {
+      width: 1175,
+    },
+  },
+  text: {
+    fontFamily: "Avenir",
+    overflowWrap: "break-word",
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: '1%',
+    [theme.breakpoints.down('sm')]: {
+        width: 265,
+        fontSize: 16,
+        textAlign: 'justify',
+    },
+    [theme.breakpoints.up('sm')]: {
+        height: 'auto',
+        width: '89%',
+    },
   },
 });
 
@@ -135,6 +164,16 @@ class ProductPage extends React.Component {
           </Grid>
         </Grid>
         </div>
+        <Grid container direction="row" justify="flex-end" alignItems="flex-start">
+          <Card elevation={0} className={classes.middleBackground}>
+            <Typography className={classes.productHeader}>
+              How It Works
+            </Typography>
+          </Card>
+        </Grid>
+        <Typography className={classes.text}>
+        Vitae et leo duis ut diam quam nulla porttitor. Viverra justo nec ultrices dui sapien eget mi proin. Sed risus pretium quam vulputate dignissim suspendisse in est ante. Arcu bibendum at varius vel pharetra vel. Mattis nunc sed blandit libero volutpat. Volutpat diam ut venenatis tellus in metus vulputate. Est pellentesque elit ullamcorper dignissim cras tincidunt lobortis feugiat vivamus. Turpis in eu mi bibendum neque egestas. Duis convallis convallis tellus id interdum velit laoreet id donec. Lectus urna duis convallis convallis. Vel fringilla est ullamcorper eget nulla facilisi. Nec tincidunt praesent semper feugiat. Nunc lobortis mattis aliquam faucibus purus in massa tempor nec. Et netus et malesuada fames ac turpis egestas. Ut tellus elementum sagittis vitae et leo duis ut.
+        </Typography>
       </div>
     );
   }
