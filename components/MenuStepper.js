@@ -26,6 +26,7 @@ import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
+import IconButton from '@material-ui/core/IconButton';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 
@@ -49,23 +50,26 @@ const styles = theme => ({
     // flexGrow: 1,
   },
   header: {
-    fontSize: 18,
+    fontSize: 25,
     fontFamily: "Avenir",
     fontWeight: 400,
-    marginRight: "5%"
+    textAlign: 'center',
+    marginTop: '2%',
   },
   grid: {
     position: "relative",
-    marginLeft: "5%",
-    marginRight: "5%",
-    marginTop: "5%",
-    marginBottom: "5%",
+    marginLeft: "3.5%",
+    // marginRight: "3.5%",
+    marginTop: "3%",
+    marginBottom: "3%",
   },
   parkImage: {
     width: "80%",     // CHANGED FROM 40% TO 80%
     height: 300,
-    backgroundSize: "cover"
-    // opacity: 0.5,
+    backgroundSize: "cover",
+    [theme.breakpoints.between('xs','sm')]: {
+      height: 210,
+    },
   },
   textCard: {
     width: "max-content",
@@ -136,7 +140,9 @@ class MenuStepper extends React.Component {
     const { classes } = this.props;
     return (
       <div>
-        <Typography className={classes.header}>Select a park</Typography>
+        <Typography className={classes.header}>
+          Select a park
+        </Typography>
         <Divider variant="middle" />
         <Grid container spacing={24} className={classes.grid}>
           <Grid item xs={12} md={6}>
@@ -207,25 +213,42 @@ class MenuStepper extends React.Component {
   renderLands() {
     const { classes } = this.props;
     return (
-      <List>
-        <ListItem button onClick={this.handleContentChange("RESTAURANTS")}>
-          <ListItemText primary="Land1" />
-        </ListItem>
-      </List>
+      <div>
+        <div>
+          <Button onClick={this.handleContentChange("PARKS")}>
+            <KeyboardArrowLeft />
+            Back to parks
+          </Button>
+        </div>
+        <Divider variant="middle" />
+        <List>
+          <ListItem button onClick={this.handleContentChange("RESTAURANTS")}>
+            <ListItemText primary="Land1" />
+          </ListItem>
+        </List>
+      </div>
     )
   }
 
   renderRestaurants() {
-    console.log(this.state.restaurants);
     const { classes } = this.props;
     const restaurantsInfo = this.state.restaurants.map((restaurant, index) =>
       {
         return (
           <div>
-            <RestaurantPanel key={restaurant.restaurantID}
-                             restaurantID={restaurant.restaurantID}
-                             restaurantName={restaurant.restaurantName}
-                             restaurantLand={restaurant.landName} />
+            <div>
+              <Button variant="text" onClick={this.handleContentChange("LANDS")}>
+                <KeyboardArrowLeft />
+                Back to lands
+              </Button>
+            </div>
+            <Divider variant="middle" />
+            <div>
+              <RestaurantPanel key={restaurant.restaurantID}
+                              restaurantID={restaurant.restaurantID}
+                              restaurantName={restaurant.restaurantName}
+                              restaurantLand={restaurant.landName} />
+            </div>
           </div>
         )
       }
@@ -243,7 +266,6 @@ class MenuStepper extends React.Component {
     return (
       <div className={classes.root}>
         <Card>
-          <Typography>hello</Typography>
           {this.renderDividerContent()}
         </Card>
       </div>
