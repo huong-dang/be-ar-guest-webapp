@@ -1,11 +1,16 @@
 import React from 'react';
+import Link from 'next/link';
 import Grid from '@material-ui/core/Grid';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import Menu from '../components/Menu';
 // import Logo from './images/logo.png';
 
 const styles = theme => ({
+    signInButton: {
+        position: 'absolute',
+    },
     headerGridLayout:   {
         width: 'auto',
     },
@@ -22,7 +27,14 @@ const styles = theme => ({
 function Header(props) {
     const { classes } = props;
     return (
-        <div style={{marginTop: 15}}>
+        <div style={{marginTop: '-2%',}}>
+            {/* <div>
+                <Link href={'/signIn'}>
+                    <Button color={'secondary'} variant={'outlined'}>
+                        Sign In
+                    </Button>
+                </Link>
+            </div> */}
             <Grid container direction="column" justify="flex-start" alignItems="center" className={classes.headerGridLayout}>
                 <Grid container direction="column" justify="space-between" alignItems="center">
                     <Grid container direction="column" justify="flex-start" alignItems="center">

@@ -101,7 +101,6 @@ INSERT INTO
 VALUES ((SELECT `landID` FROM `Land` WHERE `landName` = 'Tomorrowland' AND `parkID` = (SELECT `parkID` FROM `Park` WHERE `parkName` = 'Magic Kingdom Park')),
         (SELECT `restaurantTypeID` FROM `RestaurantType` WHERE `restaurantTypeName` = 'Quick Service'), 'The Lunching Pad', 'AVAILABLE');
 
-
 insert into Item (`restaurantID`, `itemName`, `itemDescription`, `secret`, `vegan`, `substitution`, `itemStatus`)
 values ((select restaurantID from Restaurant where restaurantName = 'Casey\'s Corner'), 'Plant-based loaded-slaw dog',
 'Plant-based Sausage topped with Pickled Slaw, BBQ Vegan Aïoli and Roasted Corn Relish served with French Fries or Apple Slices',
