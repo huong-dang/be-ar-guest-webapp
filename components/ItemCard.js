@@ -71,8 +71,8 @@ function ItemCard(props) {
                 <Grid container direction="row" justify="space-between" alignItems="center">
                     <Grid container direction="row" alignItems="center">
                         <Grid item xs>
-                            <Typography className={classes.title} gutterBottom>
-                                Slaw Dog
+                            <Typography className={classes.title}>
+                                {props.itemName}
                             </Typography>
                         </Grid>
                         <Grid item>
@@ -81,18 +81,19 @@ function ItemCard(props) {
                     </Grid>
                 </Grid>
                 <Typography className={classes.description} color="textSecondary">
-                    Plant-based sausage topped with pickled slaw, BBQ vegan aioli, & roasted corn relish.
+                    {/* Plant-based sausage topped with pickled slaw, BBQ vegan aioli, & roasted corn relish. */}
+                    {props.itemDescription}
                 </Typography>
-                <Typography className={classes.description} color="textSecondary">
+                {/* <Typography className={classes.description} color="textSecondary">
                     Served with french fries or apple slices.
-                </Typography>
+                </Typography> */}
                 <Divider variant="middle" style={{marginTop: 8}}/>
                 <Grid container direction="row" justify="flex-start" alignItems="flex-start">
                     <Typography className={classes.alterations} color="textSecondary">
                         Alterations:
                     </Typography>
                     <Typography className={classes.alterationsDescription} color="textSecondary">
-                        None
+                        {props.substitution}
                     </Typography>
                 </Grid>
                 <Button variant="outlined" className={classes.expandButton}>
@@ -105,6 +106,9 @@ function ItemCard(props) {
 
 ItemCard.propTypes = {
     classes: PropTypes.object.isRequired,
+    itemName: PropTypes.string.isRequired,
+    itemDescription: PropTypes.string.isRequired,
+    substitution: PropTypes.string.isRequired,
 };
 
 export default withStyles(styles)(ItemCard);

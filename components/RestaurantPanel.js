@@ -16,18 +16,48 @@ const styles = prop => ({
     },
 });
 
-function RestaurantPanel(props) {
-    const {classes} = props;
+class RestaurantPanel extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        items: [],
+        restaurantID: props.restaurantID,
+      }
+    }
+
+    async componentDidMount() {
+      try {
+          const result = await axios.post('/restaurant/getAllItemsByRestaurantID', { restaurantID: this.state.restaurantID });
+          this.setState({
+              items: result.data
+          })
+      } catch (e) {
+          console.log('Error', e);
+      }
+  }
+
+  render () {
+    const { classes } = this.props;
+    const itemsInfo = this.state.items.map((item, index) =>
+      {
+        return <Grid item xs={12} sm={4} key={item.itemID}>
+                  <ItemCard itemName={item.itemName}
+                            itemDescription={item.itemDescription}
+                            substitution={item.substitution} />
+                </Grid>;
+      }
+    )
+
     return (
         <ExpansionPanel>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h4" className={classes.restaurantName}>
-            {props.restaurantName}
+            {this.props.restaurantName}
           </Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <Grid container spacing={24}>
-            <Grid item xs={12} sm={4}>
+            {/* <Grid item xs={12} sm={4}>
               <ItemCard />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -38,11 +68,13 @@ function RestaurantPanel(props) {
             </Grid>
             <Grid item xs={12} sm={4}>
               <ItemCard />
-            </Grid>
+            </Grid> */}
+            {itemsInfo}
           </Grid>
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );
+    }
 }
 
 RestaurantPanel.propTypes = {

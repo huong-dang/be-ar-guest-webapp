@@ -265,11 +265,11 @@ class MenuStepper extends React.Component {
     const restaurantsInfo = this.state.restaurants.map((restaurant, index) =>
       {
         return (
-          <div>
+          <div key={restaurant.restaurantID}>
             
             <Divider variant="middle" />
             <div>
-              <RestaurantPanel key={restaurant.restaurantID}
+              <RestaurantPanel 
                               restaurantID={restaurant.restaurantID}
                               restaurantName={restaurant.restaurantName}
                               restaurantLand={restaurant.landName} />
