@@ -10,16 +10,18 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import Landscape from '@material-ui/icons/Landscape';
 import LandManagement from './LandManagement';
 import SignOutMenuButton from './SignOutMenuButton';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Food from '@material-ui/icons/Fastfood';
+import Restaurant from '@material-ui/icons/Restaurant';
+import User from '@material-ui/icons/VerifiedUser';
+// import logo from '../static/images/logo.png';
 
 const drawerWidth = 240;
 
@@ -33,8 +35,7 @@ const styles = theme => ({
     toolbarIcon:      {
         display:        'flex',
         alignItems:     'center',
-        justifyContent: 'flex-end',
-        padding:        '0 8px',
+        justifyContent: 'space-evenly',
         ...theme.mixins.toolbar,
     },
     appBar:           {
@@ -43,6 +44,7 @@ const styles = theme => ({
             easing:   theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
         }),
+        backgroundColor: '#9993B2',
     },
     appBarShift:      {
         marginLeft: drawerWidth,
@@ -105,8 +107,8 @@ class Dashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            open:             false,
-            selectedMenuItem: 'Land'
+            open:             true,
+            selectedMenuItem: 'Item'
         }
     }
 
@@ -125,7 +127,17 @@ class Dashboard extends React.Component {
     renderContent = () => {
         switch (this.state.selectedMenuItem) {
             case 'Land':
-                return <LandManagement/>
+                return <LandManagement/>;
+                break;
+            case 'Item':
+                return MenuItemPanel();
+                break;
+            case 'Restaurant':
+                return <div>Restaurant!</div>;
+                break;
+            case 'User':
+                return <div>User!</div>;
+                break;
             default:
                 return <div>Something</div>
         }
@@ -170,13 +182,8 @@ class Dashboard extends React.Component {
                             noWrap
                             className={classes.title}
                         >
-                            Dashboard
+                            Admin Portal
                         </Typography>
-                        <IconButton color="inherit">
-                            <Badge badgeContent={4} color="secondary">
-                                <NotificationsIcon/>
-                            </Badge>
-                        </IconButton>
                     </Toolbar>
                 </AppBar>
                 <Drawer
@@ -187,6 +194,20 @@ class Dashboard extends React.Component {
                     open={this.state.open}
                 >
                     <div className={classes.toolbarIcon}>
+                        <div>
+                            <img src={'../static/images/logo.png'} alt="Logo" width={52}/>
+                        </div>
+                        <div>
+                            <Typography
+                                component="h3"
+                                variant="h6"
+                                color="inherit"
+                                noWrap
+                                className={classes.title}
+                            >
+                                be AR guest
+                            </Typography>
+                        </div>
                         <IconButton onClick={this.handleDrawerClose}>
                             <ChevronLeftIcon/>
                         </IconButton>
@@ -199,6 +220,24 @@ class Dashboard extends React.Component {
                             </ListItemIcon>
                             <ListItemText primary="Land"/>
                         </ListItem>
+                        <ListItem button onClick={this.handleListItemSelection('Item')}>
+                            <ListItemIcon>
+                                <Food/>
+                            </ListItemIcon>
+                            <ListItemText primary="Menu Item"/>
+                        </ListItem>
+                        <ListItem button onClick={this.handleListItemSelection('Restaurant')}>
+                            <ListItemIcon>
+                                <Restaurant/>
+                            </ListItemIcon>
+                            <ListItemText primary="Restaurant"/>
+                        </ListItem>
+                        <ListItem button onClick={this.handleListItemSelection('User')}>
+                            <ListItemIcon>
+                                <User/>
+                            </ListItemIcon>
+                            <ListItemText primary="User Accounts"/>
+                        </ListItem>
                     </List>
                     <Divider/>
                     <List><SignOutMenuButton/></List>
@@ -207,6 +246,48 @@ class Dashboard extends React.Component {
             </div>
         );
     }
+}
+
+import Grid from '@material-ui/core/Grid';
+
+const moreStyling = theme => ({
+    main:   {
+        width:                                                    'auto',
+        display:                                                  'block', // Fix IE 11 issue.
+        marginLeft:                                               theme.spacing.unit * 2,
+        marginRight:                                              theme.spacing.unit * 2,
+        [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
+            width:       400,
+            marginLeft:  'auto',
+            marginRight: 'auto',
+        },
+    },
+    paper:  {
+        marginTop:     theme.spacing.unit * 8,
+        display:       'flex',
+        flexDirection: 'column',
+        alignItems:    'center',
+        padding:       `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+    },
+    avatar: {
+        margin:          theme.spacing.unit,
+        backgroundColor: theme.palette.secondary.main,
+    },
+    form:   {
+        width:     '100%', // Fix IE 11 issue.
+        marginTop: theme.spacing.unit,
+    },
+    submit: {
+        marginTop: theme.spacing.unit * 3,
+    },
+});
+
+function MenuItemPanel() {
+    return (
+        <Grid container spacing={40}>
+            hello!
+        </Grid>
+    );
 }
 
 Dashboard.propTypes = {
