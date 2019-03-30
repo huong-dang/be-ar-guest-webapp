@@ -20,7 +20,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Food from '@material-ui/icons/Fastfood';
 import Restaurant from '@material-ui/icons/Restaurant';
-import User from '@material-ui/icons/VerifiedUser';
+import Group from '@material-ui/icons/Group';
 import MenuItemManagement from './MenuItemManagement';
 
 const drawerWidth = 240;
@@ -233,7 +233,7 @@ class Dashboard extends React.Component {
                         </ListItem>
                         <ListItem button onClick={this.handleListItemSelection('User')}>
                             <ListItemIcon>
-                                <User/>
+                                <Group/>
                             </ListItemIcon>
                             <ListItemText primary="User Accounts"/>
                         </ListItem>

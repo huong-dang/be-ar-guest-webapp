@@ -135,8 +135,8 @@ class Items extends React.Component {
                 item.landName,
                 item.restaurantName,
                 item.itemName,
-                item.itemDescription,
-                item.substitution,
+                item.itemDescription ? item.itemDescription : '',
+                item.substitution ? item.substitution : '',
                 item.itemStatus,
                 item.secret ? 'Yes' : 'No',
                 item.vegan ? 'Yes' : 'No'
@@ -183,6 +183,10 @@ class Items extends React.Component {
         )
     }
 
+    handleChange = prop => event => {
+        console.log('value', event.target.value);
+    };
+
     renderEditItem() {
         if (!this.state.editItem) {
             return null;
@@ -206,6 +210,7 @@ class Items extends React.Component {
                             label="Email Address"
                             type="email"
                             fullWidth
+                            onChange={this.handleChange}
                         />
                     </DialogContent>
                     <DialogActions>

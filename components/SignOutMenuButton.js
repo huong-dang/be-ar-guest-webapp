@@ -2,7 +2,7 @@ import Router from "next/router";
 import {signOut} from '../services/accounts';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import PeopleIcon from '@material-ui/icons/People';
+import Person from '@material-ui/icons/Person';
 import ListItemText from '@material-ui/core/ListItemText';
 
 function SignOutMenuButton() {
@@ -19,7 +19,7 @@ function SignOutMenuButton() {
     return (
         <ListItem button onClick={handleSignOut}>
             <ListItemIcon>
-                <PeopleIcon/>
+                <Person/>
             </ListItemIcon>
             <ListItemText primary="Sign Out"/>
         </ListItem>
