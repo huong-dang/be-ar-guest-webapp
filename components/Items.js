@@ -1,13 +1,21 @@
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import axios from 'axios';
 import Loading from './Loading';
 import withStyles from '@material-ui/core/styles/withStyles';
 import PropTypes from 'prop-types';
+import MUIDataTable from 'mui-datatables';
+import Typography from '@material-ui/core/Typography';
 import React from 'react';
+import IconButton from "@material-ui/core/IconButton";
+import Tooltip from "@material-ui/core/Tooltip";
+import AddIcon from "@material-ui/icons/Add";
+import RefreshIcon from "@material-ui/icons/Refresh";
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const styles = theme => ({
     main:   {
@@ -45,9 +53,13 @@ class Items extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            items:   [],
-            loading: true,
-        }
+            items:          [],
+            loading:        true,
+            selectedItemID: null,
+            selectedItem:   {},
+            editItem:       false,
+            refresh:        false
+        };
     }
 
     async componentDidMount() {
@@ -61,50 +73,167 @@ class Items extends React.Component {
         }
     }
 
+    async componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.state.refresh && this.state.refresh !== prevState.refresh) {
+            this.setState({loading: true})
+            const result = await axios.post('/item/getAll');
+            this.setState({items: result.data, loading: false, refresh: false});
+        }
+    }
+
+    handleToolbarClick = prop => event => {
+        switch (prop) {
+            case 'add':
+                console.log('add an item!!!!');
+                break;
+            case 'refresh':
+                this.setState({refresh: true});
+                break;
+        }
+    };
+
+    handleEditItemClose = () => {
+        this.setState({editItem: false})
+    };
+
+    renderItemsTable() {
+        const columns = [
+            {
+                name:    'ID',
+                options: {
+                    display: false
+                }
+            },
+            'Park',
+            'Land',
+            'Restaurant',
+            'Name',
+            {
+                name:    'Description',
+                options: {
+                    filter:           false,
+                    customBodyRender: (value, tableMeta, updateValue) => {
+                        return (
+                            <div style={{minWidth: 350}}>
+                                <Typography style={{fontSize: '13px'}}>
+                                    {value}
+                                </Typography>
+                            </div>
+                        );
+                    },
+                }
+            },
+            'Substitution',
+            'Status',
+            'Secret',
+            'Vegan',
+        ];
+        const data    = this.state.items.map((item) => {
+            return [
+                item.itemID,
+                item.parkName,
+                item.landName,
+                item.restaurantName,
+                item.itemName,
+                item.itemDescription,
+                item.substitution,
+                item.itemStatus,
+                item.secret ? 'Yes' : 'No',
+                item.vegan ? 'Yes' : 'No'
+            ];
+        });
+        const options = {
+            filterType:     'multiselect',
+            responsive:     'scroll',
+            print:          false,
+            selectableRows: true,
+            onRowClick:     (rowData, rowMeta) => {
+                const selectedItem = this.state.items.find(item => item.itemID === rowData[0]);
+                this.setState({
+                                  selectedItemID: rowData[0],
+                                  editItem:       true,
+                                  selectedItem:   selectedItem
+                              });
+            },
+            customToolbar:  () => {
+                return (
+                    <React.Fragment>
+                        <Tooltip title={"Refresh"}>
+                            <IconButton onClick={this.handleToolbarClick('refresh')}>
+                                <RefreshIcon/>
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title={"Add Item"}>
+                            <IconButton style={{backgroundColor: '#C9BEDE'}} onClick={this.handleToolbarClick('add')}>
+                                <AddIcon/>
+                            </IconButton>
+                        </Tooltip>
+                    </React.Fragment>
+                );
+            }
+        };
+
+        return (
+            <MUIDataTable
+                title={"Menu Items"}
+                data={data}
+                columns={columns}
+                options={options}
+            />
+        )
+    }
+
+    renderEditItem() {
+        if (!this.state.editItem) {
+            return null;
+        }
+        return (
+            <div>
+                <Dialog
+                    open={this.state.editItem}
+                    onClose={this.handleClose}
+                    aria-labelledby="form-dialog-title"
+                >
+                    <DialogTitle id="form-dialog-title">Update Item</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            {this.state.selectedItem.itemName}
+                        </DialogContentText>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="name"
+                            label="Email Address"
+                            type="email"
+                            fullWidth
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleEditItemClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={this.handleEditItemClose} color="primary">
+                            Subscribe
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
+        );
+    }
+
     render() {
-        const {classes} = this.props;
         if (this.state.loading) {
             return <Loading/>;
         } else {
             return (
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell align="right">Description</TableCell>
-                            <TableCell align="right">Status</TableCell>
-                            <TableCell align="right">Substitution</TableCell>
-                            <TableCell align="right">Secret</TableCell>
-                            <TableCell align="right">Vegan</TableCell>
-                            {/*<TableCell align="right">Restaurant</TableCell>*/}
-                            {/*<TableCell align="right">Park</TableCell>*/}
-                            {/*<TableCell align="right">Land</TableCell>*/}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {this.state.items.map(i => (
-                            <TableRow key={i.itemID}>
-                                <TableCell component="th" scope="row">
-                                    {i.itemName}
-                                </TableCell>
-                                <TableCell align="right">{i.itemDescription}</TableCell>
-                                <TableCell align="right">{i.itemStatus}</TableCell>
-                                <TableCell align="right">{i.substitution}</TableCell>
-                                <TableCell align="right">{i.secret ? 'Yes' : 'No'}</TableCell>
-                                <TableCell align="right">{i.vegan ? 'Yes' : 'No'}</TableCell>
-                                {/*<TableCell align="right">{i.restaurantName}</TableCell>*/}
-                                {/*<TableCell align="right">{i.parkName}</TableCell>*/}
-                                {/*<TableCell align="right">{i.landName}</TableCell>*/}
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            )
+                <div style={{margin: 0, padding: 0}}>
+                    {this.renderItemsTable()}
+                    {this.renderEditItem()}
+                </div>
+            );
         }
     }
-
 }
-
 
 Items.propTypes = {
     classes: PropTypes.object.isRequired,
