@@ -15,6 +15,17 @@ router.get('/getAll', async (req, res) => {
     }
 });
 
+router.get('/getAllRestaurants', async (req, res) => {
+    try {
+        const query  = `Select restaurantID, restaurantName from Restaurant;`;
+        const result = await DB.runQuery(query);
+        res.json(result);
+    } catch (e) {
+        console.log('Error getting all restaurants, returning ID and name:', e);
+        res.status(500).send('Check server logs for more info');
+    }
+});
+
 router.get('/getAllRestaurantsInfo', async (req, res) => {
     try {
         const query  = `Select L.landName, R.restaurantID, R.restaurantName from Restaurant R, Land L WHERE L.landID = R.landID;`;

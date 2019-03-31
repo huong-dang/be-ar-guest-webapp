@@ -7,7 +7,8 @@ import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
-import AddIcon from "@material-ui/icons/Add";
+import AddOneIcon from "@material-ui/icons/Add";
+import AddMultipleIcon from "@material-ui/icons/AddToPhotos";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -26,7 +27,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 
-const styles = theme => ({
+const styles          = theme => ({
     selector:           {
         display:       'flex',
         flexDirection: 'column',
@@ -34,35 +35,51 @@ const styles = theme => ({
         marginRight:   theme.spacing.unit * 2
     },
     selectorsContainer: {
-        display:       'flex',
-        flexDirection: 'row',
-        marginTop:     theme.spacing.unit,
+        display:        'flex',
+        flexDirection:  'row',
+        marginTop:      theme.spacing.unit,
         justifyContent: 'space-between'
     },
-    messageContainer: {
+    messageContainer:   {
         marginTop: theme.spacing.unit
     }
 });
+const newItemTemplate = {
+    restaurantID:    null,
+    itemName:        '',
+    itemDescription: '',
+    secret:          true,
+    vegan:           true,
+    substitution:    '',
+    itemStatus:      'AVAILABLE',
+    x:               null,
+    z:               null
+};
 
 class Items extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            items:           [],
-            loading:         true,
-            selectedItemID:  null,
-            selectedItem:    {},
-            editItem:        false,
-            refresh:         false,
-            editItemMessage: '',
-            savingEdits:     false
+            items:             [],
+            loading:           true,
+            selectedItemID:    null,
+            selectedItem:      {},
+            editItem:          false,
+            refresh:           false,
+            editItemMessage:   '',
+            saving:            false,
+            restaurants:       [],
+            addNewItem:        false,
+            newItem:           newItemTemplate,
+            addNewItemMessage: ''
         };
     }
 
     async componentDidMount() {
         try {
-            const result = await axios.post('/item/getAll');
-            this.setState({items: result.data, loading: false});
+            const items       = await axios.post('/item/getAll');
+            const restaurants = await axios.get('/restaurant/getAllRestaurants');
+            this.setState({items: items.data, loading: false, restaurants: restaurants.data});
         } catch (e) {
             this.setState({loading: false});
             console.log(e);
@@ -79,8 +96,11 @@ class Items extends React.Component {
 
     handleToolbarClick = prop => event => {
         switch (prop) {
-            case 'add':
-                console.log('add an item!!!!');
+            case 'addOne':
+                this.setState({addNewItem: true});
+                break;
+            case 'addMultiple':
+                console.log('add multiple items!!!!');
                 break;
             case 'refresh':
                 this.setState({refresh: true});
@@ -89,12 +109,20 @@ class Items extends React.Component {
     };
 
     handleEditItemClose = prop => {
-        this.setState({editItem: false, savingEdits: false, editItemMessage: ''});
+        this.setState({editItem: false, saving: false, editItemMessage: ''});
+    };
+
+    handleAddItemClose = prop => {
+        this.setState({addNewItem: false, saving: false, editItemMessage: '', newItem: newItemTemplate});
+    };
+
+    handleAddItemSave = async () => {
+        console.log('add item clicked!');
     };
 
     handleEditItemSave = async () => {
         try {
-            this.setState({savingEdits: true});
+            this.setState({saving: true});
             const item = this.state.items.find(item => item.itemID === this.state.selectedItem.itemID);
 
             // Check with item field(s) were changed
@@ -140,9 +168,9 @@ class Items extends React.Component {
                 message = message ? message + errorMessage : errorMessage;
             }
 
-            this.setState({savingEdits: false, editItemMessage: message ? message : '', refresh: true});
+            this.setState({saving: false, editItemMessage: message ? message : '', refresh: true});
         } catch (e) {
-            this.setState({savingEdits: false, editItemMessage: errorHandler.getErrorMessage(e)});
+            this.setState({saving: false, editItemMessage: errorHandler.getErrorMessage(e)});
         }
     };
 
@@ -213,9 +241,15 @@ class Items extends React.Component {
                                 <RefreshIcon/>
                             </IconButton>
                         </Tooltip>
+                        <Tooltip title={"Add Multiple Items"}>
+                            <IconButton onClick={this.handleToolbarClick('addMultiple')}>
+                                <AddMultipleIcon/>
+                            </IconButton>
+                        </Tooltip>
                         <Tooltip title={"Add Item"}>
-                            <IconButton style={{backgroundColor: '#C9BEDE'}} onClick={this.handleToolbarClick('add')}>
-                                <AddIcon/>
+                            <IconButton style={{backgroundColor: '#C9BEDE'}}
+                                        onClick={this.handleToolbarClick('addOne')}>
+                                <AddOneIcon/>
                             </IconButton>
                         </Tooltip>
                     </React.Fragment>
@@ -241,11 +275,19 @@ class Items extends React.Component {
                       });
     };
 
+    handleAdd = prop => event => {
+        this.setState({
+                          newItem: assign({},
+                                          this.state.newItem,
+                                          {[prop]: event.target.value})
+                      });
+    };
+
     renderEditItem() {
         if (!this.state.editItem) {
             return null;
         }
-        const {classes} = this.props;
+        const {classes}         = this.props;
         return (
             <Dialog
                 open={this.state.editItem}
@@ -331,10 +373,134 @@ class Items extends React.Component {
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={this.handleEditItemSave} color="primary" disabled={this.state.savingEdits}>
-                        {this.state.savingEdits ? <CircularProgress size={24}/> : 'Save'}
+                    <Button onClick={this.handleEditItemSave} color="primary" disabled={this.state.saving}>
+                        {this.state.saving ? <CircularProgress size={24}/> : 'Save'}
                     </Button>
-                    <Button onClick={this.handleEditItemClose} color="secondary" disabled={this.state.savingEdits}>
+                    <Button onClick={this.handleEditItemClose} color="secondary" disabled={this.state.saving}>
+                        Cancel
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
+    renderAddItem() {
+        if (!this.state.addNewItem) {
+            return null;
+        }
+        const {classes}         = this.props;
+        let restaurantOptions = this.state.restaurants.map((r) => {
+            return (
+                <MenuItem value={r.restaurantID} key={r.restaurantID}>{r.restaurantName}</MenuItem>
+            );
+        })
+        
+        restaurantOptions.push(
+            <MenuItem value={-1} key={-1}>Select a restaurant</MenuItem>
+        );
+
+        return (
+            <Dialog
+                open={this.state.addNewItem}
+                onClose={this.handleAddItemClose}
+                aria-labelledby="form-dialog-title"
+            >
+                <DialogTitle id="customized-dialog-title" onClose={this.handleAddItemClose}>Add Item</DialogTitle>
+                <DialogContent>
+                    <div className={classes.selector}>
+                        <InputLabel htmlFor="status">Restaurant</InputLabel>
+                        <Select
+                            value={this.state.newItem.restaurantID ? this.state.newItem.restaurantID : -1}
+                            onChange={this.handleAdd('restaurantID')}
+                            inputProps={{
+                                name: 'restaurant',
+                                id:   'restaurant',
+                            }}
+                        >
+                            {restaurantOptions}
+                        </Select>
+                    </div>
+                    <TextField
+                        margin="dense"
+                        label="Name"
+                        type="text"
+                        fullWidth
+                        value={this.state.newItem.itemName}
+                        onChange={this.handleAdd('itemName')}
+                    />
+                    <TextField
+                        margin="dense"
+                        label="Description"
+                        type="text"
+                        multiline
+                        fullWidth
+                        value={this.state.newItem.itemDescription}
+                        onChange={this.handleAdd('itemDescription')}
+                    />
+                    <TextField
+                        margin="dense"
+                        label="Substitution"
+                        type="text"
+                        fullWidth
+                        multiline
+                        value={this.state.newItem.substitution}
+                        onChange={this.handleAdd('substitution')}
+                    />
+                    <div className={classes.selectorsContainer}>
+                        <div className={classes.selector}>
+                            <InputLabel htmlFor="status">Status</InputLabel>
+                            <Select
+                                value={this.state.newItem.itemStatus}
+                                onChange={this.handleAdd('itemStatus')}
+                                inputProps={{
+                                    name: 'status',
+                                    id:   'status',
+                                }}
+                            >
+                                <MenuItem value={'AVAILABLE'}>Available</MenuItem>
+                                <MenuItem value={'UNAVAILABLE'}>Unavailable</MenuItem>
+                            </Select>
+                        </div>
+                        <div className={classes.selector}>
+                            <InputLabel htmlFor="vegan">Vegan</InputLabel>
+                            <Select
+                                value={this.state.newItem.vegan ? true : false}
+                                onChange={this.handleAdd('vegan')}
+                                inputProps={{
+                                    name: 'vegan',
+                                    id:   'vegan',
+                                }}
+                            >
+                                <MenuItem value={true}>Yes</MenuItem>
+                                <MenuItem value={false}>No</MenuItem>
+                            </Select>
+                        </div>
+                        <div className={classes.selector}>
+                            <InputLabel htmlFor="secret">Secret</InputLabel>
+                            <Select
+                                value={this.state.newItem.secret ? true : false}
+                                onChange={this.handleAdd('secret')}
+                                inputProps={{
+                                    name: 'secret',
+                                    id:   'secret',
+                                }}
+                            >
+                                <MenuItem value={true}>Yes</MenuItem>
+                                <MenuItem value={false}>No</MenuItem>
+                            </Select>
+                        </div>
+                    </div>
+                    <div className={classes.messageContainer}>
+                        <Typography>
+                            {this.state.addNewItemMessage}
+                        </Typography>
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={this.handleAddItemSave} color="primary" disabled={this.state.saving}>
+                        {this.state.saving ? <CircularProgress size={24}/> : 'Save'}
+                    </Button>
+                    <Button onClick={this.handleAddItemClose} color="secondary" disabled={this.state.saving}>
                         Cancel
                     </Button>
                 </DialogActions>
@@ -350,6 +516,7 @@ class Items extends React.Component {
                 <div style={{margin: 0, padding: 0}}>
                     {this.renderItemsTable()}
                     {this.renderEditItem()}
+                    {this.renderAddItem()}
                 </div>
             );
         }
