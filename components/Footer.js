@@ -9,22 +9,22 @@ import Button from '@material-ui/core/Button';
 const styles = theme => ({
   footer: {
     width: '100%',
-    marginRight: 0,
+    // marginRight: 0,
     backgroundColor: 'rgb(220,220,220)',
     // margin: 0,
     [theme.breakpoints.between('xs','sm')]: {
-      height: 225,
+      height: 195,
       marginTop: 30,
-      visibility: 'hidden',
+      // visibility: 'hidden',
     },
-    [theme.breakpoints.between('sm','md')]: {
+    [theme.breakpoints.up('sm')]: {
       height: 225,
-      marginTop: 155,
+      marginTop: 75,
     },
-    [theme.breakpoints.up('md')]: {
-      height: 225,
-      marginTop: 155,
-    },
+    // [theme.breakpoints.up('md')]: {
+    //   height: 225,
+    //  //  marginTop: 155,
+    // },
   },
   footerGridLayout: {
     [theme.breakpoints.down('sm')]: {
@@ -84,40 +84,44 @@ function Footer(props) {
   const { classes } = props;
   return (
         <Card className={classes.footer}>
-        <Grid container direction="row" justify="flex-start" alignItems="center">
-          <Grid container direction="row" justify="flex-start" alignItems="center" className={classes.footerGridLayout}>
-            <img src="../static/images/logo.png" alt="Logo" className={classes.logoImage}/>
-            <Typography className={classes.logoText}>
-              be <br />
-              AR <br />
-              guest <br />
-            </Typography>
-          </Grid>
-          <Typography className={classes.descriptionText}>
-            An augmented reality mobile application powered by computer vision that helps vegans find suitable food and drink at Walt Disney World.
-            </Typography>
-            {/* <Grid container direction="column" justify="flex-start" alignItems="center" className={classes.footerLinksLayout}>
-              <Typography style={{
-                fontFamily: "Avenir",
-                fontSize: 25,
-                color: 'rgb(57,57,57)',
-                
-              }}>
-                Links
-              </Typography>
-              <Button size="small" className={classes.buttonText}>
-                Home
-              </Button>
-              <Button size="small" className={classes.buttonText}>
-                Product
-              </Button>
-              <Button size="small" className={classes.buttonText}>
-                Menus
-              </Button>
-              <Button size="small" className={classes.buttonText}>
-                FAQ
-              </Button>
-            </Grid> */}
+        <Grid container spacing={0}>
+          <Grid item xs={6}>
+            <Grid container direction="row" justify="flex-start" alignItems="center">
+              <Grid container direction="row" justify="flex-start" alignItems="center" className={classes.footerGridLayout}>
+                <img src="../static/images/logo.png" alt="Logo" className={classes.logoImage}/>
+                <Typography className={classes.logoText}>
+                  be <br />
+                  AR <br />
+                  guest <br />
+                </Typography>
+              </Grid>
+              <Typography className={classes.descriptionText}>
+                An augmented reality mobile application powered by computer vision that helps vegans find suitable food and drink at Walt Disney World.
+                </Typography>
+                {/* <Grid container direction="column" justify="flex-start" alignItems="center" className={classes.footerLinksLayout}>
+                  <Typography style={{
+                    fontFamily: "Avenir",
+                    fontSize: 25,
+                    color: 'rgb(57,57,57)',
+                    
+                  }}>
+                    Links
+                  </Typography>
+                  <Button size="small" className={classes.buttonText}>
+                    Home
+                  </Button>
+                  <Button size="small" className={classes.buttonText}>
+                    Product
+                  </Button>
+                  <Button size="small" className={classes.buttonText}>
+                    Menus
+                  </Button>
+                  <Button size="small" className={classes.buttonText}>
+                    FAQ
+                  </Button>
+                </Grid> */}
+              </Grid>
+            </Grid>
           </Grid>
         </Card>
   );

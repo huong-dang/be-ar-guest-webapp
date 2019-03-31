@@ -1,11 +1,11 @@
-var express   = require('express');
-var router    = express.Router();
-var DB        = require('../db');
-var _         = require('lodash');
-var sqlstring = require('sqlstring');
+var express      = require('express');
+var router       = express.Router();
+var DB           = require('../db');
+var _            = require('lodash');
+var sqlstring    = require('sqlstring');
+var errorHandler = require('../../misc/errors-handler');
 
 
-// TODO: Code here
 router.post('/getAll', async (req, res) => {
     try {
         const query  = `SELECT * FROM Land;`;
@@ -21,24 +21,28 @@ router.post('/getAll', async (req, res) => {
  * Add a new land here
  */
 router.post('/add', async (req, res) => {
-    const {park_id, land_name} = req.body;
-    if (!park_id || !land_name) {
-        return res.status(500).json({
-                                        error: `There are missing arguments.`,
-                                    });
-    } else {
-        try {
-            const parkID   = sqlstring.escape(park_id),
-                  landName = sqlstring.escape(land_name);
-
-            const query  = `INSERT INTO Land (parkID, landName) VALUES (${parkID}, ${landName})`;
-            const result = await DB.runQuery(query);
-            res.json({success: true});
-        } catch (e) {
-            console.log('Error adding a new land to the database:', e);
-            res.json({success: false});
+    try {
+        const {park_id, land_name} = req.body;
+        if (_.isNil(park_id) || _.isNil(land_name)) {
+            throw new Error('Missing park_id or land_name.');
+        } else if (await landDoesExist(land_name, park_id)) {
+            throw new Error(land_name + ' already exists in the database.');
         }
+
+        const query  = `INSERT INTO Land (parkID, landName) VALUES (${sqlstring.escape(park_id)}, ${sqlstring.escape(land_name)});`;
+        const result = await DB.runQuery(query);
+        res.json({success: true, errorMessage: ''});
+    } catch (e) {
+        res.json({success: false, errorMessage: errorHandler.getErrorMessage(e)});
     }
 });
+
+/** HElPER FUNCTIONS */
+async function landDoesExist(landName, parkID) {
+    const query  = `select landID from Land where landName = ${sqlstring.escape(landName)} and parkID = ${sqlstring.escape(parkID)};`;
+    const result = await DB.runQuery(query);
+
+    return result.length > 0;
+}
 
 module.exports = router;

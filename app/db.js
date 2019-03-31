@@ -37,7 +37,7 @@ const DB = (function () {
                         conn.query(query, (err, data) => {
                             if (err) {
                                 console.log('Failed to execute query:', err);
-                                reject();
+                                reject(err);
                             } else {
                                 console.log('Done!');
                                 conn.release();

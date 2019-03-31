@@ -19,14 +19,20 @@ import Card from '@material-ui/core/Card';
 
 import HomePage from '../components/HomePage';
 import HomePageLayout from '../components/HomePageLayout';
+import AccountIcon from '@material-ui/icons/AccountCircle';
 import PhoneIcon from '@material-ui/icons/PhoneAndroid';
 import MenuIcon from '@material-ui/icons/ImportContacts';
 import RestaurantWrapper from  '../components/RestaurantWrapper';
 import MenuStepper from '../components/MenuStepper';
 import FAQDrawer from '../components/FAQDrawer';
 import AboutUs from '../components/AboutUs';
+import ProductPage from '../components/ProductPage';
 
 const styles = theme => ({
+    signInButton: {
+        marginRight: '3%',
+        marginTop: '2%',
+    },
     button: {
       margin: theme.spacing.unit,
     },
@@ -126,7 +132,7 @@ const styles = theme => ({
 class Index extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {tab: "RESTAURANTS"}
+        this.state = {tab: "HOME"}
     }
 
     handleNavigationChange = prop => event => {
@@ -146,11 +152,11 @@ class Index extends React.Component {
             <Button size="small" className={classes.button} onClick={this.handleNavigationChange("HOME")}>
                 Home
             </Button>
+            <Button size="small" className={classes.button} onClick={this.handleNavigationChange("PRODUCT")}>
+                Product
+            </Button>
             <Button size="small" className={classes.button} onClick={this.handleNavigationChange("MENUS")}>
                 Menus
-            </Button>
-            <Button size="small" className={classes.button} onClick={this.handleNavigationChange("RESTAURANTS")}>
-                Restaurants
             </Button>
             <Button size="small" className={classes.button} onClick={this.handleNavigationChange("FAQ")}>
                 FAQ
@@ -163,10 +169,11 @@ class Index extends React.Component {
         switch (this.state.tab) {
             case "HOME":
                 return this.renderHome();
+            case "PRODUCT":
+                // return this.renderMenus();
+                return this.renderProduct();
             case "MENUS":
                 return this.renderMenus();
-            case "RESTAURANTS":
-                return this.renderRestaurants();
             case "FAQ":
                 return this.renderFAQ();
             default:
@@ -174,19 +181,12 @@ class Index extends React.Component {
         }
     }
 
-    renderRestaurants() {
-        return (
-            // <RestaurantWrapper />
-            <MenuStepper />
-        )
-    }
-
     renderHome() {
         const {classes} = this.props;
         return (
             <div>
             <HomeImageList />
-            <Grid container spacing={8} style={{marginLeft: '7%',}}>
+            <Grid container spacing={8} style={{paddingLeft: '7%',}}>
                 {/* First Row of Info Grid */}
                 {/* What We Do Grid Component*/}
                 {/* <Grid container spacing={40} className={classes.homeGridRowLayout}> */}
@@ -195,7 +195,7 @@ class Index extends React.Component {
                             What We Do
                         </Typography>
                         <Typography variant="body1" className={classes.homeBodyText}>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                        Be AR Guest is a convenient mobile and web application that helps visitors at Walt Disney World find vegan dishes. Users can utilize our Android mobile application’s augmented reality menu scanner and determine which menu items are vegan through an  interactive interface that is rendered in real time. Users also have the option to use our listed menu information to plan for their meals in advance.
                         </Typography>
                     </Grid>
                     {/* What We Do Grid Component*/}
@@ -295,7 +295,7 @@ class Index extends React.Component {
                                 Our Motivation
                             </Typography>
                             <Typography variant="body1" className={classes.homeBodyText}>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                            We want to make vegan options accessible to Walt Disney World visitors by reducing the amount of work required to find information on vegan options at Walt Disney World. There is currently no identification of vegan options on Disney’s restaurant menus and there are vegan items that are not listed on menus. Visitors with dietary needs have the task of figuring out where and what to eat on their trip - we want to simplify that aspect of vacation planning.
                             </Typography>
                         </Grid>
                     </Grid>
@@ -400,7 +400,20 @@ class Index extends React.Component {
         )
     }
 
+    renderProduct() {
+        return (
+            <ProductPage />
+        )
+    }
+
     renderMenus() {
+        return (
+            // <RestaurantWrapper />
+            <MenuStepper />
+        )
+    }
+
+    renderMenuWrapper() {
         const {classes} = this.props;
         return (
             <div>
@@ -470,6 +483,7 @@ class Index extends React.Component {
     }
 
     render() {
+        const {classes} = this.props;
         return (
 
             /** 
@@ -540,6 +554,16 @@ class Index extends React.Component {
             //  *  HOME PAGE
             //  */
             <div>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end',}}>
+                    <Link href={'/signIn'}>
+                        <Button variant="outlined" className={classes.signInButton}>
+                            <AccountIcon />
+                            <Typography variant="body2" style={{marginLeft: 3,}}>
+                                Sign In
+                            </Typography>
+                        </Button>
+                    </Link>
+                </div>
                 <Grid container direction="column" justify="center" alignItems="center">
                     <Header />
                     {this.renderNavigationBar()}

@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
@@ -19,7 +18,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-
 const styles = theme => ({
     main:   {
         width:                                                    'auto',
@@ -33,7 +31,6 @@ const styles = theme => ({
         },
     },
     paper:  {
-        marginTop:     theme.spacing.unit * 8,
         display:       'flex',
         flexDirection: 'column',
         alignItems:    'center',
@@ -52,17 +49,16 @@ const styles = theme => ({
     },
 });
 
-// TODO: Add client-side validation to make sure that the user is not adding a duplicate land name
 class LandManagement extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            parks:      [],
-            land_name:  '',
-            park_id:    '',
-            loading:    true,
-            message:    '',
-            dialogOpen: false,
+            parks:        [],
+            land_name:    '',
+            park_id:      '',
+            loading:      true,
+            message:      '',
+            dialogOpen:   false,
             messageTitle: ''
         }
     }
@@ -72,7 +68,11 @@ class LandManagement extends React.Component {
             const result = await axios.post('/park/getAll');
             this.setState({loading: false, parks: result.data});
         } catch (e) {
-            this.setState({loading: false, message: 'Could not get parks', dialogOpen: true});
+            this.setState({loading:         false,
+                              messageTitle: 'Something went wrong!',
+                              message:      'Could not get parks',
+                              dialogOpen:   true
+                          });
         }
     }
 
@@ -82,14 +82,23 @@ class LandManagement extends React.Component {
 
     handleAddLand = async () => {
         try {
-            this.setState({loading: true})
+            this.setState({loading: true});
             // Need park_id and land_name in order to successfully send the request
-            // TODO: validation function here
             const result = await axios.post('/land/add', {
                 park_id:   this.state.park_id,
                 land_name: this.state.land_name
             });
-            this.setState({loading: false, message: 'Successfully added land!', dialogOpen: true});
+
+            if (result.data.success) {
+                this.setState({loading: false, messageTitle: 'Successfully added land!', dialogOpen: true});
+            } else {
+                this.setState({
+                                  loading:      false,
+                                  messageTitle: 'Error adding land',
+                                  message:      result.data.errorMessage,
+                                  dialogOpen:   true,
+                              });
+            }
         } catch (e) {
             console.log('Error occurred while adding a new land', e);
             this.setState({loading: false, message: 'Could not add land', dialogOpen: true});
