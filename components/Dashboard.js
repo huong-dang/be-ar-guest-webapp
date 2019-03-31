@@ -22,6 +22,7 @@ import Food from "@material-ui/icons/Fastfood";
 import Restaurant from "@material-ui/icons/Restaurant";
 import Group from "@material-ui/icons/Group";
 import MenuItemManagement from "./MenuItemManagement";
+import RestaurantManagement from "./RestaurantManagement";
 
 const drawerWidth = 240;
 
@@ -107,7 +108,7 @@ class Dashboard extends React.Component {
         super(props);
         this.state = {
             open: false,
-            selectedMenuItem: "Item"
+            selectedMenuItem: "Restaurant"
         };
     }
 
@@ -132,7 +133,7 @@ class Dashboard extends React.Component {
                 return <MenuItemManagement />;
                 break;
             case "Restaurant":
-                return <div>Restaurant!</div>;
+                return <RestaurantManagement />;
                 break;
             case "User":
                 return <div>User!</div>;
@@ -241,7 +242,7 @@ class Dashboard extends React.Component {
                             <ListItemIcon>
                                 <Food />
                             </ListItemIcon>
-                            <ListItemText primary="Menu Item" />
+                            <ListItemText primary="Menu Items" />
                         </ListItem>
                         <ListItem
                             button
