@@ -3,7 +3,7 @@ var router       = express.Router();
 var DB           = require('../db');
 var _            = require('lodash');
 var sqlstring    = require('sqlstring');
-var errorHandler = require('../errors-handler');
+var errorHandler = require('../../misc/errors-handler');
 
 
 router.post('/getAll', async (req, res) => {

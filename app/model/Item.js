@@ -1,8 +1,11 @@
-var express   = require('express');
-var router    = express.Router();
-var DB        = require('../db');
-var _         = require('lodash');
-var sqlstring = require('sqlstring');
+var express                 = require('express');
+var router                  = express.Router();
+var DB                      = require('../db');
+var _                       = require('lodash');
+var sqlstring               = require('sqlstring');
+var errorHandler            = require('../../misc/errors-handler');
+var ITEMS_UPDATABALE_FIELDS = require('../../misc/FieldNames').ITEMS_UPDATABALE_FIELDS;
+
 
 // router.post('/getItemByID', async (req, res) => {
 //     try {
@@ -30,7 +33,7 @@ router.post('/getItemByID', async (req, res) => {
         if (_.isNil(itemID)) {
             throw new Error('Missing itemID');
         }
-        const query = `select * from Item where itemID = ${sqlstring.escape(itemID)};`;
+        const query  = `select * from Item where itemID = ${sqlstring.escape(itemID)};`;
         const result = await DB.runQuery(query);
         res.json(result);
     } catch (e) {
@@ -45,7 +48,7 @@ router.post('/getItemByName', async (req, res) => {
         if (_.isNil(itemName)) {
             throw new Error('Missing itemName');
         }
-        const query = `select * from Item where itemName = ${sqlstring.escape(itemName)};`;
+        const query  = `select * from Item where itemName = ${sqlstring.escape(itemName)};`;
         const result = await DB.runQuery(query);
         res.json(result);
     } catch (e) {
@@ -100,9 +103,6 @@ router.post('/add', async (req, res) => {
     }
 });
 
-// Column property names that can be updated
-const updateableColumns = ['itemName', 'itemDescription', 'secret', 'vegan', 'substitution', 'itemStatus', 'x', 'z'];
-
 /**
  * Update an item
  * Input: (All properties are required)
@@ -117,16 +117,15 @@ router.post('/update', async (req, res) => {
         const {fieldName, newContent, itemID} = req.body;
         if (_.isNil(fieldName) || _.isNil(newContent) || _.isNil(itemID)) {
             throw new Error('Missing fieldName, newContent, userID, or itemID.');
-        } else if (updateableColumns.indexOf(fieldName) < 0) {
+        } else if (ITEMS_UPDATABALE_FIELDS.indexOf(fieldName) < 0) {
             throw new Error(fieldName + ' is not a valid field to update for a item.');
         }
 
-        const query = `update Item set ${fieldName}=${sqlstring.escape(newContent)} where itemID = ${sqlstring.escape(itemID)};`;
+        const query  = `update Item set ${fieldName}=${sqlstring.escape(newContent)} where itemID = ${sqlstring.escape(itemID)};`;
         const result = await DB.runQuery(query);
         res.json({success: true});
     } catch (e) {
-        console.log('Error updating an item', e);
-        res.status(500).send('Check server logs for more info');
+        res.json({success: false, error: errorHandler.getErrorMessage(e)});
     }
 });
 

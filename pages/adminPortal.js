@@ -19,7 +19,6 @@ class AdminPortal extends React.Component {
     userIsAdmin = async (uid) => {
         try {
             const admin = await axios.post('profile/isAdmin', {uid: uid});
-            console.log('admin', admin);
             return admin.data;
         } catch (e) {
             throw e;
