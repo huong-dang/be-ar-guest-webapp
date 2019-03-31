@@ -30,13 +30,14 @@ const styles = theme => ({
     selector:           {
         display:       'flex',
         flexDirection: 'column',
-        maxWidth:      '150px',
+        minWidth:      '150px',
         marginRight:   theme.spacing.unit * 2
     },
     selectorsContainer: {
         display:       'flex',
         flexDirection: 'row',
         marginTop:     theme.spacing.unit,
+        justifyContent: 'space-between'
     },
     messageContainer: {
         marginTop: theme.spacing.unit
@@ -62,7 +63,6 @@ class Items extends React.Component {
         try {
             const result = await axios.post('/item/getAll');
             this.setState({items: result.data, loading: false});
-            console.log(this.state);
         } catch (e) {
             this.setState({loading: false});
             console.log(e);
@@ -252,8 +252,7 @@ class Items extends React.Component {
                 onClose={this.handleEditItemClose}
                 aria-labelledby="form-dialog-title"
             >
-                <DialogTitle id="customized-dialog-title" onClose={this.handleEditItemClose}>Update
-                    Item</DialogTitle>
+                <DialogTitle id="customized-dialog-title" onClose={this.handleEditItemClose}>Update Item</DialogTitle>
                 <DialogContent>
                     <TextField
                         margin="dense"
@@ -360,7 +359,7 @@ class Items extends React.Component {
 const DialogTitle = withStyles(theme => ({
     root:        {
         margin:  0,
-        padding: theme.spacing.unit * 2,
+        padding: theme.spacing.unit * 2
     },
     closeButton: {
         position: 'absolute',
@@ -372,7 +371,7 @@ const DialogTitle = withStyles(theme => ({
     const {children, classes, onClose} = props;
     return (
         <MuiDialogTitle disableTypography className={classes.root}>
-            <Typography variant="h6">{children}</Typography>
+            <Typography variant="h6" align="center">{children}</Typography>
             {onClose ? (
                 <IconButton aria-label="Close" className={classes.closeButton} onClick={onClose}>
                     <CloseIcon/>
