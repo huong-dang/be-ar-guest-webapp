@@ -107,7 +107,7 @@ router.post("/add", async (req, res) => {
             );
         } else if (await restaurantDoesExist(restaurantName, landID)) {
             // Check to make sure that there is not already an item with that name in the database for that restaurant
-            throw new Error(itemName + " already exists for restaurant.");
+            throw new Error(restaurantName + " already exists for restaurant.");
         }
 
         const query = `insert into Restaurant (landID, restaurantTypeID, restaurantName, restaurantStatus)

@@ -143,19 +143,22 @@ class RestaurantManagement extends React.Component {
     handleAddRestaurantSave = async () => {
         try {
             console.log("this.state.newRestaurant", this.state.newRestaurant);
-            // this.setState({ saving: true });
-            // const result = await axios.post("/item/add", this.state.newItem);
-            // this.setState({
-            //     saving: false,
-            //     addNewRestaurant: result.data.error
-            //         ? "Error adding item: " + result.data.error
-            //         : "Successfully added item!",
-            //     refresh: true
-            // });
+            this.setState({ saving: true });
+            const result = await axios.post(
+                "/restaurant/add",
+                this.state.newRestaurant
+            );
+            this.setState({
+                saving: false,
+                addNewRestaurantMessage: result.data.error
+                    ? "Error adding restaurant: " + result.data.error
+                    : "Successfully added new restaurant!",
+                refresh: true
+            });
         } catch (e) {
             this.setState({
                 saving: false,
-                addNewRestaurant: errorHandler.getErrorMessage(e)
+                addNewRestaurantMessage: errorHandler.getErrorMessage(e)
             });
         }
     };
@@ -499,12 +502,6 @@ class RestaurantManagement extends React.Component {
             </MenuItem>
         );
 
-        // restaurantTypeOptions.unshift(
-        //     <MenuItem value={-1} key={-1}>
-        //         Select a restaurant
-        //     </MenuItem>
-        // );
-
         return (
             <Dialog
                 open={this.state.addNewRestaurant}
@@ -593,7 +590,7 @@ class RestaurantManagement extends React.Component {
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        onClick={this.handleAddIRestaurantSave}
+                        onClick={this.handleAddRestaurantSave}
                         color="primary"
                         disabled={this.state.saving}
                     >
