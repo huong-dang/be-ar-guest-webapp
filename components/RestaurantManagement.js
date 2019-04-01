@@ -20,7 +20,7 @@ import assign from "lodash/assign";
 import reduce from "lodash/reduce";
 import map from "lodash/map";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { ITEMS_UPDATABALE_FIELDS } from "../misc/FieldNames";
+import { RESTAURANTS_UPDATABLE_FIELDS } from "../misc/FieldNames";
 import errorHandler from "../misc/errors-handler";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -65,18 +65,18 @@ class RestaurantManagement extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            restaurants: [],
-            lands: [],
-            loading: true,
-            selectedRestaurantID: null,
-            selectedRestaurant: {},
-            editRestaurant: false,
-            restaurantTypes: [],
-            refresh: false,
-            editItemMessage: "",
-            saving: false,
-            addNewRestaurant: false,
-            newRestaurant: newRestaurantTemplate,
+            restaurants:             [],
+            lands:                   [],
+            loading:                 true,
+            selectedRestaurantID:    null,
+            selectedRestaurant:      {},
+            editRestaurant:          false,
+            restaurantTypes:         [],
+            refresh:                 false,
+            editRestaurantMessage:   "",
+            saving:                  false,
+            addNewRestaurant:        false,
+            newRestaurant:           newRestaurantTemplate,
             addNewRestaurantMessage: ""
         };
     }
@@ -127,8 +127,8 @@ class RestaurantManagement extends React.Component {
         }
     };
 
-    handleEditItemClose = prop => {
-        this.setState({ editItem: false, saving: false, editItemMessage: "" });
+    handleEditRestaurantClose = prop => {
+        this.setState({ editRestaurant: false, saving: false, editRestaurantMessage: "" });
     };
 
     handleAddRestaurantClose = prop => {
@@ -142,7 +142,6 @@ class RestaurantManagement extends React.Component {
 
     handleAddRestaurantSave = async () => {
         try {
-            console.log("this.state.newRestaurant", this.state.newRestaurant);
             this.setState({ saving: true });
             const result = await axios.post(
                 "/restaurant/add",
@@ -163,25 +162,25 @@ class RestaurantManagement extends React.Component {
         }
     };
 
-    handleEditItemSave = async () => {
+    handleEditRestaurantSave = async () => {
         try {
             this.setState({ saving: true });
-            const item = this.state.items.find(
-                item => item.itemID === this.state.selectedItem.itemID
+            const restaurant = this.state.restaurants.find(
+                r => r.restaurantID === this.state.selectedRestaurant.restaurantID
             );
 
             // Check with item field(s) were changed
             const contentToBeUpdated = reduce(
-                this.state.selectedItem,
+                this.state.selectedRestaurant,
                 (result, value, key) => {
                     if (
-                        value !== item[key] &&
-                        ITEMS_UPDATABALE_FIELDS.find(field => field === key)
+                        value !== restaurant[key] &&
+                        RESTAURANTS_UPDATABLE_FIELDS.find(field => field === key)
                     ) {
                         result.push({
                             fieldName: key,
                             newContent: value,
-                            itemID: this.state.selectedItem.itemID
+                            restaurantID: this.state.selectedRestaurant.restaurantID
                         });
                     }
                     return result;
@@ -193,7 +192,7 @@ class RestaurantManagement extends React.Component {
             let successes = [];
             const results = await Promise.all(
                 map(contentToBeUpdated, itemInfo =>
-                    axios.post("/item/update", itemInfo)
+                    axios.post("/restaurant/update", itemInfo)
                 )
             );
 
@@ -243,14 +242,14 @@ class RestaurantManagement extends React.Component {
             }
 
             this.setState({
-                saving: false,
-                editItemMessage: message ? message : "",
-                refresh: true
+                saving:                false,
+                editRestaurantMessage: message ? message : "",
+                refresh:               true
             });
         } catch (e) {
             this.setState({
-                saving: false,
-                editItemMessage: errorHandler.getErrorMessage(e)
+                saving:                false,
+                editRestaurantMessage: errorHandler.getErrorMessage(e)
             });
         }
     };
@@ -285,13 +284,14 @@ class RestaurantManagement extends React.Component {
             print: false,
             selectableRows: true,
             onRowClick: (rowData, rowMeta) => {
-                const selectedItem = this.state.restaurants.find(
-                    item => item.itemID === rowData[0]
+                const selectedRestaurant = this.state.restaurants.find(
+                    r => r.restaurantID === rowData[0]
                 );
+                console.log('selectedRestaurant', selectedRestaurant);
                 this.setState({
                     selectedRestaurantID: rowData[0],
-                    editItem: true,
-                    selectedRestaurant: selectedItem
+                    editRestaurant: true,
+                    selectedRestaurant: selectedRestaurant
                 });
             },
             customToolbar: () => {
@@ -332,7 +332,7 @@ class RestaurantManagement extends React.Component {
 
     handleEdit = prop => event => {
         this.setState({
-            selectedItem: assign({}, this.state.selectedItem, {
+            selectedRestaurant: assign({}, this.state.selectedRestaurant, {
                 [prop]: event.target.value
             })
         });
@@ -346,56 +346,102 @@ class RestaurantManagement extends React.Component {
         });
     };
 
-    renderEditItem() {
-        if (!this.state.editItem) {
+    renderEditRestaurant() {
+        if (!this.state.editRestaurant) {
             return null;
         }
         const { classes } = this.props;
+        let restaurantTypeOptions = this.state.restaurantTypes.map(r => {
+            return (
+                <MenuItem value={r.restaurantTypeID} key={r.restaurantTypeID}>
+                    {r.restaurantTypeName}
+                </MenuItem>
+            );
+        });
+        restaurantTypeOptions.unshift(
+            <MenuItem value={-1} key={-1}>
+                Select a restaurant type
+            </MenuItem>
+        );
+        let landOptions = this.state.lands.map(l => {
+            return (
+                <MenuItem value={l.landID} key={l.landID}>
+                    {l.landName}
+                </MenuItem>
+            );
+        });
+        landOptions.unshift(
+            <MenuItem value={-1} key={-1}>
+                Select a land
+            </MenuItem>
+        );
+
         return (
             <Dialog
-                open={this.state.editItem}
-                onClose={this.handleEditItemClose}
+                open={this.state.editRestaurant}
+                onClose={this.handleEditRestaurantClose}
                 aria-labelledby="form-dialog-title"
+                fullWidth
             >
                 <DialogTitle
                     id="customized-dialog-title"
-                    onClose={this.handleEditItemClose}
+                    onClose={this.handleEditRestaurantClose}
                 >
-                    Update Item
+                    Edit Restaurant
                 </DialogTitle>
                 <DialogContent>
+                    <div className={classes.selector}>
+                        <InputLabel htmlFor="restaurantTypeID">
+                            Restaurant Type
+                        </InputLabel>
+                        <Select
+                            value={
+                                this.state.selectedRestaurant.restaurantTypeID
+                                    ? this.state.selectedRestaurant.restaurantTypeID
+                                    : -1
+                            }
+                            onChange={this.handleEdit("restaurantTypeID")}
+                            inputProps={{
+                                name: "restaurantTypeID",
+                                id: "restaurantTypeID"
+                            }}
+                        >
+                            {restaurantTypeOptions}
+                        </Select>
+                    </div>
+                    <div className={classes.selector}>
+                        <InputLabel htmlFor="landID">Land Name</InputLabel>
+                        <Select
+                            value={
+                                this.state.selectedRestaurant.landID
+                                    ? this.state.selectedRestaurant.landID
+                                    : -1
+                            }
+                            onChange={this.handleEdit("landID")}
+                            inputProps={{
+                                name: "landID",
+                                id: "landID"
+                            }}
+                        >
+                            {landOptions}
+                        </Select>
+                    </div>
                     <TextField
                         margin="dense"
                         label="Name"
                         type="text"
                         fullWidth
-                        value={this.state.selectedItem.itemName}
-                        onChange={this.handleEdit("itemName")}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="Description"
-                        type="text"
-                        multiline
-                        fullWidth
-                        value={this.state.selectedItem.itemDescription}
-                        onChange={this.handleEdit("itemDescription")}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="Substitution"
-                        type="text"
-                        fullWidth
-                        multiline
-                        value={this.state.selectedItem.substitution}
-                        onChange={this.handleEdit("substitution")}
+                        value={this.state.selectedRestaurant.restaurantName}
+                        onChange={this.handleEdit("restaurantName")}
                     />
                     <div className={classes.selectorsContainer}>
                         <div className={classes.selector}>
                             <InputLabel htmlFor="status">Status</InputLabel>
                             <Select
-                                value={this.state.selectedItem.itemStatus}
-                                onChange={this.handleEdit("itemStatus")}
+                                value={
+                                    this.state.selectedRestaurant.restaurantStatus
+                                }
+                                onChange={this.handleEdit("restaurantStatus")}
                                 inputProps={{
                                     name: "status",
                                     id: "status"
@@ -409,48 +455,16 @@ class RestaurantManagement extends React.Component {
                                 </MenuItem>
                             </Select>
                         </div>
-                        <div className={classes.selector}>
-                            <InputLabel htmlFor="vegan">Vegan</InputLabel>
-                            <Select
-                                value={
-                                    this.state.selectedItem.vegan ? true : false
-                                }
-                                onChange={this.handleEdit("vegan")}
-                                inputProps={{
-                                    name: "vegan",
-                                    id: "vegan"
-                                }}
-                            >
-                                <MenuItem value={true}>Yes</MenuItem>
-                                <MenuItem value={false}>No</MenuItem>
-                            </Select>
-                        </div>
-                        <div className={classes.selector}>
-                            <InputLabel htmlFor="secret">Secret</InputLabel>
-                            <Select
-                                value={
-                                    this.state.selectedItem.secret
-                                        ? true
-                                        : false
-                                }
-                                onChange={this.handleEdit("secret")}
-                                inputProps={{
-                                    name: "secret",
-                                    id: "secret"
-                                }}
-                            >
-                                <MenuItem value={true}>Yes</MenuItem>
-                                <MenuItem value={false}>No</MenuItem>
-                            </Select>
-                        </div>
                     </div>
                     <div className={classes.messageContainer}>
-                        <Typography>{this.state.editItemMessage}</Typography>
+                        <Typography>
+                            {this.state.editRestaurantMessage}
+                        </Typography>
                     </div>
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        onClick={this.handleEditItemSave}
+                        onClick={this.handleEditRestaurantSave}
                         color="primary"
                         disabled={this.state.saving}
                     >
@@ -461,7 +475,7 @@ class RestaurantManagement extends React.Component {
                         )}
                     </Button>
                     <Button
-                        onClick={this.handleEditItemClose}
+                        onClick={this.handleEditRestaurantClose}
                         color="secondary"
                         disabled={this.state.saving}
                     >
@@ -616,12 +630,12 @@ class RestaurantManagement extends React.Component {
         if (this.state.loading) {
             return <Loading />;
         } else {
-            console.log("this.state", this.state);
+            // console.log("this.state", this.state);
             return (
                 <div style={{ margin: 0, padding: 0 }}>
                     {this.renderRestaurantsTable()}
+                    {this.renderEditRestaurant()}
                     {this.renderAddRestaurant()}
-                    {/*{this.renderAddItem()}*/}
                 </div>
             );
         }
