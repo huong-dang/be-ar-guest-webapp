@@ -1,13 +1,14 @@
-var express = require("express");
-var router = express.Router();
-var DB = require("../db");
-var _ = require("lodash");
-var sqlstring = require("sqlstring");
-var errorHandler = require("../../misc/errors-handler");
+var express                      = require("express");
+var router                       = express.Router();
+var DB                           = require("../db");
+var _                            = require("lodash");
+var sqlstring                    = require("sqlstring");
+var errorHandler                 = require("../../misc/errors-handler");
+var RESTAURANTS_UPDATABLE_FIELDS = require("../../misc/FieldNames").RESTAURANTS_UPDATABLE_FIELDS;
 
 router.get("/getAll", async (req, res) => {
     try {
-        const query = `Select * from Restaurant;`;
+        const query  = `Select * from Restaurant;`;
         const result = await DB.runQuery(query);
         res.json(result);
     } catch (e) {
@@ -18,7 +19,7 @@ router.get("/getAll", async (req, res) => {
 
 router.get("/getAllRestaurants", async (req, res) => {
     try {
-        const query = `Select restaurantID, restaurantName from Restaurant;`;
+        const query  = `Select restaurantID, restaurantName from Restaurant;`;
         const result = await DB.runQuery(query);
         res.json(result);
     } catch (e) {
@@ -29,7 +30,7 @@ router.get("/getAllRestaurants", async (req, res) => {
 
 router.get("/getAllRestaurantsInfo", async (req, res) => {
     try {
-        const query = `select Restaurant.*, RestaurantType.*, Land.*, Park.parkName from Restaurant, RestaurantType, Land, Park where Restaurant.restaurantTypeID = RestaurantType.restaurantTypeID and Restaurant.landID = Land.landID and Park.parkID = Land.landID;`;
+        const query  = `select Restaurant.*, RestaurantType.*, Land.*, Park.parkName from Restaurant, RestaurantType, Land, Park where Restaurant.restaurantTypeID = RestaurantType.restaurantTypeID and Restaurant.landID = Land.landID and Park.parkID = Land.landID;`;
         const result = await DB.runQuery(query);
         res.json(result);
     } catch (e) {
@@ -39,12 +40,12 @@ router.get("/getAllRestaurantsInfo", async (req, res) => {
 });
 
 router.post("/getAllItemsByRestaurantID", async (req, res) => {
-    const { restaurantID } = req.body;
+    const {restaurantID} = req.body;
     if (_.isNil(restaurantID)) {
         res.status(401).send("Bad request");
     } else {
         try {
-            const query = `select * from Item as I where I.restaurantID = ${sqlstring.escape(
+            const query  = `select * from Item as I where I.restaurantID = ${sqlstring.escape(
                 restaurantID
             )};`;
             const result = await DB.runQuery(query);
@@ -57,15 +58,15 @@ router.post("/getAllItemsByRestaurantID", async (req, res) => {
 });
 
 router.post("/getAllItemsByRestaurantName", async (req, res) => {
-    const { restaurantName } = req.body;
+    const {restaurantName} = req.body;
     if (_.isNil(restaurantName)) {
         res.status(401).send("Bad request");
     } else {
         try {
-            const query = `SELECT * FROM Item I, Restaurant R 
+            const query  = `SELECT * FROM Item I, Restaurant R 
                             WHERE replace(R.restaurantName, '''', '') = ${sqlstring.escape(
-                                restaurantName
-                            )} 
+                restaurantName
+            )} 
                             AND R.restaurantID = I.restaurantID`;
             const result = await DB.runQuery(query);
             res.json(result);
@@ -78,7 +79,7 @@ router.post("/getAllItemsByRestaurantName", async (req, res) => {
 
 router.get("/getAllRestaurantsInfo", async (req, res) => {
     try {
-        const query = `Select L.landName, R.restaurantID, R.restaurantName from Restaurant R, Land L WHERE L.landID = R.landID;`;
+        const query  = `Select L.landName, R.restaurantID, R.restaurantName from Restaurant R, Land L WHERE L.landID = R.landID;`;
         const result = await DB.runQuery(query);
         res.json(result);
     } catch (e) {
@@ -90,11 +91,11 @@ router.get("/getAllRestaurantsInfo", async (req, res) => {
 router.post("/add", async (req, res) => {
     try {
         const {
-            landID,
-            restaurantName,
-            restaurantStatus,
-            restaurantTypeID
-        } = req.body;
+                  landID,
+                  restaurantName,
+                  restaurantStatus,
+                  restaurantTypeID
+              } = req.body;
 
         if (
             _.isNil(landID) ||
@@ -118,16 +119,39 @@ value (${sqlstring.escape(landID)}, ${sqlstring.escape(
         )});`;
 
         const result = await DB.runQuery(query);
-        res.json({ success: true });
+        res.json({success: true});
     } catch (e) {
         console.log("Error adding a review", e);
-        res.json({ success: false, error: errorHandler.getErrorMessage(e) });
+        res.json({success: false, error: errorHandler.getErrorMessage(e)});
+    }
+});
+
+router.post("/update", async (req, res) => {
+    try {
+        const {fieldName, newContent, restaurantID} = req.body;
+        if (_.isNil(fieldName) || _.isNil(newContent) || _.isNil(restaurantID)) {
+            throw new Error(
+                "Missing fieldName, newContent, or restaurantID."
+            );
+        } else if (RESTAURANTS_UPDATABLE_FIELDS.indexOf(fieldName) < 0) {
+            throw new Error(
+                fieldName + " is not a valid field to update for a restaurant."
+            );
+        }
+
+        const query  = `update Restaurant set ${fieldName}=${sqlstring.escape(
+            newContent
+        )} where restaurantID = ${sqlstring.escape(restaurantID)};`;
+        const result = await DB.runQuery(query);
+        res.json({success: true});
+    } catch (e) {
+        res.json({success: false, error: errorHandler.getErrorMessage(e)});
     }
 });
 
 /** HElPER FUNCTIONS */
 async function restaurantDoesExist(restaurantName, landID) {
-    const query = `select restaurantID from Restaurant where restaurantName = ${sqlstring.escape(
+    const query  = `select restaurantID from Restaurant where restaurantName = ${sqlstring.escape(
         restaurantName
     )} and landID = ${sqlstring.escape(landID)};`;
     const result = await DB.runQuery(query);
