@@ -2,17 +2,18 @@ const express     = require('express');
 const next        = require('next');
 const localConfig = require('./app/config');
 
-const dev        = process.env.NODE_ENV !== 'production';
-const app        = next({dev});
-const handle     = app.getRequestHandler();
-const PORT       = process.env.PORT || 3000;
-const bodyParser = require('body-parser');
-const Profile    = require('./app/model/Profile');
-const Park       = require('./app/model/Park');
-const Land       = require('./app/model/Land');
-const Restaurant = require('./app/model/Restaurant');
-const Item       = require('./app/model/Item');
-const Review     = require('./app/model/Review');
+const dev            = process.env.NODE_ENV !== 'production';
+const app            = next({dev});
+const handle         = app.getRequestHandler();
+const PORT           = process.env.PORT || 3000;
+const bodyParser     = require('body-parser');
+const Profile        = require('./app/model/Profile');
+const Park           = require('./app/model/Park');
+const Land           = require('./app/model/Land');
+const Restaurant     = require('./app/model/Restaurant');
+const Item           = require('./app/model/Item');
+const Review         = require('./app/model/Review');
+const RestaurantType = require('./app/model/RestaurantType');
 
 app.prepare()
    .then(async () => {
@@ -26,6 +27,7 @@ app.prepare()
            server.use('/restaurant', Restaurant);
            server.use('/item', Item);
            server.use('/review', Review);
+           server.use('/restaurantType', RestaurantType);
            server.get('*', (req, res) => {
                return handle(req, res);
            });

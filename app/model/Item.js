@@ -106,7 +106,7 @@ router.post("/add", async (req, res) => {
             throw new Error(itemName + " already exists for restaurant.");
         }
 
-        const query = `insert into Item (restaurantID, itemName, itemDescription, secret, vegan, substitution, itemStatus, x, y)
+        const query = `insert into Item (restaurantID, itemName, itemDescription, secret, vegan, substitution, itemStatus, x, z)
                        values(${sqlstring.escape(restaurantID)}, 
                               ${sqlstring.escape(itemName)}, 
                               ${sqlstring.escape(itemDescription)}, 
