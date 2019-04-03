@@ -17,7 +17,7 @@ router.post('/getAllRestaurantsByParkID', async (req, res) => {
         res.status(500).send('No parkID provided.');
     } else {
         try {
-            const query  = `SELECT * FROM Restaurant R, Land L, Park P WHERE P.parkID = ${sqlstring.escape(parkID)} AND P.parkID = L.landID AND R.landID = L.landID;`;
+            const query  = `SELECT * FROM Restaurant R, Land L, Park P WHERE P.parkID = ${sqlstring.escape(parkID)} AND P.parkID = L.parkID AND R.landID = L.landID;`;
             const result = await DB.runQuery(query);
             res.json(result);
         } catch (e) {
