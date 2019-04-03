@@ -107,6 +107,7 @@ CREATE TABLE `Review` (
   `rating` INT,
   `isFavorite` BOOLEAN NOT NULL,
   `flag` BOOLEAN,
+  `dateOfComment` DATE,
   PRIMARY KEY (`userID`, `itemID`),
   FOREIGN KEY (`userID`) REFERENCES `Profile` (`userID`),
   FOREIGN KEY (`itemID`) REFERENCES `Item` (`itemID`)
