@@ -26,6 +26,12 @@ class MyDocument extends Document {
                     href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
                 />
             </Head>
+            <style jsx global>{`
+                    body {
+                        margin: 0,
+                        padding: 0
+                        }`}
+            </style>
             <body>
             <Main/>
             <NextScript/>
