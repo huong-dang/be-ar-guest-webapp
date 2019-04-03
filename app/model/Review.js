@@ -52,13 +52,14 @@ router.post('/add', async (req, res) => {
             throw new Error('Rating must be between 1 and 5.');
         }
 
-        const query = `insert into Review (userID, itemID, comment, rating, isFavorite, flag)
+        const query = `insert into Review (userID, itemID, comment, rating, isFavorite, flag, dateOfComment)
                         values (${sqlstring.escape(userID)}, 
                         ${sqlstring.escape(itemID)}, 
                         ${sqlstring.escape(comment)}, 
                         ${sqlstring.escape(rating)}, 
                         ${sqlstring.escape((_.isNil(isFavorite) ? false : isFavorite))}, 
-                        ${sqlstring.escape((_.isNil(flag) ? false : isFavorite))});`
+                        ${sqlstring.escape((_.isNil(flag) ? false : isFavorite))},
+                        ${sqlstring.escape(new Date().toISOString().slice(0, 19).replace('T', ' '))});`
 
         const result = await DB.runQuery(query);
         res.json({success: true});
