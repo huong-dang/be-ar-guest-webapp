@@ -199,11 +199,10 @@ router.post('/getAllByItemID', async (req, res) => {
     try {
         const {itemID} = req.body;
         if (_.isNil(itemID)) {
-            throw new Error('Missing userID.');
+            throw new Error('Missing itemID.');
         }
-
-        const query  = `select * from Review R, Item I where I.itemID = ${sqlstring.escape(itemID)} and 
-R.itemID = I.itemID order by R.rating desc;`;
+        const query = `select R.*, I.*, P.fName, P.lName, P.imageURL from Review R, Item I, Profile P where I.itemID = ${sqlstring.escape(itemID)} and 
+R.itemID = I.itemID and P.userID = R.userID order by R.rating desc;`;
         const result = await DB.runQuery(query);
         res.json(result);
     } catch (e) {
