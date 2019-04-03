@@ -273,7 +273,7 @@ class RestaurantManagement extends React.Component {
                 restaurant.restaurantID,
                 restaurant.restaurantName,
                 restaurant.restaurantTypeName,
-                restaurant.restaurantStatus,
+                restaurant.restaurantStatus === "AVAILABLE" ? "Open" : "Closed",
                 restaurant.landName,
                 restaurant.parkName
             ];
@@ -448,10 +448,10 @@ class RestaurantManagement extends React.Component {
                                 }}
                             >
                                 <MenuItem value={"AVAILABLE"}>
-                                    Available
+                                    Open
                                 </MenuItem>
                                 <MenuItem value={"UNAVAILABLE"}>
-                                    Unavailable
+                                    Closed
                                 </MenuItem>
                             </Select>
                         </div>
@@ -588,10 +588,10 @@ class RestaurantManagement extends React.Component {
                                 }}
                             >
                                 <MenuItem value={"AVAILABLE"}>
-                                    Available
+                                    Open
                                 </MenuItem>
                                 <MenuItem value={"UNAVAILABLE"}>
-                                    Unavailable
+                                    Closed
                                 </MenuItem>
                             </Select>
                         </div>
