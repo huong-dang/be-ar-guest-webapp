@@ -259,9 +259,24 @@ class Items extends React.Component {
                     display: false
                 }
             },
-            "Park",
-            "Land",
-            "Restaurant",
+            {
+                name: "Park",
+                options: {
+                    display: false
+                }
+            },
+            {
+                name: "Land",
+                options: {
+                    display: false
+                }
+            },
+            {
+                name: "Restaurant",
+                options: {
+                    display: false
+                }
+            },
             "Name",
             {
                 name: "Description",
