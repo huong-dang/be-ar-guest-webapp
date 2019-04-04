@@ -9,8 +9,6 @@ var sqlstring = require('sqlstring');
  * POST: { parkID: num } /park/getAllRestaurantsByParkID
  *
  */
-
-// TODO: Code here
 router.post('/getAllRestaurantsByParkID', async (req, res) => {
     const {parkID} = req.body;
     if (!parkID) {
