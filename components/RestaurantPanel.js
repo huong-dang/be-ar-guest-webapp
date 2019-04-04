@@ -18,46 +18,46 @@ const styles = prop => ({
 
 class RestaurantPanel extends React.Component {
     constructor(props) {
-      super(props);
-      this.state = {
-        items: [],
-        restaurantID: props.restaurantID,
-      }
+        super(props);
+        this.state = {
+            items:        [],
+            restaurantID: props.restaurantID,
+        }
     }
 
     async componentDidMount() {
-      try {
-          const result = await axios.post('/restaurant/getAllItemsByRestaurantID', { restaurantID: this.state.restaurantID });
-          this.setState({
-              items: result.data
-          })
-      } catch (e) {
-          console.log('Error', e);
-      }
-  }
+        try {
+            const result = await axios.post('/restaurant/getAllItemsByRestaurantID', {restaurantID: this.state.restaurantID});
+            this.setState({
+                              items: result.data
+                          })
+        } catch (e) {
+            console.log('Error', e);
+        }
+    }
 
-  render () {
-    const { classes } = this.props;
-    const itemsInfo = this.state.items.map((item, index) =>
-      {
-        return <Grid item xs={12} sm={4} key={item.itemID}>
-                  <ItemCard itemName={item.itemName}
-                            itemDescription={item.itemDescription}
-                            substitution={item.substitution} />
-                </Grid>;
-      }
-    )
+    render() {
+        const {classes, user} = this.props;
+        const itemsInfo = this.state.items.map((menuItem, index) => {
+                                                   return (
+                                                       <Grid item xs={12} sm={4} key={menuItem.itemID}>
+                                                           <ItemCard item={menuItem}
+                                                                     user={user}/>
+                                                       </Grid>
+                                                   );
+                                               }
+        );
 
-    return (
-        <ExpansionPanel>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h4" className={classes.restaurantName}>
-            {this.props.restaurantName}
-          </Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <Grid container spacing={24}>
-            {/* <Grid item xs={12} sm={4}>
+        return (
+            <ExpansionPanel>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
+                    <Typography variant="h4" className={classes.restaurantName}>
+                        {this.props.restaurantName}
+                    </Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                    <Grid container spacing={24}>
+                        {/* <Grid item xs={12} sm={4}>
               <ItemCard />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -69,19 +69,20 @@ class RestaurantPanel extends React.Component {
             <Grid item xs={12} sm={4}>
               <ItemCard />
             </Grid> */}
-            {itemsInfo}
-          </Grid>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-    );
+                        {itemsInfo}
+                    </Grid>
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
+        );
     }
 }
 
 RestaurantPanel.propTypes = {
-    classes: PropTypes.object.isRequired,
+    classes:        PropTypes.object.isRequired,
     restaurantName: PropTypes.string.isRequired,
     restaurantLand: PropTypes.string.isRequired,
-    restaurantID: PropTypes.number.isRequired,
-}
+    restaurantID:   PropTypes.number.isRequired,
+    user:           PropTypes.object
+};
 
 export default withStyles(styles)(RestaurantPanel);
