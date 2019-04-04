@@ -80,7 +80,7 @@ const styles = theme => ({
             easing:   theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen
         }),
-        width:                        theme.spacing.unit * 7,
+        width:                        0, // When the screen is small, don't show the menu icons
         [theme.breakpoints.up("sm")]: {
             width: theme.spacing.unit * 9
         }
