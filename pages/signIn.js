@@ -88,7 +88,7 @@ class SignIn extends React.Component {
             if (!isNil(localStorage.uid) && isAuthorizedUser) {
                 const uid = localStorage.uid;
                 const isAdmin = await this.userIsAdmin(uid);
-                Router.push(`${isAdmin ? '/adminPortal' : '/userPortal'}`);
+                Router.push(`${isAdmin ? '/adminPortal' : '/'}`);
             } else {
                 localStorage.clear();
                 // User is not logged in
@@ -113,7 +113,7 @@ class SignIn extends React.Component {
             if (admin.data) {
                 Router.push('/adminPortal');
             } else {
-                Router.push('/userPortal');
+                Router.push('/');
             }
         } catch (err) {
             if (err.code === 'auth/user-not-found') {
