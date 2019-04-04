@@ -25,6 +25,12 @@ class MyDocument extends Document {
                     rel="stylesheet"
                     href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
                 />
+                <style jsx global>{`
+                    body {
+                        margin: 0,
+                        padding: 0
+                        }`}
+                </style>
             </Head>
             <body>
             <Main/>
