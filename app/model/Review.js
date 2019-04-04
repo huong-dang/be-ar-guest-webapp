@@ -1,8 +1,9 @@
-var express   = require('express');
-var router    = express.Router();
-var DB        = require('../db');
-var _         = require('lodash');
-var sqlstring = require('sqlstring');
+var express        = require('express');
+var router         = express.Router();
+var DB             = require('../db');
+var _              = require('lodash');
+var sqlstring      = require('sqlstring');
+const errorHandler = require('../../misc/errors-handler');
 
 // General format of defining a post request
 // router.post('/', async (req, res) => {
@@ -59,7 +60,7 @@ router.post('/add', async (req, res) => {
                         ${sqlstring.escape(rating)}, 
                         ${sqlstring.escape((_.isNil(isFavorite) ? false : isFavorite))}, 
                         ${sqlstring.escape((_.isNil(flag) ? false : isFavorite))},
-                        ${sqlstring.escape(new Date().toISOString().slice(0, 19).replace('T', ' '))});`
+                        ${sqlstring.escape(new Date().toISOString().slice(0, 19).replace('T', ' '))});`;
 
         const result = await DB.runQuery(query);
         res.json({success: true});
@@ -202,7 +203,7 @@ router.post('/getAllByItemID', async (req, res) => {
         if (_.isNil(itemID)) {
             throw new Error('Missing itemID.');
         }
-        const query = `select R.*, I.*, P.fName, P.lName, P.imageURL from Review R, Item I, Profile P where I.itemID = ${sqlstring.escape(itemID)} and 
+        const query  = `select R.*, I.*, P.fName, P.lName, P.imageURL from Review R, Item I, Profile P where I.itemID = ${sqlstring.escape(itemID)} and 
 R.itemID = I.itemID and P.userID = R.userID order by R.rating desc;`;
         const result = await DB.runQuery(query);
         res.json(result);
@@ -262,12 +263,50 @@ router.post('/update', async (req, res) => {
             throw new Error('Rating must be between 1 and 5');
         }
 
-        const query = `update Review set ${fieldName}=${sqlstring.escape(newContent)} where userID = ${sqlstring.escape(userID)} and itemID = ${sqlstring.escape(itemID)};`;
+        const query  = `update Review set ${fieldName}=${sqlstring.escape(newContent)} where userID = ${sqlstring.escape(userID)} and itemID = ${sqlstring.escape(itemID)};`;
         const result = await DB.runQuery(query);
         res.json({success: true});
     } catch (e) {
         console.log('', e);
         res.status(500).send('Check server logs for more info');
+    }
+});
+
+
+router.post('/favorite', async (req, res) => {
+    try {
+        const {userID, itemID} = req.body;
+        if (_.isNil(userID) || _.isNil(itemID)) {
+            throw new Error('Missing userID, itemID.');
+        }
+
+        // Check if a review is currently existing
+        const getReviewQuery = `select * from Review R, Item I, Profile P where P.userID = ${sqlstring.escape(userID)} and 
+I.itemID = ${sqlstring.escape(itemID)} and R.userID = P.userID and R.itemID = I.itemID;`;
+        const review         = await DB.runQuery(getReviewQuery);
+
+        if (review.length > 0) {
+            const favoriteVal   = review[0] && review[0].isFavorite;
+            const favoriteQuery = `update Review set isFavorite=${!favoriteVal} where userID = ${sqlstring.escape(userID)} and itemID = ${sqlstring.escape(itemID)};`;
+            const result        = await DB.runQuery(favoriteQuery);
+            res.json({success: true})
+        } else {
+            // Create a review
+            const query = `insert into Review (userID, itemID, comment, rating, isFavorite, flag, dateOfComment)
+                        values (${sqlstring.escape(userID)}, 
+                        ${sqlstring.escape(itemID)}, 
+                        ${null}, 
+                        ${null}, 
+                        ${true /*It's the user's first time favoriting the item*/}, 
+                        ${false},
+                        ${sqlstring.escape(new Date().toISOString().slice(0, 19).replace('T', ' '))});`;
+
+            const result = await DB.runQuery(query);
+            res.json({success: true})
+        }
+    } catch (e) {
+        console.log(e);
+        res.json({success: false, error: errorHandler.getErrorMessage(e)});
     }
 });
 
