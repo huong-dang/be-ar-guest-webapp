@@ -64,19 +64,10 @@ class SignIn extends React.Component {
         }
     }
 
-    userIsAdmin = async (uid) => {
-        try {
-            const admin = await axios.post('profile/isAdmin', {uid: uid});
-            return admin.data;
-        } catch (e) {
-            throw e;
-        }
-    };
-
     authorizedUser = async () => {
         try {
             const user  = await getCurrentUser();
-            return user && user.uid === localStorage.uid;
+            return !isNil(localStorage.uid) && user && user.uid === localStorage.uid;
         } catch (e) {
             throw e;
         }
@@ -84,11 +75,9 @@ class SignIn extends React.Component {
 
     async componentDidMount() {
         try {
-            const isAuthorizedUser = await this.authorizedUser();
-            if (!isNil(localStorage.uid) && isAuthorizedUser) {
-                const uid = localStorage.uid;
-                const isAdmin = await this.userIsAdmin(uid);
-                Router.push(`${isAdmin ? '/adminPortal' : '/'}`);
+            const userIsAuthorized = await this.authorizedUser();
+            if (userIsAuthorized) {
+                Router.push('/');
             } else {
                 localStorage.clear();
                 // User is not logged in
@@ -108,13 +97,7 @@ class SignIn extends React.Component {
         try {
             const result = await signIn(this.state.email, this.state.password);
             localStorage.setItem('uid', result.user.uid);
-
-            const admin = await axios.post('profile/isAdmin', {uid: localStorage.uid});
-            if (admin.data) {
-                Router.push('/adminPortal');
-            } else {
-                Router.push('/');
-            }
+            Router.push('/');
         } catch (err) {
             if (err.code === 'auth/user-not-found') {
                 this.setState({
