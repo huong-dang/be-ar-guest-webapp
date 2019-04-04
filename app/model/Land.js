@@ -56,4 +56,20 @@ router.post('/getLands', async (req, res) => {
     }
 });
 
+router.post('/getRestaurantsByLand', async (req, res) => {
+    const {landID} = req.body;
+    if (_.isNil(landID)) {
+        res.status(401).send('Bad request');
+    } else {
+        try {
+            const query  = `select * from Restaurant as R where R.landID = ${escape(landID)};`;
+            const result = await DB.runQuery(query);
+            res.json(result);
+        } catch (e) {
+            console.log('An error occurred when querying the database', e);
+            res.status(500).send('Check server logs for errors.');
+        }
+    }
+});
+
 module.exports = router;
