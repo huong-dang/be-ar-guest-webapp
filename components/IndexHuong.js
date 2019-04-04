@@ -12,6 +12,7 @@ import Footer from '../components/Footer';
 import RestaurantCard from '../components/RestaurantCard';
 import ItemCard from '../components/ItemCard';
 import HomeImageList from '../components/HomeImageList';
+import Router from 'next/router';
 
 import {signOut, getCurrentUser} from "../services/accounts";
 import Loading from "../components/Loading";
@@ -149,18 +150,14 @@ class IndexHuong extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tab:          "HOME",
+            tab:          "MENUS",
             loading:      true,
             user:         null,
             alertMessage: '',
             alertTitle:   '',
-            dialogOpen:   false
+            dialogOpen:   false,
         }
     }
-
-    handleDialogClose = () => {
-        this.setState({dialogOpen: false, alertMessage: '', alertTitle: ''});
-    };
 
     renderAlertDialog() {
         return (
@@ -192,41 +189,63 @@ class IndexHuong extends React.Component {
         );
     }
 
-    async componentDidMount() {
-        /**
-         * If a user is currently logged in, then set the user's information
-         * to the state of this page.
-         */
+    /**
+     * Check if there is an authorized user currently logged in. If a user is logged in,
+     * return that user's data. If the user is not logged in, set the user to null.
+     */
+    authorizedUser = async () => {
         try {
             if (!isNil(localStorage.uid)) {
-                const result = await axios.post('/profile/getProfileByID', {
-                    uid: localStorage.uid
-                });
-                // If the user's ID doesn't map to any user, then alert that there's
-                // something wrong and don't let the user take user privileged actions
-                if (result.data.length === 0) {
-                    this.setState({
-                                      user:         null,
-                                      loading:      false,
-                                      dialogOpen:   true,
-                                      alertMessage: alertMessages.invalidUser.message,
-                                      alertTitle:   alertMessages.invalidUser.title
-                                  });
+                const user = await getCurrentUser();
+
+                if (user && user.uid === localStorage.uid) {
+                    // The user is currently logged in, fetch their profile
+                    const result = await axios.post('/profile/getProfileByID', {
+                        uid: localStorage.uid
+                    });
+                    return result.data[0];
                 } else {
-                    this.setState({user: result.data[0], loading: false});
+                    // The user is not currently logged in, log them out
+                    await this.handleSignOut();
+                    return null;
                 }
-            } else {
-                // No user is currently logged in
-                this.setState({user: null, loading: false});
             }
+
+            return null;
+        } catch (e) {
+            console.log('Error:', e);
+            return null;
+        }
+    };
+
+    async componentDidMount() {
+        try {
+            const user = await this.authorizedUser();
+            this.setState({loading: false, user: user});
         } catch (e) {
             console.log("An error occurred", e);
         }
     }
 
     async componentDidUpdate(prevProps, prevState, snapshot) {
-        // What happens when a user is logged out?
+        // What happens when a state changes?
     }
+
+    handleSignOut = async () => {
+        try {
+            this.setState({loading: true});
+            localStorage.clear();
+            await signOut();
+            this.setState({loading: false, user: null});
+        } catch (e) {
+            console.log('Error signing out.', e);
+            this.setState({loading: false, user: null});
+        }
+    };
+
+    handleDialogClose = () => {
+        this.setState({dialogOpen: false, alertMessage: '', alertTitle: ''});
+    };
 
     handleNavigationChange = prop => event => {
         this.setState({tab: prop});
@@ -240,16 +259,24 @@ class IndexHuong extends React.Component {
 
     renderNavigationBar() {
         const {classes}      = this.props;
-        const privilegedTabs = () => {
+        const privilegedTabs = (tabs = ['TRIPS', 'ACCOUNT', 'ADMIN']) => {
             if (isNil(this.state.user)) {
                 return null;
-            } else {
+            }
+
+            if (this.state.user.role !== 'admin') {
+                tabs = tabs.filter((val) => val !== 'admin'.toUpperCase());
+            }
+
+            return tabs.map((tabName) => {
                 return (
-                    <Button size="small" className={classes.button} onClick={this.handleNavigationChange("TRIP")}>
-                        My Trips
+                    <Button key={tabName} size="small" className={classes.button}
+                            onClick={this.handleNavigationChange(tabName)}>
+                        {tabName}
                     </Button>
                 );
-            }
+            });
+
         };
 
         return (
@@ -277,13 +304,17 @@ class IndexHuong extends React.Component {
                 return this.renderHome();
             case "PRODUCT":
                 // return this.renderMenus();
-                return this.renderProduct();
+                return <ProductPage/>;
             case "MENUS":
-                return this.renderMenus();
+                return <MenuStepper user={this.state.user}/>
             case "FAQ":
                 return this.renderFAQ();
-            case "TRIP":
+            case "TRIPS":
                 return this.renderTrips();
+            case "ADMIN":
+                this.setState({loading: true});
+                Router.push('/adminPortal');
+                return;
             default:
                 return this.renderHome();
         }
@@ -292,6 +323,89 @@ class IndexHuong extends React.Component {
     renderTrips() {
         return (
             <div>Name: {this.state.user.fName} </div>
+        )
+    }
+
+    renderTeam() {
+        const { classes } = this.props;
+        return (
+                <Grid container spacing={0}>
+                    <Grid item xs={12} sm={2}>
+                        <Grid container direction="column" justify="flex-start" alignItems="center"
+                              className={classes.profileTile}>
+                            <Card
+                                style={{backgroundImage: "url('../static/images/PeopleImages/RS.jpg')"}}
+                                className={classes.pictureCard}
+                            />
+                            <Typography variant="h5" className={classes.nameText}>
+                                Rachael Sera
+                            </Typography>
+                            <Typography className={classes.positionText}>
+                                Augmented Reality
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} sm={2}>
+                        <Grid container direction="column" justify="flex-start" alignItems="center"
+                              className={classes.profileTile}>
+                            <Card
+                                style={{backgroundImage: "url('../static/images/PeopleImages/BB.jpg')"}}
+                                className={classes.pictureCard}
+                            />
+                            <Typography variant="h5" className={classes.nameText}>
+                                Bailey Brooks
+                            </Typography>
+                            <Typography className={classes.positionText}>
+                                Computer Vision
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} sm={2}>
+                        <Grid container direction="column" justify="flex-start" alignItems="center"
+                              className={classes.profileTile}>
+                            <Card
+                                style={{backgroundImage: "url('../static/images/PeopleImages/LY.jpg')"}}
+                                className={classes.pictureCard}
+                            />
+                            <Typography variant="h5" className={classes.nameText}>
+                                Lorraine Yerger
+                            </Typography>
+                            <Typography className={classes.positionText}>
+                                Mobile Developer
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} sm={2}>
+                        <Grid container direction="column" justify="flex-start" alignItems="center"
+                              className={classes.profileTile}>
+                            <Card
+                                style={{backgroundImage: "url('../static/images/PeopleImages/HD.jpg')"}}
+                                className={classes.pictureCard}
+                            />
+                            <Typography variant="h5" className={classes.nameText}>
+                                Huong Dang
+                            </Typography>
+                            <Typography className={classes.positionText}>
+                                Web Developer
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} sm={2}>
+                        <Grid container direction="column" justify="flex-start" alignItems="center"
+                              className={classes.profileTile}>
+                            <Card
+                                style={{backgroundImage: "url('../static/images/PeopleImages/JL.jpg')"}}
+                                className={classes.pictureCard}
+                            />
+                            <Typography variant="h5" className={classes.nameText}>
+                                Jacquelyn Law
+                            </Typography>
+                            <Typography className={classes.positionText}>
+                                Web Developer
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                </Grid>
         )
     }
 
@@ -424,8 +538,6 @@ class IndexHuong extends React.Component {
                     </Grid>
                     {/* End of 2nd row */}
                     {/* Our Motivation Component*/}
-
-                    {/* <Grid container direction="column" justify="flex-start" alignItems="flex-start"> */}
                     <Grid item xs={6}>
                         <Typography variant="h5"
                                     style={{
@@ -435,142 +547,7 @@ class IndexHuong extends React.Component {
                             Our Team
                         </Typography>
                     </Grid>
-                    <Grid container spacing={0} style={{}}>
-                        <Grid item xs={12} sm={2}>
-                            <Grid container direction="column" justify="flex-start" alignItems="center"
-                                  className={classes.profileTile}>
-                                <Card
-                                    style={{backgroundImage: "url('../static/images/PeopleImages/RS.jpg')"}}
-                                    className={classes.pictureCard}
-                                />
-                                <Typography variant="h5" className={classes.nameText}>
-                                    Rachael Sera
-                                </Typography>
-                                <Typography className={classes.positionText}>
-                                    Augmented Reality
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={12} sm={2}>
-                            <Grid container direction="column" justify="flex-start" alignItems="center"
-                                  className={classes.profileTile}>
-                                <Card
-                                    style={{backgroundImage: "url('../static/images/PeopleImages/BB.jpg')"}}
-                                    className={classes.pictureCard}
-                                />
-                                <Typography variant="h5" className={classes.nameText}>
-                                    Bailey Brooks
-                                </Typography>
-                                <Typography className={classes.positionText}>
-                                    Computer Vision
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={12} sm={2}>
-                            <Grid container direction="column" justify="flex-start" alignItems="center"
-                                  className={classes.profileTile}>
-                                <Card
-                                    style={{backgroundImage: "url('../static/images/PeopleImages/LY.jpg')"}}
-                                    className={classes.pictureCard}
-                                />
-                                <Typography variant="h5" className={classes.nameText}>
-                                    Lorraine Yerger
-                                </Typography>
-                                <Typography className={classes.positionText}>
-                                    Mobile Developer
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={12} sm={2}>
-                            <Grid container direction="column" justify="flex-start" alignItems="center"
-                                  className={classes.profileTile}>
-                                <Card
-                                    style={{backgroundImage: "url('../static/images/PeopleImages/HD.jpg')"}}
-                                    className={classes.pictureCard}
-                                />
-                                <Typography variant="h5" className={classes.nameText}>
-                                    Huong Dang
-                                </Typography>
-                                <Typography className={classes.positionText}>
-                                    Web Developer
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={12} sm={2}>
-                            <Grid container direction="column" justify="flex-start" alignItems="center"
-                                  className={classes.profileTile}>
-                                <Card
-                                    style={{backgroundImage: "url('../static/images/PeopleImages/JL.jpg')"}}
-                                    className={classes.pictureCard}
-                                />
-                                <Typography variant="h5" className={classes.nameText}>
-                                    Jacquelyn Law
-                                </Typography>
-                                <Typography className={classes.positionText}>
-                                    Web Developer
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    {/* </Grid> */}
-                    {/* </Grid> */}
-                </Grid>
-
-                {/* <Grid container spacing={40}> */}
-
-                {/* </Grid> */}
-            </div>
-        )
-    }
-
-    renderProduct() {
-        return (
-            <ProductPage/>
-        )
-    }
-
-    renderMenus() {
-        return (
-            // <RestaurantWrapper />
-            <MenuStepper/>
-        )
-    }
-
-    renderMenuWrapper() {
-        const {classes} = this.props;
-        return (
-            <div>
-                <Grid container direction="column" justify="space-between" alignItems="center">
-                    <Grid container direction="row" justify="flex-start" alignItems="flex-start">
-                        <RestaurantCard/>
-                        <div style={{
-                            // width: "auto",
-                            position:     "relative",
-                            marginLeft:   "28%",
-                            marginTop:    -250,
-                            marginRight:  "5%",
-                            marginBottom: 30,
-                        }}>
-                            <Grid container spacing={32}>
-                                <Grid item>
-                                    <ItemCard/>
-                                    {/* <ItemCard />
-                                    <ItemCard />
-                                    <ItemCard />
-                                    <ItemCard /> */}
-                                </Grid>
-                                <Grid item>
-                                    <ItemCard/>
-                                </Grid>
-                                <Grid item>
-                                    <ItemCard/>
-                                </Grid>
-                                <Grid item>
-                                    <ItemCard/>
-                                </Grid>
-                            </Grid>
-                        </div>
-                    </Grid>
+                    {this.renderTeam()}
                 </Grid>
             </div>
         )
@@ -605,48 +582,41 @@ class IndexHuong extends React.Component {
         )
     }
 
-    handleSignOut = async () => {
-        try {
-            this.setState({loading: true})
-            localStorage.clear();
-            await signOut();
-            this.setState({loading: false, user: null})
-        } catch (e) {
-            console.log('Error signing out.', e);
-        }
+    renderAccountsButtons = () => {
+        const {classes} = this.props;
+        return (
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end',}}>
+                {!isNil(this.state.user) ?
+                    <Button variant="outlined" className={classes.signInButton} onClick={this.handleSignOut}>
+                        <AccountIcon/>
+                        <Typography variant="body2" style={{marginLeft: 3,}}>
+                            Sign Out
+                        </Typography>
+                    </Button>
+                    : <Link href={'/signIn'}>
+                        <Button variant="outlined" className={classes.signInButton}>
+                            <AccountIcon/>
+                            <Typography variant="body2" style={{marginLeft: 3,}}>
+                                Sign In
+                            </Typography>
+                        </Button>
+                    </Link>
+                }
+            </div>
+        )
     };
 
     render() {
-        const {classes} = this.props;
-
         if (this.state.loading) {
             return <Loading/>
         } else {
             return (
                 <div>
-                    <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end',}}>
-                        {!isNil(this.state.user) ?
-                            <Button variant="outlined" className={classes.signInButton} onClick={this.handleSignOut}>
-                                <AccountIcon/>
-                                <Typography variant="body2" style={{marginLeft: 3,}}>
-                                    Sign Out
-                                </Typography>
-                            </Button>
-                            : <Link href={'/signIn'}>
-                                <Button variant="outlined" className={classes.signInButton}>
-                                    <AccountIcon/>
-                                    <Typography variant="body2" style={{marginLeft: 3,}}>
-                                        Sign In
-                                    </Typography>
-                                </Button>
-                            </Link>
-                        }
-                    </div>
+                    {this.renderAccountsButtons()}
                     <Grid container direction="column" justify="center" alignItems="center">
                         <Header/>
                         {this.renderNavigationBar()}
                         {this.renderBodyContent()}
-                        {this.renderAlertDialog()}
                         <Footer/>
                     </Grid>
                 </div>
