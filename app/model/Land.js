@@ -51,4 +51,36 @@ async function landDoesExist(landName, parkID) {
     return result.length > 0;
 }
 
+router.post('/getRestaurantsByLand', async (req, res) => {
+    const {landID} = req.body;
+    if (_.isNil(landID)) {
+        res.status(401).send('Bad request');
+    } else {
+        try {
+            const query  = `select * from Restaurant as R where R.landID = ${escape(landID)};`;
+            const result = await DB.runQuery(query);
+            res.json(result);
+        } catch (e) {
+            console.log('An error occurred when querying the database', e);
+            res.status(500).send('Check server logs for errors.');
+        }
+    }
+});
+
+router.post('/getLandsByPark', async (req, res) => {
+    const {parkID} = req.body;
+    if (_.isNil(landID)) {
+        res.status(401).send('Bad request');
+    } else {
+        try {
+            const query  = `select * from Land as L where L.parkID = ${escape(parkID)};`;
+            const result = await DB.runQuery(query);
+            res.json(result);
+        } catch (e) {
+            console.log('An error occurred when querying the database', e);
+            res.status(500).send('Check server logs for errors.');
+        }
+    }
+});
+
 module.exports = router;
