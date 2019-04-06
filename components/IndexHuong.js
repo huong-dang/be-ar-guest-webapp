@@ -1,34 +1,21 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Link from 'next/link';
 import Grid from '@material-ui/core/Grid';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import Menu from '../components/Menu';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import RestaurantCard from '../components/RestaurantCard';
-import ItemCard from '../components/ItemCard';
 import HomeImageList from '../components/HomeImageList';
 import Router from 'next/router';
-
 import {signOut, getCurrentUser} from "../services/accounts";
 import Loading from "../components/Loading";
 import {Typography} from '@material-ui/core';
-// import PeopleIcon from '../@material-ui/icons/PeopleSharp';
 import Card from '@material-ui/core/Card';
-
-import HomePage from '../components/HomePage';
-import HomePageLayout from '../components/HomePageLayout';
 import AccountIcon from '@material-ui/icons/AccountCircle';
 import PhoneIcon from '@material-ui/icons/PhoneAndroid';
 import MenuIcon from '@material-ui/icons/ImportContacts';
-import RestaurantWrapper from '../components/RestaurantWrapper';
 import MenuStepper from '../components/MenuStepper';
 import FAQDrawer from '../components/FAQDrawer';
-import AboutUs from '../components/AboutUs';
 import ProductPage from '../components/ProductPage';
 import axios from "axios";
 import isNil from "lodash/isNil";
@@ -37,6 +24,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Trips from '../components/Trips';
+import Account from '../components/Account';
 
 const styles = theme => ({
     signInButton:       {
@@ -150,7 +139,7 @@ class IndexHuong extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tab:          "MENUS",
+            tab:          "TRIPS",
             loading:      true,
             user:         null,
             alertMessage: '',
@@ -306,24 +295,20 @@ class IndexHuong extends React.Component {
                 // return this.renderMenus();
                 return <ProductPage/>;
             case "MENUS":
-                return <MenuStepper user={this.state.user}/>
+                return <MenuStepper user={this.state.user}/>;
             case "FAQ":
                 return this.renderFAQ();
             case "TRIPS":
-                return this.renderTrips();
+                return <Trips user={this.state.user}/>;
             case "ADMIN":
                 this.setState({loading: true});
                 Router.push('/adminPortal');
                 return;
+            case 'ACCOUNT':
+                return <Account user={this.state.user}/>;
             default:
                 return this.renderHome();
         }
-    }
-
-    renderTrips() {
-        return (
-            <div>Name: {this.state.user.fName} </div>
-        )
     }
 
     renderTeam() {
