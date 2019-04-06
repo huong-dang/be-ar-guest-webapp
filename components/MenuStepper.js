@@ -39,6 +39,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ItemCard from '../components/ItemCard';
+import LandListItem from '../components/LandListItem';
 import RestaurantPanel from '../components/RestaurantPanel';
 
 import axios from 'axios';
@@ -97,31 +98,66 @@ const styles = theme => ({
   },
 });
 
+const parkData = [
+  { id: 1, parkName: 'Magic Kingdom', backgroundImage: '../static/images/ParkImages/MagicKingdom.jpg'},
+  { id: 3, parkName: 'Hollywood Studios', backgroundImage: '../static/images/ParkImages/MGMStudios.jpg'},
+  { id: 2, parkName: 'Epcot', backgroundImage: '../static/images/ParkImages/Epcot.jpg'},
+  { id: 4, parkName: 'Animal Kingdom', backgroundImage: '../static/images/ParkImages/AnimalKingdom.jpg'},
+];
+
+const ParkCard = withStyles(styles)(({ parkName, backgroundImage, onClick, classes }) => (
+  <Grid item xs={12} md={6}>
+    <Card
+      className={classes.parkImage} 
+      onClick={onClick}
+      style={{
+        backgroundImage: `url(${backgroundImage})`
+      }}
+    >
+      <Card className={classes.textCard} elevation={0}>
+        <Typography className={classes.parkName}>
+          {parkName}
+        </Typography>
+      </Card>
+    </Card>
+  </Grid>
+))
+
 class MenuStepper extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       tab: "PARKS",
-      restaurants:[],
+      // restaurants:[],
       lands: [],
     };
   }
+  
 
   // Fetch restaurant names
-  async componentDidMount() {
-    try {
-      const result = await axios.get('/restaurant/getAllRestaurantsInfo');
-      this.setState({
-        restaurants: result.data
-      })
-    } catch (e) {
-      console.log('Error', e);
-    }
-  }
+  // async componentDidMount() {
+  //   try {
+  //     const result = await axios.get('/restaurant/getAllRestaurantsInfo');
+  //     this.setState({
+  //       restaurants: result.data
+  //     })
+  //   } catch (e) {
+  //     console.log('Error', e);
+  //   }
+  // }
 
   handleContentChange = prop => event => {
     this.setState({tab: prop});
   };
+
+  async handleParkSelection(parkID) {
+    try {
+      const result = await axios.post('/land/getLandsbyPark', { parkID: parkID });
+      this.setState({ tab: "LANDS", lands: result.data });
+    } catch (e) {
+        console.log('Error', e);
+    }
+  }
 
   renderNavigationButton() {
     switch (this.state.tab) {
@@ -180,66 +216,15 @@ class MenuStepper extends React.Component {
         </Typography>
         <Divider variant="middle" />
         <Grid container spacing={24} className={classes.grid}>
-          <Grid item xs={12} md={6}>
-            <Card
-              className={classes.parkImage} onClick={this.handleContentChange("LANDS")}
-              style={{
-                backgroundImage:
-                  "url('../static/images/ParkImages/MagicKingdom.jpg')"
-              }}
-            >
-              <Card className={classes.textCard} elevation={0}>
-                <Typography className={classes.parkName}>
-                  Magic Kingdom
-                </Typography>
-              </Card>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Card
-              className={classes.parkImage}
-              style={{
-                backgroundImage:
-                  "url('../static/images/ParkImages/MGMStudios.jpg')"
-              }}
-            >
-              <Card className={classes.textCard} elevation={0}>
-                <Typography className={classes.parkName}>
-                  Hollywood Studios
-                </Typography>
-              </Card>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Card
-              className={classes.parkImage}
-              style={{
-                backgroundImage: "url('../static/images/ParkImages/Epcot.jpg')"
-              }}
-            >
-              <Card className={classes.textCard} elevation={0}>
-                <Typography className={classes.parkName}>Epcot</Typography>
-              </Card>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Card
-              className={classes.parkImage}
-              style={{
-                backgroundImage:
-                  "url('../static/images/ParkImages/AnimalKingdom.jpg')"
-              }}
-            >
-              <Card className={classes.textCard} elevation={0}>
-                <Typography className={classes.parkName}>
-                  Animal Kingdom
-                </Typography>
-              </Card>
-            </Card>
-          </Grid>
+          {parkData.map((park, index) => (
+            <ParkCard
+              onClick={() => this.handleParkSelection(park.id)}
+              parkName={park.parkName} 
+              backgroundImage={park.backgroundImage} 
+              id={park.id} 
+              key={index} 
+            />
+          ))}
         </Grid>
       </div>
     );
@@ -247,43 +232,50 @@ class MenuStepper extends React.Component {
   
   renderLands() {
     const { classes } = this.props;
+   
+    const landsInfo = this.state.lands.map((land, index) =>
+      {
+        return <LandListItem key={index} landID={land.landID} landName={land.landName} parkID={land.parkID} />
+      }
+    )
+    console.log(this.state.lands);
     return (
       <div>
-        
         <Divider variant="middle" />
         <List>
-          <ListItem button onClick={this.handleContentChange("RESTAURANTS")}>
+          {/* <ListItem button onClick={this.handleContentChange("RESTAURANTS")}>
             <ListItemText primary="Land1" />
-          </ListItem>
+          </ListItem> */}
+          {landsInfo}
         </List>
       </div>
     )
   }
 
-  renderRestaurants() {
-    const { classes } = this.props;
-    const restaurantsInfo = this.state.restaurants.map((restaurant, index) =>
-      {
-        return (
-          <div key={restaurant.restaurantID}>
+  // renderRestaurants() {
+  //   const { classes } = this.props;
+  //   const restaurantsInfo = this.state.restaurants.map((restaurant, index) =>
+  //     {
+  //       return (
+  //         <div key={restaurant.restaurantID}>
             
-            <Divider variant="middle" />
-            <div>
-              <RestaurantPanel 
-                              restaurantID={restaurant.restaurantID}
-                              restaurantName={restaurant.restaurantName}
-                              restaurantLand={restaurant.landName} />
-            </div>
-          </div>
-        )
-      }
-    )
-    return (
-      <div>
-        {restaurantsInfo}
-      </div>
-    )
-  }
+  //           <Divider variant="middle" />
+  //           <div>
+  //             <RestaurantPanel 
+  //                             restaurantID={restaurant.restaurantID}
+  //                             restaurantName={restaurant.restaurantName}
+  //                             restaurantLand={restaurant.landName} />
+  //           </div>
+  //         </div>
+  //       )
+  //     }
+  //   )
+  //   return (
+  //     <div>
+  //       {restaurantsInfo}
+  //     </div>
+  //   )
+  // }
 
   render() {
     const { classes, theme } = this.props;

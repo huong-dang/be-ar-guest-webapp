@@ -40,7 +40,7 @@ router.post('/add', async (req, res) => {
     }
 });
 
-router.post('/getLands', async (req, res) => {
+router.post('/getLandsbyPark', async (req, res) => {
     const {parkID} = req.body;
     if (_.isNil(parkID)) {
         res.status(401).send('Bad request');
