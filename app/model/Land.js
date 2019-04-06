@@ -69,7 +69,7 @@ router.post('/getRestaurantsByLand', async (req, res) => {
 
 router.post('/getLandsByPark', async (req, res) => {
     const {parkID} = req.body;
-    if (_.isNil(landID)) {
+    if (_.isNil(parkID)) {
         res.status(401).send('Bad request');
     } else {
         try {
