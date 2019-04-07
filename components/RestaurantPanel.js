@@ -80,7 +80,7 @@ class RestaurantPanel extends React.Component {
 RestaurantPanel.propTypes = {
     classes: PropTypes.object.isRequired,
     restaurantName: PropTypes.string.isRequired,
-    restaurantLand: PropTypes.string.isRequired,
+    landID: PropTypes.number.isRequired,
     restaurantID: PropTypes.number.isRequired,
 }
 
