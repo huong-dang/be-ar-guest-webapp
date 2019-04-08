@@ -75,7 +75,7 @@ const parkData = [
   { id: 4, parkName: 'Animal Kingdom', backgroundImage: '../static/images/ParkImages/AnimalKingdom.jpg'},
 ];
 
-const ParkCard = withStyles(styles)(({ parkName, backgroundImage, onClick, classes }) =>  {
+const ParkCard = ({ parkName, backgroundImage, onClick, classes }) =>  {
   const [hover, setHover] = useState(false)
   return (
     (
@@ -97,7 +97,7 @@ const ParkCard = withStyles(styles)(({ parkName, backgroundImage, onClick, class
       </Grid>
     )
   )
-})
+}
 
 class MenuStepper extends React.Component {
   constructor(props) {
@@ -193,7 +193,8 @@ class MenuStepper extends React.Component {
             <ParkCard
               onClick={() => this.handleParkSelection(park.id)}
               parkName={park.parkName} 
-              backgroundImage={park.backgroundImage} 
+              backgroundImage={park.backgroundImage}
+              classes={classes}
               id={park.id} 
               key={index} 
             />
