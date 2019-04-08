@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -7,7 +7,7 @@ import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-
+import ParkCard from '../components/ParkCard';
 import List from '@material-ui/core/List';
 import LandListItem from '../components/LandListItem';
 import RestaurantPanel from '../components/RestaurantPanel';
@@ -34,35 +34,6 @@ const styles = theme => ({
     marginTop: "3%",
     marginBottom: "3%",
   },
-  parkImage: {
-    width: "80%",     // CHANGED FROM 40% TO 80%
-    height: 300,
-    backgroundSize: "cover",
-    [theme.breakpoints.between('xs','sm')]: {
-      height: 210,
-    },
-  },
-  textCard: {
-    width: "max-content",
-    height: "auto",
-    // backgroundColor: 'rgb(69,69,69)',
-    backgroundColor: "white",
-    borderRadius: 16,
-    margin: "auto",
-    position: "relative",
-    marginTop: "33%"
-  },
-  parkName: {
-    fontSize: 18,
-    fontFamily: "Roboto",
-    fontWeight: 400,
-    color: "black",
-    textAlign: "center",
-    marginLeft: 10,
-    marginRight: 10,
-    marginTop: 5,
-    marginBottom: 5
-  },
   restaurantName: {
     fontSize: 'larger'
   },
@@ -74,30 +45,6 @@ const parkData = [
   { id: 2, parkName: 'Epcot', backgroundImage: '../static/images/ParkImages/Epcot.jpg'},
   { id: 4, parkName: 'Animal Kingdom', backgroundImage: '../static/images/ParkImages/AnimalKingdom.jpg'},
 ];
-
-const ParkCard = ({ parkName, backgroundImage, onClick, classes }) =>  {
-  const [hover, setHover] = useState(false)
-  return (
-    (
-      <Grid style={{ cursor: 'pointer'}} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} item xs={12} md={6}>
-        <Card
-          className={classes.parkImage} 
-          onClick={onClick}
-          style={{
-            backgroundImage: `url(${backgroundImage})`,
-            opacity: hover ? 0.8 : 1
-          }}
-        >
-          <Card className={classes.textCard} elevation={0}>
-            <Typography className={classes.parkName}>
-              {parkName}
-            </Typography>
-          </Card>
-        </Card>
-      </Grid>
-    )
-  )
-}
 
 class MenuStepper extends React.Component {
   constructor(props) {
@@ -194,7 +141,6 @@ class MenuStepper extends React.Component {
               onClick={() => this.handleParkSelection(park.id)}
               parkName={park.parkName} 
               backgroundImage={park.backgroundImage}
-              classes={classes}
               id={park.id} 
               key={index} 
             />
