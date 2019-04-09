@@ -80,7 +80,7 @@ const styles = theme => ({
             easing:   theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen
         }),
-        width:                        theme.spacing.unit * 7,
+        width:                        theme.spacing.unit, // When the screen is small, don't show the menu icons
         [theme.breakpoints.up("sm")]: {
             width: theme.spacing.unit * 9
         }
@@ -107,7 +107,7 @@ class Dashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            open:             true,
+            open:             false,
             selectedMenuItem: "Item"
         };
     }

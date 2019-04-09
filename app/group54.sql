@@ -58,6 +58,7 @@ CREATE TABLE `TripPlan` (
   `userID` VARCHAR(100) NOT NULL,
   `startDate` DATETIME NOT NULL,
   `endDate` DATETIME NOT NULL,
+  `tripName` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`tripID`),
   FOREIGN KEY (`userID`) REFERENCES `Profile` (`userID`)
 );
@@ -107,7 +108,7 @@ CREATE TABLE `Review` (
   `rating` INT,
   `isFavorite` BOOLEAN NOT NULL,
   `flag` BOOLEAN,
-  `dateOfComment` DATE,
+  `dateOfComment` DATETIME,
   PRIMARY KEY (`userID`, `itemID`),
   FOREIGN KEY (`userID`) REFERENCES `Profile` (`userID`),
   FOREIGN KEY (`itemID`) REFERENCES `Item` (`itemID`)

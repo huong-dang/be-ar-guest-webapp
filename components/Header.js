@@ -15,12 +15,14 @@ const styles = theme => ({
         width: 'auto',
     },
     headerLogoImage:    {
-        width: "15%", 
+        width: "15%",
         height: "15%",
     },
     headerLogoText: {
         fontFamily: "Avenir",
         fontSize: 30,
+        margin: 0,
+        padding: 0
     }
 });
 
@@ -28,20 +30,13 @@ function Header(props) {
     const { classes } = props;
     return (
         <div style={{marginTop: '-2%',}}>
-            {/* <div>
-                <Link href={'/signIn'}>
-                    <Button color={'secondary'} variant={'outlined'}>
-                        Sign In
-                    </Button>
-                </Link>
-            </div> */}
             <Grid container direction="column" justify="flex-start" alignItems="center" className={classes.headerGridLayout}>
                 <Grid container direction="column" justify="space-between" alignItems="center">
                     <Grid container direction="column" justify="flex-start" alignItems="center">
                         <img src="../static/images/logo.png" alt="Logo" className={classes.headerLogoImage} />
-                        <text className={classes.headerLogoText}>
+                        <p className={classes.headerLogoText}>
                             be AR guest
-                        </text>
+                        </p>
                     </Grid>
                 </Grid>
             </Grid>
