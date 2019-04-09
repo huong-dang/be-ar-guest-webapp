@@ -1,10 +1,9 @@
 import React from 'react';
-import IndexJackie from '../components/IndexJackie';
-import IndexHuong from '../components/IndexHuong';
+import IndexPage from '../components/IndexPage';
 
 class Index extends React.Component {
     render() {
-        return <IndexHuong/>
+        return <IndexPage/>
     }
 }
 
