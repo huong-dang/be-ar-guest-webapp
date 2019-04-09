@@ -5,6 +5,9 @@ var _              = require('lodash');
 var sqlstring      = require('sqlstring');
 const errorHandler = require('../../misc/errors-handler');
 
+// Column property names that can be updated
+const updateableColumns = ['comment', 'rating', 'isFavorite', 'flag'];
+
 // General format of defining a post request
 // router.post('/', async (req, res) => {
 //     try {
@@ -49,11 +52,35 @@ router.post('/getAll', async (req, res) => {
 router.post('/add', async (req, res) => {
     try {
         const {userID, itemID, comment, rating, isFavorite, flag} = req.body;
-        if (!_.isNil(rating) && Number.isInteger(rating) && (rating < 1 || rating > 5)) {
-            throw new Error('Rating must be between 1 and 5.');
+        const reviewExists                                        = await userHasReviewForItem(userID, itemID);
+
+        if (reviewExists) {
+            // Update the review
+            _.forEach(updateableColumns, async (columnName) => {
+                if (!_.isNil(req.body[columnName])) {
+                    await updateReviewForUser(columnName, req.body[columnName], userID, itemID);
+                }
+            });
+        } else {
+            // Add a brand new review
+            await addNewReview(userID, itemID, comment, rating, isFavorite, flag);
         }
 
-        const query = `insert into Review (userID, itemID, comment, rating, isFavorite, flag, dateOfComment)
+        res.json({success: true});
+    } catch (e) {
+        console.log('Error adding a review', e);
+        res.status(500).send(e);
+    }
+});
+
+async function addNewReview(userID, itemID, comment, rating, isFavorite, flag) {
+    if (_.isNil(userID) || _.isNil(itemID)) {
+        throw new Error('userID or itemID is missing.');
+    } else if (!_.isNil(rating) && Number.isInteger(rating) && (rating < 1 || rating > 5)) {
+        throw new Error('Rating must be between 1 and 5.');
+    }
+
+    const query = `insert into Review (userID, itemID, comment, rating, isFavorite, flag, dateOfComment)
                         values (${sqlstring.escape(userID)}, 
                         ${sqlstring.escape(itemID)}, 
                         ${sqlstring.escape(comment)}, 
@@ -62,13 +89,8 @@ router.post('/add', async (req, res) => {
                         ${sqlstring.escape((_.isNil(flag) ? false : isFavorite))},
                         ${sqlstring.escape(new Date().toISOString().slice(0, 19).replace('T', ' '))});`;
 
-        const result = await DB.runQuery(query);
-        res.json({success: true});
-    } catch (e) {
-        console.log('Error adding a review', e);
-        res.status(500).send(e);
-    }
-});
+    const result = await DB.runQuery(query);
+}
 
 /**
  * Get all reviews by userID sorted by rating in descending order
@@ -239,9 +261,6 @@ I.itemID = ${sqlstring.escape(itemID)} and R.userID = P.userID and R.itemID = I.
     }
 });
 
-// Column property names that can be updated
-const updateableColumns = ['comment', 'rating', 'isFavorite', 'flag'];
-
 /**
  * Update a review for a user and item
  * Input: (All properties are required)
@@ -255,19 +274,10 @@ const updateableColumns = ['comment', 'rating', 'isFavorite', 'flag'];
 router.post('/update', async (req, res) => {
     try {
         const {fieldName, newContent, userID, itemID} = req.body;
-        if (_.isNil(fieldName) || _.isNil(newContent) || _.isNil(userID) || _.isNil(itemID)) {
-            throw new Error('Missing fieldName, newContent, userID, or itemID.');
-        } else if (updateableColumns.indexOf(fieldName) < 0) {
-            throw new Error(fieldName + ' is not a valid field to update for a review.');
-        } else if (fieldName === 'rating' && Number.isInteger(newContent) && (newContent < 1 || newContent > 5)) {
-            throw new Error('Rating must be between 1 and 5');
-        }
-
-        const query  = `update Review set ${fieldName}=${sqlstring.escape(newContent)} where userID = ${sqlstring.escape(userID)} and itemID = ${sqlstring.escape(itemID)};`;
-        const result = await DB.runQuery(query);
+        await updateReviewForUser(fieldName, newContent, userID, itemID);
         res.json({success: true});
     } catch (e) {
-        console.log('', e);
+        console.log(e);
         res.status(500).send(e);
     }
 });
@@ -275,35 +285,16 @@ router.post('/update', async (req, res) => {
 
 router.post('/favorite', async (req, res) => {
     try {
-        const {userID, itemID} = req.body;
-        if (_.isNil(userID) || _.isNil(itemID)) {
-            throw new Error('Missing userID, itemID.');
-        }
+        const {userID, itemID, favorite} = req.body;
+        const reviewExists               = await userHasReviewForItem(userID, itemID);
 
-        // Check if a review is currently existing
-        const getReviewQuery = `select * from Review R, Item I, Profile P where P.userID = ${sqlstring.escape(userID)} and 
-I.itemID = ${sqlstring.escape(itemID)} and R.userID = P.userID and R.itemID = I.itemID;`;
-        const review         = await DB.runQuery(getReviewQuery);
-
-        if (review.length > 0) {
-            const favoriteVal   = review[0] && review[0].isFavorite;
-            const favoriteQuery = `update Review set isFavorite=${!favoriteVal} where userID = ${sqlstring.escape(userID)} and itemID = ${sqlstring.escape(itemID)};`;
-            const result        = await DB.runQuery(favoriteQuery);
-            res.json({success: true})
+        if (reviewExists) {
+            await updateReviewForUser('isFavorite', favorite, userID, itemID);
         } else {
-            // Create a review
-            const query = `insert into Review (userID, itemID, comment, rating, isFavorite, flag, dateOfComment)
-                        values (${sqlstring.escape(userID)}, 
-                        ${sqlstring.escape(itemID)}, 
-                        ${null}, 
-                        ${null}, 
-                        ${true /*It's the user's first time favoriting the item*/}, 
-                        ${false},
-                        ${sqlstring.escape(new Date().toISOString().slice(0, 19).replace('T', ' '))});`;
-
-            const result = await DB.runQuery(query);
-            res.json({success: true})
+            await addNewReview(userID, itemID, null, null, favorite, null);
         }
+
+        res.json({success: true})
     } catch (e) {
         console.log(e);
         res.json({success: false, error: errorHandler.getErrorMessage(e)});
@@ -326,12 +317,25 @@ async function userHasReviewForItem(userID, itemID) {
         throw new Error('userID or itemID is missing.');
     } else {
         const query  = `select * from Review R, Item I, Profile P where P.userID = ${sqlstring.escape(userID)} and 
-I.itemID = ${sqlstring.escape(itemID)} and R.userID = P.userID and R.itemID = I.itemID `;
+I.itemID = ${sqlstring.escape(itemID)} and R.userID = P.userID and R.itemID = I.itemID;`;
         const result = await DB.runQuery(query);
 
         // If review found for the user and this item, then return false, else return true
         return result.length > 0;
     }
+}
+
+async function updateReviewForUser(fieldName, newContent, userID, itemID) {
+    if (_.isNil(fieldName) || _.isNil(newContent) || _.isNil(userID) || _.isNil(itemID)) {
+        throw new Error('Missing fieldName, newContent, userID, or itemID.');
+    } else if (updateableColumns.indexOf(fieldName) < 0) {
+        throw new Error(fieldName + ' is not a valid field to update for a review.');
+    } else if (fieldName === 'rating' && Number.isInteger(newContent) && (newContent < 1 || newContent > 5)) {
+        throw new Error('Rating must be between 1 and 5');
+    }
+
+    const query  = `update Review set ${fieldName}=${sqlstring.escape(newContent)} where userID = ${sqlstring.escape(userID)} and itemID = ${sqlstring.escape(itemID)};`;
+    const result = await DB.runQuery(query);
 }
 
 module.exports = router;
