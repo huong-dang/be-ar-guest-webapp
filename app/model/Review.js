@@ -310,4 +310,28 @@ I.itemID = ${sqlstring.escape(itemID)} and R.userID = P.userID and R.itemID = I.
     }
 });
 
+router.post('/userHasReviewForItem', async (req, res) => {
+    try {
+        const {userID, itemID} = req.body;
+        const userHasReview    = await userHasReviewForItem(userID, itemID);
+        res.json({reviewExists: userHasReview})
+    } catch (e) {
+        console.log('Error:', e);
+        res.status(500).send(e);
+    }
+});
+
+async function userHasReviewForItem(userID, itemID) {
+    if (_.isNil(userID) || _.isNil(itemID)) {
+        throw new Error('userID or itemID is missing.');
+    } else {
+        const query  = `select * from Review R, Item I, Profile P where P.userID = ${sqlstring.escape(userID)} and 
+I.itemID = ${sqlstring.escape(itemID)} and R.userID = P.userID and R.itemID = I.itemID `;
+        const result = await DB.runQuery(query);
+
+        // If review found for the user and this item, then return false, else return true
+        return result.length > 0;
+    }
+}
+
 module.exports = router;
