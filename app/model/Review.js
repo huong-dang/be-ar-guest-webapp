@@ -65,7 +65,7 @@ router.post('/add', async (req, res) => {
         res.json({success: true});
     } catch (e) {
         console.log('Error adding a review', e);
-        res.status(500).send('Check server logs for more info');
+        res.status(500).send(e);
     }
 });
 
@@ -267,7 +267,7 @@ router.post('/update', async (req, res) => {
         res.json({success: true});
     } catch (e) {
         console.log('', e);
-        res.status(500).send('Check server logs for more info');
+        res.status(500).send(e);
     }
 });
 
