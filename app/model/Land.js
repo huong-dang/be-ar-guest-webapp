@@ -57,7 +57,7 @@ router.post('/getRestaurantsByLand', async (req, res) => {
         res.status(401).send('Bad request');
     } else {
         try {
-            const query  = `select * from Restaurant as R where R.landID = ${escape(landID)};`;
+            const query  = `select R.*, T.* from Restaurant as R, RestaurantType as T where R.landID = ${escape(landID)} and R.restaurantTypeID = T.restaurantTypeID;`;
             const result = await DB.runQuery(query);
             res.json(result);
         } catch (e) {
