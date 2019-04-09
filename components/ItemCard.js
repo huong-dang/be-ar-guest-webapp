@@ -99,6 +99,11 @@ const styles = theme => ({
         textAlign:  'center',
         lineHeight: 1.4,
     },
+    commentsSection: {
+        outlineStyle: 'solid',
+        outlineWidth: 'thin',
+        borderRadius: 20,
+    },
 });
 
 class ItemCard extends React.Component {
@@ -181,14 +186,14 @@ class ItemCard extends React.Component {
                             <Typography variant="overline">Description: <br/></Typography>
                             {itemDescription}
                             <br />
-                            <Typography variant="overline">Alterations: <br/></Typography>
+                            <Typography variant="overline" style={{paddingTop: 5,}}>Alterations: <br/></Typography>
                             {substitution}
                         </DialogContent>
                         </Grid>
                         <Grid item xs={12} md={6}>
                         <DialogContent>
-                            <Card>
-                                comments
+                            <Card elevation={0} className={classes.commentsSection}>
+                                COMMENTS
                             </Card>
                         </DialogContent>
                         </Grid>
