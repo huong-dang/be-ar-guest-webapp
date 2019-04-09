@@ -135,11 +135,11 @@ const alertMessages = {
     }
 };
 
-class IndexHuong extends React.Component {
+class IndexPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tab:          "TRIPS",
+            tab:          "HOME",
             loading:      true,
             user:         null,
             alertMessage: '',
@@ -611,4 +611,4 @@ class IndexHuong extends React.Component {
     }
 }
 
-export default withStyles(styles)(IndexHuong);
+export default withStyles(styles)(IndexPage);
