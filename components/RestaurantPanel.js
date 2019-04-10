@@ -39,13 +39,13 @@ class RestaurantPanel extends React.Component {
     render() {
         const {classes, user} = this.props;
         const itemsInfo = this.state.items.map((menuItem, index) => {
-                                                   return (
-                                                       <Grid item xs={12} sm={4} key={menuItem.itemID}>
-                                                           <ItemCard item={menuItem}
-                                                                     user={user}/>
-                                                       </Grid>
-                                                   );
-                                               }
+                return (
+                    <Grid item xs={12} sm={4} key={menuItem.itemID}>
+                        <ItemCard item={menuItem}
+                                    user={user}/>
+                    </Grid>
+                );
+            }
         );
 
         return (

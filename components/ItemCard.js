@@ -18,6 +18,7 @@ import FlagIcon from '@material-ui/icons/OutlinedFlag';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
+import ItemReview from './ItemReview';
 
 const styles = theme => ({
     card:                   {
@@ -120,6 +121,7 @@ class ItemCard extends React.Component {
             item:       props.item,
             isFavorite: false,
             open:       false,
+            reviews: [],
         }
     }
 
@@ -138,6 +140,16 @@ class ItemCard extends React.Component {
             }
         } catch (e) {
             console.log('Error:', e);
+        }
+    }
+
+    async getItemReviews() {
+        try {
+            const result = await axios.post('/review/getAllByItemID', {itemID: this.props.item.itemID});
+            console.log(result.data);
+            this.setState({reviews: result.data});
+        } catch (e) {
+            console.log('Error', e);
         }
     }
 
@@ -219,7 +231,14 @@ class ItemCard extends React.Component {
                                 {substitution}
                             </Typography>
                         </Grid>
-                        <Button variant="outlined" className={classes.expandButton} onClick={this.handleOpen}>
+                        <Button 
+                            variant="outlined" 
+                            className={classes.expandButton} 
+                            onClick={() => {
+                                this.handleOpen();
+                                this.getItemReviews();
+                            }}
+                        >
                             <Typography className={classes.expandButtonText}>View More</Typography>
                         </Button>
                     </CardContent>
@@ -255,9 +274,17 @@ class ItemCard extends React.Component {
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <DialogContent>
-                                    <Card elevation={0} className={classes.commentsSection}>
-                                        COMMENTS
-                                    </Card>
+                                    {this.state.reviews.map((review, index) => {
+                                        return (
+                                            <ItemReview
+                                                key={index}
+                                                userID={review.userID}
+                                                itemID={review.itemID}
+                                                comment={review.comment}
+                                                rating={review.rating}
+                                            />
+                                        )
+                                    })}
                                 </DialogContent>
                             </Grid>
                         </Grid>
