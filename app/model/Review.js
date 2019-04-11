@@ -312,6 +312,33 @@ router.post('/userHasReviewForItem', async (req, res) => {
     }
 });
 
+router.post('/getUserFavoritedItems', async (req, res) => {
+    try {
+        const {userID} = req.body;
+        if (_.isNil(userID)) {
+            throw new Error('userID is missing.');
+        }
+        const query  = `select Item.itemID, Item.itemName, Restaurant.restaurantName, Restaurant.restaurantID, Land.landID, Park.parkID from Review, Restaurant, Park, Land, Item where Review.userID=${sqlstring.escape(userID)} 
+and Review.itemID=Item.itemID and Review.isFavorite=true and Item.restaurantID=Restaurant.restaurantID and Restaurant.landID=Land.landID and Land.parkID=Park.parkID;`;
+        const result = await DB.runQuery(query);
+        res.json(result);
+    } catch (e) {
+        console.log('Error:', e);
+        res.status(500).send(e);
+    }
+});
+
+router.post('/delete', async (req, res) => {
+    try {
+        const {userID, itemID} = req.body;
+        await deleteReview(userID, itemID);
+        res.json({success: true})
+    } catch (e) {
+        console.log('Error:', e);
+        res.status(500).send(e);
+    }
+});
+
 async function userHasReviewForItem(userID, itemID) {
     if (_.isNil(userID) || _.isNil(itemID)) {
         throw new Error('userID or itemID is missing.');
@@ -336,6 +363,15 @@ async function updateReviewForUser(fieldName, newContent, userID, itemID) {
 
     const query  = `update Review set ${fieldName}=${sqlstring.escape(newContent)} where userID = ${sqlstring.escape(userID)} and itemID = ${sqlstring.escape(itemID)};`;
     const result = await DB.runQuery(query);
+}
+
+async function deleteReview(userID, itemID) {
+    if (_.isNil(userID) || _.isNil(itemID)) {
+        throw new Error('Missing userID or itemID.');
+    } else {
+        const query  = `delete from Review where userID=${sqlstring.escape(userID)} and itemID=${sqlstring.escape(itemID)};`;
+        const result = await DB.runQuery(query);
+    }
 }
 
 module.exports = router;
