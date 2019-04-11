@@ -17,6 +17,21 @@ router.post('/getByUserID', async (req, res) => {
     }
 });
 
+router.post('/addRestaurantToTrip', async (req, res) => {
+    try {
+        const {tripID, restaurantID, day, mealName} = req.body;
+        const dayOfMeal                             = moment(day).format('YYYY-MM-DD HH:mm:ss');
+
+        const query = `insert into MealPlan (tripID, restaurantID, day, mealName) 
+values (${sqlstring.escape(tripID)}, ${sqlstring.escape(restaurantID)}, ${sqlstring.escape(dayOfMeal)}, ${sqlstring.escape(mealName)});`;
+        await DB.runQuery(query);
+        res.json({success: true});
+    } catch (e) {
+        console.log(e);
+        res.send(e);
+    }
+});
+
 router.post('/delete', async (req, res) => {
     try {
         const {tripID} = req.body;

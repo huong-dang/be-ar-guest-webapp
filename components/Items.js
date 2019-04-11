@@ -567,6 +567,41 @@ class Items extends React.Component {
                     />
                     <div className={classes.selectorsContainer}>
                         <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="X-coordinate"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.newItem.x}
+                                onChange={this.handleAdd("x")}
+                            />
+                        </div>
+                        <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="Z-coordinate"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.newItem.z}
+                                onChange={this.handleAdd("z")}
+                            />
+                        </div>
+                        <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="Page Number"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.newItem.pageNum}
+                                onChange={this.handleAdd("pageNum")}
+                            />
+                        </div>
+                    </div>
+                    <div className={classes.selectorsContainer}>
+                        <div className={classes.selector}>
                             <InputLabel htmlFor="status">Status</InputLabel>
                             <Select
                                 value={this.state.newItem.itemStatus}
