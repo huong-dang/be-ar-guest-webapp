@@ -89,6 +89,7 @@ const styles = theme => ({
     dialogFavoriteButton:   {
         position: 'absolute',
         right:    15,
+        marginTop: -32,
     },
     addToTripButton:        {
         position: 'absolute',
@@ -98,7 +99,7 @@ const styles = theme => ({
     flagButton:             {
         position: 'absolute',
         // top: 15,
-        right:    75,
+        right:    50,
     },
     dialogDescription:      {
         fontSize:   12.5,
@@ -250,12 +251,12 @@ class ItemCard extends React.Component {
                 >
                     <DialogTitle className={classes.dialogItemTitle}>
                         {itemName}
-                        <IconButton className={classes.dialogFavoriteButton}>
+                        {/* <IconButton className={classes.dialogFavoriteButton}>
                             <FavoriteIconEmpty/>
-                        </IconButton>
-                        <IconButton className={classes.addToTripButton}>
-                            <TripIcon/>
-                        </IconButton>
+                        </IconButton> */}
+                        <div className={classes.dialogFavoriteButton}>
+                        {this.renderFavoriteButton()}
+                        </div>
                         <IconButton className={classes.flagButton}>
                             <FlagIcon/>
                         </IconButton>
@@ -273,7 +274,7 @@ class ItemCard extends React.Component {
                                 </DialogContent>
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <DialogContent>
+                                <DialogContent style={{overflowY: 'auto'}}>
                                     {this.state.reviews.map((review, index) => {
                                         return (
                                             <ItemReview
