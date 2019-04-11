@@ -147,7 +147,6 @@ class ItemCard extends React.Component {
     async getItemReviews() {
         try {
             const result = await axios.post('/review/getAllByItemID', {itemID: this.props.item.itemID});
-            console.log(result.data);
             this.setState({reviews: result.data});
         } catch (e) {
             console.log('Error', e);

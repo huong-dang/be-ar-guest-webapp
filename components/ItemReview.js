@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import axios from 'axios';
-
+import StarRatingComponent from 'react-star-rating-component';
 
 const styles = theme => ({
     comment: {
@@ -21,6 +21,7 @@ class ItemComment extends React.Component {
         super(props);
         this.state = {
             firstName: "",
+            rating: '0',
         }
     }
 
@@ -40,9 +41,18 @@ class ItemComment extends React.Component {
         return (
             <Card elevation={0}>
                 <Grid container direction="column" justify="flex-start">
-                    <Typography variant="overline">
-                        {this.state.firstName}
-                    </Typography>
+                    <Grid container direction="row" justify="space-between" alignItems="flex-start">
+                        <Typography variant="overline">
+                            {this.state.firstName}
+                        </Typography>
+                        <StarRatingComponent 
+                            name="userRating"
+                            starCount={5}
+                            value={rating}
+                            starColor={'#C9BEDE'}
+                            editing={false}
+                        />
+                    </Grid>
                     <Typography className={classes.comment}>
                         {comment}
                     </Typography>
