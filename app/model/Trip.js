@@ -9,13 +9,43 @@ const updateableColumns = ['startDate', 'endDate', 'tripName'];
 
 // Get all trips for a user
 router.post('/getByUserID', async (req, res) => {
-    const {userID} = req.body;
     try {
+        const {userID} = req.body;
+        if (_.isNil(userID)) {
+            throw new Error('Missing userID!');
+        }
+        const getTripsQuery = `select * from TripPlan where userID=${sqlstring.escape(userID)} order by startDate desc;`;
+        let userTrips       = await DB.runQuery(getTripsQuery);
+        const mealsByDay = await getMealPlansFromTrip(userTrips);
+        _.forEach(mealsByDay, (meals) => {
+            if (meals.length > 1) {
+                let userTrip = userTrips.find((trip) => {
+                    return trip.tripID === meals[0].tripID;
+                });
+                userTrip.mealsByDay = meals;
+            }
+        });
 
+        _.forEach(userTrips, (trip) => {
+            if (!trip.hasOwnProperty('mealsByDay')) {
+                trip.mealsByDay = [];
+            }
+        });
+
+        res.json(userTrips);
     } catch (e) {
-
+        console.log(e);
+        res.send(e);
     }
 });
+
+async function getMealPlansFromTrip(trips) {
+    // Go through each user's trips and get the mealsByDay for that trip
+    return Promise.all(_.map(trips, async (trip) => {
+        const mealsByDayQuery = `select MealPlan.*, RestaurantType.restaurantTypeName, Restaurant.restaurantName from MealPlan, RestaurantType, Restaurant where tripID=${sqlstring.escape(trip.tripID)} and MealPlan.restaurantID=Restaurant.restaurantID and RestaurantType.restaurantTypeID=Restaurant.restaurantTypeID order by day;`;
+        return DB.runQuery(mealsByDayQuery);
+    }));
+}
 
 router.post('/addRestaurantToTrip', async (req, res) => {
     try {
