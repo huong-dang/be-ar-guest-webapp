@@ -8,11 +8,16 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ItemCard from './ItemCard';
+import IconButton from '@material-ui/core/IconButton';
+import TripIcon from '@material-ui/icons/DateRangeOutlined';
 import axios from 'axios';
 
 const styles = prop => ({
     restaurantName: {
         fontSize: 'larger'
+    },
+    tripButton: {
+        marginTop: -16,
     },
 });
 
@@ -39,13 +44,13 @@ class RestaurantPanel extends React.Component {
     render() {
         const {classes, user} = this.props;
         const itemsInfo = this.state.items.map((menuItem, index) => {
-                                                   return (
-                                                       <Grid item xs={12} sm={4} key={menuItem.itemID}>
-                                                           <ItemCard item={menuItem}
-                                                                     user={user}/>
-                                                       </Grid>
-                                                   );
-                                               }
+                return (
+                    <Grid item xs={12} sm={4} key={menuItem.itemID}>
+                        <ItemCard item={menuItem}
+                                    user={user}/>
+                    </Grid>
+                );
+            }
         );
 
         return (
@@ -54,21 +59,12 @@ class RestaurantPanel extends React.Component {
                     <Typography variant="h4" className={classes.restaurantName}>
                         {this.props.restaurantName}
                     </Typography>
+                    <IconButton className={classes.tripButton}>
+                            <TripIcon/>
+                    </IconButton>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Grid container spacing={24}>
-                        {/* <Grid item xs={12} sm={4}>
-              <ItemCard />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <ItemCard />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <ItemCard />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <ItemCard />
-            </Grid> */}
                         {itemsInfo}
                     </Grid>
                 </ExpansionPanelDetails>

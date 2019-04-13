@@ -13,11 +13,14 @@ import FavoriteIconFilled from '@material-ui/icons/Favorite';
 import axios from 'axios';
 import isNil from 'lodash/isNil';
 import Router from 'next/router';
-import TripIcon from '@material-ui/icons/DateRangeOutlined';
 import FlagIcon from '@material-ui/icons/OutlinedFlag';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
+import ItemReview from './ItemReview';
+import StarRatingComponent from 'react-star-rating-component';
+import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
 
 const styles = theme => ({
     card:                   {
@@ -40,6 +43,9 @@ const styles = theme => ({
         textAlign:  'center',
         lineHeight: 1.4,
         marginTop:  5,
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
     },
     alterations:            {
         fontSize:   12.5,
@@ -85,9 +91,14 @@ const styles = theme => ({
             paddingTop: 20,
         },
     },
+    starRating: {
+        right: 100,
+        marginTop: -40,
+    },
     dialogFavoriteButton:   {
         position: 'absolute',
         right:    15,
+        marginTop: -32,
     },
     addToTripButton:        {
         position: 'absolute',
@@ -97,7 +108,7 @@ const styles = theme => ({
     flagButton:             {
         position: 'absolute',
         // top: 15,
-        right:    75,
+        right:    50,
     },
     dialogDescription:      {
         fontSize:   12.5,
@@ -110,6 +121,13 @@ const styles = theme => ({
         outlineWidth: 'thin',
         borderRadius: 20,
     },
+    writeReviewButton: {
+        top: 12,
+        height: 30,
+    },
+    reviewTextField: {
+        top: 5,
+    },
 });
 
 class ItemCard extends React.Component {
@@ -120,9 +138,15 @@ class ItemCard extends React.Component {
             item:       props.item,
             isFavorite: false,
             open:       false,
+            reviews: [],
+            canWriteReview: false,
+            showReviewTextField: false,
+            reviewRating: 0,
+            newReview: '',
+            averageReview: 0,
         }
     }
-
+    
     async componentDidMount() {
         try {
             const {user, item} = this.state;
@@ -132,12 +156,31 @@ class ItemCard extends React.Component {
                     itemID: item.itemID,
                     userID: user.userID,
                 });
-
+                
                 const review = result.data;
                 this.setState({isFavorite: review && review.length === 1 && review[0].isFavorite});
-            }
+
+                // For writing reviews in dialog
+                // const [userReview] = result.data;
+                // console.log('result is =>', result);
+                // console.log('userReview', userReview);
+                if(review.length === 0) {
+                    this.setState({ canWriteReview: true });
+                } else {
+                    this.setState({ canWriteReview: false });
+                }
+            } 
         } catch (e) {
             console.log('Error:', e);
+        }
+    }
+
+    async getItemReviews() {
+        try {
+            const result = await axios.post('/review/getAllByItemID', {itemID: this.props.item.itemID});
+            this.setState({reviews: result.data});
+        } catch (e) {
+            console.log('Error', e);
         }
     }
 
@@ -181,6 +224,7 @@ class ItemCard extends React.Component {
         );
     }
 
+    // For Dialog rendering
     handleOpen = () => {
         this.setState({open: true});
     };
@@ -189,9 +233,104 @@ class ItemCard extends React.Component {
         this.setState({open: false});
     };
 
+    calculateAverageRating() {
+        var average = 0;
+        for (var i = 0; i < this.state.reviews.length; i++) {
+            average = average + this.state.reviews[i].rating;
+        }
+        average = average / this.state.reviews.length;
+        this.setState({ averageReview: average });
+        console.log('Average Rating for item => ', this.state.averageReview);
+    }
+
+    setReviewTextField(value) {
+        this.setState({ showReviewTextField: value });
+    }
+    
+    onStarClick(nextValue,prevValue, name) {
+        console.log('onStarClick called');
+        this.setState({ reviewRating: nextValue });
+    }
+
+    handleChange = prop => event => {
+        this.setState({[prop]: event.target.value });
+    };
+
+    handleSubmit = async () => {
+        try {
+            const {user, item, newReview, reviewRating} = this.state;
+            if (reviewRating === 0) {
+                console.log('Must rate item.');
+            } else {
+                const reviewSubmitted = await axios.post('/review/add', {
+                    userID: user.userID,
+                    itemID: item.itemID,
+                    comment: newReview,
+                    rating: reviewRating,
+                });
+                this.setState({ canWriteReview: false });
+                console.log('New Review =>', newReview);
+                console.log('Review Rating =>', reviewRating);
+            }   
+        } catch (e) {
+            console.log('Error: ', e);
+        }
+    }
+
+    renderWriteReviewArea() {
+        const { classes } = this.props;
+        return (
+            <div>
+                <Grid container direction="column" justify="flex-start" alignItems="center">
+                    <Typography variant="overline">
+                        Write a Review
+                    </Typography>
+                    <StarRatingComponent 
+                        name="ratingInput"
+                        starCount={5}
+                        editing={true}
+                        value={this.state.reviewRating}
+                        starColor={'#C9BEDE'}
+                        onStarClick={this.onStarClick.bind(this)}
+                    />
+                    <form>
+                        <FormControl required>
+                            <TextField
+                                id="newReview"
+                                variant="outlined"
+                                required
+                                multiline
+                                className={classes.reviewTextField}
+                                autoFocus={false}
+                                value={this.state.newReview}
+                                onChange={this.handleChange('newReview')}
+                            />
+                        </FormControl>
+                    </form>
+                    <Button 
+                        variant="outlined" 
+                        className={classes.writeReviewButton} 
+                        onClick={this.handleSubmit}
+                    >
+                        <Typography 
+                            variant="overline" 
+                            style={{
+                                textAlign: 'center', 
+                                marginTop: -5,
+                            }}
+                        >
+                            Enter
+                        </Typography>
+                    </Button>  
+                </Grid>
+            </div>
+        );
+    }
+
     render() {
         const {classes}                                 = this.props;
         const {itemName, itemDescription, substitution} = this.props.item;
+        // this.calculateAverageRating().bind(this);
         return (
             <div>
                 <Card className={classes.card}>
@@ -220,7 +359,14 @@ class ItemCard extends React.Component {
                                 {substitution}
                             </Typography>
                         </Grid>
-                        <Button variant="outlined" className={classes.expandButton} onClick={this.handleOpen}>
+                        <Button 
+                            variant="outlined" 
+                            className={classes.expandButton} 
+                            onClick={() => {
+                                this.handleOpen();
+                                this.getItemReviews();
+                            }}
+                        >
                             <Typography className={classes.expandButtonText}>View More</Typography>
                         </Button>
                     </CardContent>
@@ -232,16 +378,24 @@ class ItemCard extends React.Component {
                 >
                     <DialogTitle className={classes.dialogItemTitle}>
                         {itemName}
-                        <IconButton className={classes.dialogFavoriteButton}>
+                        {/* <IconButton className={classes.dialogFavoriteButton}>
                             <FavoriteIconEmpty/>
-                        </IconButton>
-                        <IconButton className={classes.addToTripButton}>
-                            <TripIcon/>
-                        </IconButton>
+                        </IconButton> */}
+                        <div className={classes.dialogFavoriteButton}>
+                        {this.renderFavoriteButton()}
+                        </div>
                         <IconButton className={classes.flagButton}>
                             <FlagIcon/>
                         </IconButton>
                     </DialogTitle>
+                    <StarRatingComponent
+                        name="itemAverageReview"
+                        editing={false}
+                        starCount={5}
+                        value={this.state.averageReview}
+                        starColor={'#C9BEDE'}
+                        className={classes.starRating}
+                    />
                     <DialogContent>
                         <Grid container spacing={24}>
                             <Grid item xs={12} md={6}>
@@ -255,10 +409,19 @@ class ItemCard extends React.Component {
                                 </DialogContent>
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <DialogContent>
-                                    <Card elevation={0} className={classes.commentsSection}>
-                                        COMMENTS
-                                    </Card>
+                                <DialogContent style={{overflowY: 'auto'}}>
+                                    {this.state.reviews.map((review, index) => {
+                                        return (
+                                            <ItemReview
+                                                key={index}
+                                                userID={review.userID}
+                                                itemID={review.itemID}
+                                                comment={review.comment}
+                                                rating={review.rating}
+                                            />
+                                        )
+                                    })}
+                                    {this.state.canWriteReview ? this.renderWriteReviewArea() : <div></div> }
                                 </DialogContent>
                             </Grid>
                         </Grid>
