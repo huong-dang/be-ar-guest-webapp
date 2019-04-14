@@ -11,8 +11,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import RestaurantPanel from '../components/RestaurantPanel';
-
 const mobileImages = [
     {
         label: 'Home Page',
@@ -34,8 +32,14 @@ const mobileImages = [
 
 const styles = theme => ({
   gridLayout: {
-    paddingLeft: '5%',
-    paddingTop: '3%',
+    [theme.breakpoints.between('xs','sm')]: {
+      paddingLeft: '19%',
+      paddingTop: '5%',
+    },
+    [theme.breakpoints.up('sm')]: {
+      paddingLeft: '5%',
+      paddingTop: '3%',
+    },
   },
   headerBackground: {
     backgroundColor: 'rgb(220,220,220)',
@@ -101,27 +105,10 @@ const styles = theme => ({
 class ProductPage extends React.Component {
   constructor(props) {
     super(props);
-  }
-  state = {
-    activeStep: 0,
-  };
-
-  handleNext = () => {
-    this.setState(prevState => ({
-      activeStep: prevState.activeStep + 1,
-    }));
-  };
-
-  handleBack = () => {
-    this.setState(prevState => ({
-      activeStep: prevState.activeStep - 1,
-    }));
   };
 
   render() {
     const { classes } = this.props;
-    const { activeStep } = this.state;
-    const maxSteps = mobileImages.length;
 
     return (
       <div style={{width: '100%', height: 'auto',}}>
@@ -134,7 +121,7 @@ class ProductPage extends React.Component {
         </Grid>
         <div style={{marginLeft: 'auto', marginRight: 'auto',}}>
         <Grid container spacing={0} className={classes.gridLayout}>
-          <Grid item sm={3}>
+          <Grid item sm={3} >
             {/* <Card elevation={0} className={classes.mobileImageCard} style={{ backgroundImage: "url('../static/images/MobileImages/MobileHome.png')" }} /> */}
             <img src="../static/images/MobileImages/MobileHome.png" alt="Mobile Home" className={classes.mobileImage} />
             <Typography variant="overline" className={classes.mobileCaption}>
