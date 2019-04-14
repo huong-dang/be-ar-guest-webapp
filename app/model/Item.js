@@ -87,7 +87,8 @@ router.post("/add", async (req, res) => {
             substitution,
             itemStatus,
             x,
-            z
+            z,
+            pageNum
         } = req.body;
 
         // Non required fields are x, z, itemDescription, and substitution
@@ -106,7 +107,7 @@ router.post("/add", async (req, res) => {
             throw new Error(itemName + " already exists for restaurant.");
         }
 
-        const query = `insert into Item (restaurantID, itemName, itemDescription, secret, vegan, substitution, itemStatus, x, z)
+        const query = `insert into Item (restaurantID, itemName, itemDescription, secret, vegan, substitution, itemStatus, x, z, pageNum)
                        values(${sqlstring.escape(restaurantID)}, 
                               ${sqlstring.escape(itemName)}, 
                               ${sqlstring.escape(itemDescription)}, 
@@ -115,12 +116,13 @@ router.post("/add", async (req, res) => {
                               ${sqlstring.escape(substitution)},
                               ${sqlstring.escape(itemStatus)},
                               ${sqlstring.escape(x)},
-                              ${sqlstring.escape(z)});`;
+                              ${sqlstring.escape(z)},
+                              ${sqlstring.escape(pageNum)});`;
 
         const result = await DB.runQuery(query);
         res.json({ success: true });
     } catch (e) {
-        console.log("Error adding a review", e);
+        console.log("Error adding an item", e);
         res.json({ success: false, error: errorHandler.getErrorMessage(e) });
     }
 });

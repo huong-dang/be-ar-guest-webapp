@@ -191,8 +191,9 @@ class ItemCard extends React.Component {
             // Load the user's favorite icons for this item if the user is logged in
             if (!isNil(user)) {
                 const favorited = await axios.post('/review/favorite', {
-                    itemID: item.itemID,
-                    userID: user.userID,
+                    itemID:   item.itemID,
+                    userID:   user.userID,
+                    favorite: !this.state.isFavorite
                 });
 
                 if (favorited.data.success) {

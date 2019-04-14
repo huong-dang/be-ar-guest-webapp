@@ -281,7 +281,10 @@ class Items extends React.Component {
             "Substitution",
             "Status",
             "Secret",
-            "Vegan"
+            "Vegan",
+            "X-coordinate",
+            "Y-coordinate",
+            "Page Number"
         ];
         const data = this.state.items.map(item => {
             return [
@@ -294,7 +297,10 @@ class Items extends React.Component {
                 item.substitution ? item.substitution : "",
                 item.itemStatus,
                 item.secret ? "Yes" : "No",
-                item.vegan ? "Yes" : "No"
+                item.vegan ? "Yes" : "No",
+                item.x ? item.x : "N/A",
+                item.z ? item.z : "N/A",
+                item.pageNum ? item.pageNum : "N/A",
             ];
         });
         const options = {
@@ -408,6 +414,41 @@ class Items extends React.Component {
                         value={this.state.selectedItem.substitution}
                         onChange={this.handleEdit("substitution")}
                     />
+                    <div className={classes.selectorsContainer}>
+                        <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="X-coordinate"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.selectedItem.x}
+                                onChange={this.handleEdit("x")}
+                            />
+                        </div>
+                        <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="Z-coordinate"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.selectedItem.z}
+                                onChange={this.handleEdit("z")}
+                            />
+                        </div>
+                        <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="Page Number"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.selectedItem.pageNum}
+                                onChange={this.handleEdit("pageNum")}
+                            />
+                        </div>
+                    </div>
                     <div className={classes.selectorsContainer}>
                         <div className={classes.selector}>
                             <InputLabel htmlFor="status">Status</InputLabel>
@@ -565,6 +606,41 @@ class Items extends React.Component {
                         value={this.state.newItem.substitution}
                         onChange={this.handleAdd("substitution")}
                     />
+                    <div className={classes.selectorsContainer}>
+                        <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="X-coordinate"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.newItem.x}
+                                onChange={this.handleAdd("x")}
+                            />
+                        </div>
+                        <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="Z-coordinate"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.newItem.z}
+                                onChange={this.handleAdd("z")}
+                            />
+                        </div>
+                        <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="Page Number"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.newItem.pageNum}
+                                onChange={this.handleAdd("pageNum")}
+                            />
+                        </div>
+                    </div>
                     <div className={classes.selectorsContainer}>
                         <div className={classes.selector}>
                             <InputLabel htmlFor="status">Status</InputLabel>
