@@ -178,7 +178,8 @@ class ItemCard extends React.Component {
     async getItemReviews() {
         try {
             const result = await axios.post('/review/getAllByItemID', {itemID: this.props.item.itemID});
-            this.setState({reviews: result.data});
+            this.setState({ reviews: result.data });
+            this.calculateAverageRating();
         } catch (e) {
             console.log('Error', e);
         }
@@ -268,8 +269,7 @@ class ItemCard extends React.Component {
                     rating: reviewRating,
                 });
                 this.setState({ canWriteReview: false });
-                console.log('New Review =>', newReview);
-                console.log('Review Rating =>', reviewRating);
+                this.getItemReviews();
             }   
         } catch (e) {
             console.log('Error: ', e);
@@ -289,7 +289,8 @@ class ItemCard extends React.Component {
                         starCount={5}
                         editing={true}
                         value={this.state.reviewRating}
-                        starColor={'#C9BEDE'}
+                        starColor={'#9993B2'}
+                        emptyStarColor={'#DFDFDF'}
                         onStarClick={this.onStarClick.bind(this)}
                     />
                     <form>
@@ -387,12 +388,14 @@ class ItemCard extends React.Component {
                             <FlagIcon/>
                         </IconButton>
                     </DialogTitle>
+                    
                     <StarRatingComponent
                         name="itemAverageReview"
                         editing={false}
                         starCount={5}
                         value={this.state.averageReview}
-                        starColor={'#C9BEDE'}
+                        starColor={'#9993B2'}
+                        emptyStarColor={'#DFDFDF'}
                         className={classes.starRating}
                     />
                     <DialogContent>

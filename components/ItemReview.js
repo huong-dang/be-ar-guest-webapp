@@ -49,7 +49,8 @@ class ItemComment extends React.Component {
                             name="userRating"
                             starCount={5}
                             value={rating}
-                            starColor={'#C9BEDE'}
+                            starColor={'#9993B2'}
+                            emptyStarColor={'#DFDFDF'}
                             editing={false}
                         />
                     </Grid>
