@@ -301,6 +301,24 @@ router.post('/favorite', async (req, res) => {
     }
 });
 
+router.post('/flag', async (req, res) => {
+    try {
+        const {userID, itemID, flag} = req.body;
+        const reviewExists               = await userHasReviewForItem(userID, itemID);
+
+        if (reviewExists) {
+            await updateReviewForUser('flag', flag, userID, itemID);
+        } else {
+            await addNewReview(userID, itemID, null, null, null, flag);
+        }
+
+        res.json({success: true})
+    } catch (e) {
+        console.log(e);
+        res.json({success: false, error: errorHandler.getErrorMessage(e)});
+    }
+});
+
 router.post('/userHasReviewForItem', async (req, res) => {
     try {
         const {userID, itemID} = req.body;

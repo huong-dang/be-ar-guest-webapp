@@ -13,7 +13,8 @@ import FavoriteIconFilled from '@material-ui/icons/Favorite';
 import axios from 'axios';
 import isNil from 'lodash/isNil';
 import Router from 'next/router';
-import FlagIcon from '@material-ui/icons/OutlinedFlag';
+import FlagOutlinedIcon from '@material-ui/icons/OutlinedFlag';
+import FlagFilledIcon from '@material-ui/icons/Flag';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -107,7 +108,7 @@ const styles = theme => ({
     },
     flagButton:             {
         position: 'absolute',
-        // top: 15,
+        top: 20,
         right:    50,
     },
     dialogDescription:      {
@@ -144,6 +145,7 @@ class ItemCard extends React.Component {
             reviewRating: 0,
             newReview: '',
             averageReview: 0,
+            flagged: false,
         }
     }
     
@@ -215,6 +217,38 @@ class ItemCard extends React.Component {
             console.log('Error:', e);
         }
     };
+    
+    handleFlag = async () => {
+        try {
+            const {user, item} = this.state;
+            // Load the user's favorite icons for this item if the user is logged in
+            if (!isNil(user)) {
+                const flagged = await axios.post('/review/flag', {
+                    itemID:   item.itemID,
+                    userID:   user.userID,
+                    flag: !this.state.flagged,
+                });
+
+                if (flagged.data.success) {
+                    // Update the favorite button
+                    const newFlagged = await axios.post('/review/get', {
+                        itemID: item.itemID,
+                        userID: user.userID,
+                    });
+
+                    const review = newFlagged.data;
+                    console.log('handleFlag => ', review[0].flag);
+                    this.setState({flagged: review && review[0].flag});
+                } else {
+                    throw Error('Unable to flag item' + flagged.data.error);
+                }
+            } else {
+                Router.push('/signIn');
+            }
+        } catch (e) {
+            console.log('Error:', e);
+        }
+    };
 
     renderFavoriteButton() {
         const {classes} = this.props;
@@ -223,6 +257,15 @@ class ItemCard extends React.Component {
                 {this.state.isFavorite ? <FavoriteIconFilled style={{color: "#C9BEDE"}}/> : <FavoriteIconEmpty/>}
             </IconButton>
         );
+    }
+    
+    renderFlagButton() {
+        const { classes } = this.props;
+        return (
+            <IconButton aria-label="Flag Item" onClick={this.handleFlag} className={classes.margin}>
+                {this.state.flagged ? <FlagFilledIcon style={{ color: '#CC0000' }} /> : <FlagOutlinedIcon />}
+            </IconButton>
+        )
     }
 
     // For Dialog rendering
@@ -383,11 +426,14 @@ class ItemCard extends React.Component {
                             <FavoriteIconEmpty/>
                         </IconButton> */}
                         <div className={classes.dialogFavoriteButton}>
-                        {this.renderFavoriteButton()}
+                            {this.renderFavoriteButton()}
                         </div>
-                        <IconButton className={classes.flagButton}>
-                            <FlagIcon/>
-                        </IconButton>
+                        {/* <IconButton className={classes.flagButton}>
+                            <FlagOutlinedIcon/>
+                        </IconButton> */}
+                        <div className={classes.flagButton}>
+                            {this.renderFlagButton()}
+                        </div>
                     </DialogTitle>
                     
                     <StarRatingComponent
