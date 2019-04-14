@@ -16,8 +16,15 @@ const styles = prop => ({
     restaurantName: {
         fontSize: 'larger'
     },
+    restaurantType: {
+        fontSize: 14,
+        color: 'grey',
+        fontWeight: 400,
+        fontStyle: 'italic',
+        paddingTop: 8,
+    },
     tripButton: {
-        marginTop: -16,
+        marginTop: -6,
     },
 });
 
@@ -27,14 +34,17 @@ class RestaurantPanel extends React.Component {
         this.state = {
             items:        [],
             restaurantID: props.restaurantID,
+            restaurantType: "",
         }
     }
 
     async componentDidMount() {
         try {
             const result = await axios.post('/restaurant/getAllItemsByRestaurantID', {restaurantID: this.state.restaurantID});
+            const type = await axios.post('/restaurantType/get', {restaurantTypeID: this.props.restaurantTypeID});
             this.setState({
-                              items: result.data
+                              items: result.data,
+                              restaurantType: type.data[0].restaurantTypeName,
                           })
         } catch (e) {
             console.log('Error', e);
@@ -56,12 +66,23 @@ class RestaurantPanel extends React.Component {
         return (
             <ExpansionPanel>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
-                    <Typography variant="h4" className={classes.restaurantName}>
-                        {this.props.restaurantName}
-                    </Typography>
-                    <IconButton className={classes.tripButton}>
-                            <TripIcon/>
-                    </IconButton>
+                    <Grid container direction="row" justify="space-between" alignItems="center">
+                        <Grid item>
+                            <Typography variant="h4" className={classes.restaurantName}>
+                                {this.props.restaurantName}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Grid container direction="row" justify="flex-start" alignItems="flex-start">
+                            <Typography className={classes.restaurantType}>
+                                {this.state.restaurantType}
+                            </Typography>
+                            <IconButton className={classes.tripButton}>
+                                    <TripIcon/>
+                            </IconButton>
+                            </Grid>
+                        </Grid>
+                    </Grid>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Grid container spacing={24}>
@@ -78,6 +99,7 @@ RestaurantPanel.propTypes = {
     restaurantName: PropTypes.string.isRequired,
     landID:         PropTypes.number.isRequired,
     restaurantID:   PropTypes.number.isRequired,
+    restaurantTypeID: PropTypes.number.isRequired,
     user:           PropTypes.object
 };
 

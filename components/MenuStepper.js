@@ -136,6 +136,7 @@ class MenuStepper extends React.Component {
         try {
             const result = await axios.post('/land/getRestaurantsByLand', {landID: landID});
             this.setState({tab: "RESTAURANTS", restaurants: result.data});
+            console.log('Restaurants from MENUSTEPPER:', this.state.restaurants);
         } catch (e) {
             console.log('Error', e);
         }
@@ -205,14 +206,17 @@ class MenuStepper extends React.Component {
         const {classes, user} = this.props;
 
         const restaurantsInfo = this.state.restaurants.map((restaurant, index) => {
-                                                               return (
-                                                                   <RestaurantPanel key={index}
-                                                                                    user={user}
-                                                                                    restaurantID={restaurant.restaurantID}
-                                                                                    restaurantName={restaurant.restaurantName}
-                                                                                    landID={restaurant.landID}/>
-                                                               )
-                                                           }
+                return (
+                    <RestaurantPanel 
+                        key={index}
+                        user={user}
+                        restaurantID={restaurant.restaurantID}
+                        restaurantTypeID={restaurant.restaurantTypeID}
+                        restaurantName={restaurant.restaurantName}
+                        landID={restaurant.landID}
+                    />
+                )
+            }
         );
 
         return (
