@@ -190,7 +190,16 @@ class ItemCard extends React.Component {
     async getItemReviews() {
         try {
             const result = await axios.post('/review/getAllByItemID', {itemID: this.props.item.itemID});
-            this.setState({ reviews: result.data });
+            for (var i = 0; i < result.data.length; i++)
+            {
+                if (!isNil(result.data[i].comment) && !isNil(result.data[i].rating))
+                {
+                    var newArray=this.state.reviews.slice();
+                    newArray.push(result.data[i]);
+                    this.setState({ reviews: newArray });
+                }
+            }
+            console.log('Contents of state.reviews[] =>', this.state.reviews);
             this.calculateAverageRating();
         } catch (e) {
             console.log('Error', e);
