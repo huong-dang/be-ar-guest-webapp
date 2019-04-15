@@ -93,13 +93,25 @@ const styles = theme => ({
         },
     },
     starRating: {
-        right: 100,
-        marginTop: -40,
+        right: 120,
+        // marginTop: -40,
+        [theme.breakpoints.between('xs', 'sm')]: {
+            marginTop: -18,
+        },
+        [theme.breakpoints.up('sm')]: {
+            marginTop: -40,
+        },
     },
     dialogFavoriteButton:   {
         position: 'absolute',
         right:    15,
         marginTop: -32,
+        [theme.breakpoints.between('xs', 'sm')]: {
+            marginTop: -10,
+        },
+        [theme.breakpoints.up('sm')]: {
+            marginTop: -32,
+        },
     },
     addToTripButton:        {
         position: 'absolute',
@@ -107,9 +119,7 @@ const styles = theme => ({
         right:    45,
     },
     flagButton:             {
-        position: 'absolute',
-        top: 20,
-        right:    50,
+        // paddingLeft: 0,
     },
     dialogDescription:      {
         fontSize:   12.5,
@@ -262,7 +272,7 @@ class ItemCard extends React.Component {
     renderFlagButton() {
         const { classes } = this.props;
         return (
-            <IconButton aria-label="Flag Item" onClick={this.handleFlag} className={classes.margin}>
+            <IconButton aria-label="Flag Item" onClick={this.handleFlag} className={classes.flagButton}>
                 {this.state.flagged ? <FlagFilledIcon style={{ color: '#CC0000' }} /> : <FlagOutlinedIcon />}
             </IconButton>
         )
@@ -422,17 +432,9 @@ class ItemCard extends React.Component {
                 >
                     <DialogTitle className={classes.dialogItemTitle}>
                         {itemName}
-                        {/* <IconButton className={classes.dialogFavoriteButton}>
-                            <FavoriteIconEmpty/>
-                        </IconButton> */}
                         <div className={classes.dialogFavoriteButton}>
-                            {this.renderFavoriteButton()}
-                        </div>
-                        {/* <IconButton className={classes.flagButton}>
-                            <FlagOutlinedIcon/>
-                        </IconButton> */}
-                        <div className={classes.flagButton}>
                             {this.renderFlagButton()}
+                            {this.renderFavoriteButton()}
                         </div>
                     </DialogTitle>
                     
