@@ -226,7 +226,7 @@ router.post('/getAllByItemID', async (req, res) => {
             throw new Error('Missing itemID.');
         }
         const query  = `select R.*, I.*, P.fName, P.lName, P.imageURL from Review R, Item I, Profile P where I.itemID = ${sqlstring.escape(itemID)} and 
-R.itemID = I.itemID and P.userID = R.userID order by R.rating desc;`;
+R.itemID = I.itemID and P.userID = R.userID order by R.dateOfComment asc;`;
         const result = await DB.runQuery(query);
         res.json(result);
     } catch (e) {
