@@ -172,14 +172,19 @@ class ItemCard extends React.Component {
                 const review = result.data;
                 this.setState({isFavorite: review && review.length === 1 && review[0].isFavorite});
 
+                // Check if user has a review associated with them for a flag
+                console.log('ItemCard: const review => ', review);
+                // console.log('ItemCard: const review[0].comment =>', review[0].comment);
                 // For writing reviews in dialog
                 // const [userReview] = result.data;
                 // console.log('result is =>', result);
                 // console.log('userReview', userReview);
-                if(review.length === 0) {
+                this.getItemReviews();
+                if(review.length === 0 || isNil(review[0].comment)) {
                     this.setState({ canWriteReview: true });
                 } else {
                     this.setState({ canWriteReview: false });
+                    
                 }
             } 
         } catch (e) {
@@ -190,6 +195,7 @@ class ItemCard extends React.Component {
     async getItemReviews() {
         try {
             const result = await axios.post('/review/getAllByItemID', {itemID: this.props.item.itemID});
+            this.setState({ reviews: [] });
             for (var i = 0; i < result.data.length; i++)
             {
                 if (!isNil(result.data[i].comment) && !isNil(result.data[i].rating))
@@ -199,7 +205,6 @@ class ItemCard extends React.Component {
                     this.setState({ reviews: newArray });
                 }
             }
-            console.log('Contents of state.reviews[] =>', this.state.reviews);
             this.calculateAverageRating();
         } catch (e) {
             console.log('Error', e);
@@ -303,7 +308,6 @@ class ItemCard extends React.Component {
         }
         average = average / this.state.reviews.length;
         this.setState({ averageReview: average });
-        console.log('Average Rating for item => ', this.state.averageReview);
     }
 
     setReviewTextField(value) {
@@ -311,7 +315,6 @@ class ItemCard extends React.Component {
     }
     
     onStarClick(nextValue,prevValue, name) {
-        console.log('onStarClick called');
         this.setState({ reviewRating: nextValue });
     }
 
@@ -427,7 +430,7 @@ class ItemCard extends React.Component {
                             className={classes.expandButton} 
                             onClick={() => {
                                 this.handleOpen();
-                                this.getItemReviews();
+                                // this.getItemReviews();
                             }}
                         >
                             <Typography className={classes.expandButtonText}>View More</Typography>
