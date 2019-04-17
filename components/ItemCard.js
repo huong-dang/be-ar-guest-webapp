@@ -88,6 +88,8 @@ const styles = theme => ({
         textAlign:                               'left',
         fontFamily:                              'Avenir',
         textTransform:                           'uppercase',
+        overflowWrap: "break-word",
+        width: 520,
         [theme.breakpoints.between('xs', 'md')]: {
             paddingTop: 20,
         },
@@ -138,6 +140,11 @@ const styles = theme => ({
     },
     reviewTextField: {
         top: 5,
+    },
+    reviewRequired: {
+        [theme.breakpoints.up('sm')]: {
+            paddingLeft: 3,
+        },
     },
 });
 
@@ -350,15 +357,20 @@ class ItemCard extends React.Component {
                     <Typography variant="overline">
                         Write a Review
                     </Typography>
-                    <StarRatingComponent 
-                        name="ratingInput"
-                        starCount={5}
-                        editing={true}
-                        value={this.state.reviewRating}
-                        starColor={'#9993B2'}
-                        emptyStarColor={'#DFDFDF'}
-                        onStarClick={this.onStarClick.bind(this)}
-                    />
+                    <div>
+                        <Grid container direction="row" justify="center" className={classes.reviewRequired}>
+                        <StarRatingComponent 
+                            name="ratingInput"
+                            starCount={5}
+                            editing={true}
+                            value={this.state.reviewRating}
+                            starColor={'#9993B2'}
+                            emptyStarColor={'#DFDFDF'}
+                            onStarClick={this.onStarClick.bind(this)}
+                        />
+                        <p style={{ marginTop: 2, marginBottom: 5, color: 'red',}}>*</p>
+                        </Grid>
+                    </div>
                     <form>
                         <FormControl required>
                             <TextField
