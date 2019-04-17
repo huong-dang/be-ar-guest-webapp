@@ -65,14 +65,25 @@ values (${sqlstring.escape(tripID)}, ${sqlstring.escape(restaurantID)}, ${sqlstr
 router.post('/delete', async (req, res) => {
     try {
         const {tripID} = req.body;
-        const query    = `delete from TripPlan where tripID=${sqlstring.escape(tripID)};`;
-        await DB.runQuery(query);
+        await deleteTripPlan(tripID);
         res.json({success: true});
     } catch (e) {
         console.log(e);
-        res.send(e);
+        res.json({success: false, error: e});
     }
 });
+
+async function deleteTripPlan(tripID) {
+    if (_.isNil(tripID)) {
+        throw new Error('Missing tripID.');
+    }
+
+    // Delete all meal plans with the tripID first and then delete the entire trip
+    const deleteMealPlans = `delete from MealPlan where tripID=${sqlstring.escape(tripID)};`;
+    await DB.runQuery(deleteMealPlans);
+    const deleteTripPlan = `delete from TripPlan where tripID=${sqlstring.escape(tripID)};`;
+    await DB.runQuery(deleteTripPlan);
+}
 
 router.post('/add', async (req, res) => {
     try {
