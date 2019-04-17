@@ -14,6 +14,7 @@ const Restaurant     = require('./app/model/Restaurant');
 const Item           = require('./app/model/Item');
 const Review         = require('./app/model/Review');
 const RestaurantType = require('./app/model/RestaurantType');
+const AR             = require('./app/model/AR');
 const Trip           = require('./app/model/Trip');
 
 app.prepare()
@@ -29,6 +30,7 @@ app.prepare()
            server.use('/item', Item);
            server.use('/review', Review);
            server.use('/restaurantType', RestaurantType);
+           server.use('/ar', AR);
            server.use('/trip', Trip);
            server.get('*', (req, res) => {
                return handle(req, res);
