@@ -89,9 +89,12 @@ const styles = theme => ({
         fontFamily:                              'Avenir',
         textTransform:                           'uppercase',
         overflowWrap: "break-word",
-        width: 520,
-        [theme.breakpoints.between('xs', 'md')]: {
+        [theme.breakpoints.between('xs', 'sm')]: {
             paddingTop: 20,
+            width: 315,
+        },
+        [theme.breakpoints.up('md')]: {
+            width: 520,
         },
     },
     starRating: {
@@ -169,6 +172,7 @@ class ItemCard extends React.Component {
     async componentDidMount() {
         try {
             const {user, item} = this.state;
+            this.getItemReviews();
             // Load the user's favorite icons for this item if the user is logged in
             if (!isNil(user)) {
                 const result = await axios.post('/review/get', {
@@ -186,7 +190,7 @@ class ItemCard extends React.Component {
                 // const [userReview] = result.data;
                 // console.log('result is =>', result);
                 // console.log('userReview', userReview);
-                this.getItemReviews();
+                // this.getItemReviews();
                 if(review.length === 0 || isNil(review[0].comment)) {
                     this.setState({ canWriteReview: true });
                 } else {
