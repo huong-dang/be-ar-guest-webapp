@@ -91,7 +91,7 @@ const styles = theme => ({
         overflowWrap: "break-word",
         [theme.breakpoints.between('xs', 'sm')]: {
             paddingTop: 20,
-            width: 315,
+            width: 300,
         },
         [theme.breakpoints.up('md')]: {
             width: 520,
