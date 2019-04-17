@@ -89,6 +89,33 @@ router.post('/add', async (req, res) => {
     }
 });
 
+router.post('/update', async (req, res) => {
+    try {
+        const {fieldName, newContent, tripID} = req.body;
+        await updateTripPlan(fieldName, newContent, tripID);
+        res.json({success: true});
+    } catch (e) {
+        console.log(e);
+        res.json({success: false, error: e})
+    }
+});
+
+async function updateTripPlan(fieldName, newContent, tripID) {
+    if (_.isNil(fieldName) || _.isNil(newContent) || _.isNil(tripID)) {
+        throw new Error('Missing fieldName, or tripID.');
+    } else if (updateableColumns.indexOf(fieldName) < 0) {
+        throw new Error(fieldName + ' is not a valid field to update for a review.');
+    } else if ((fieldName === 'startDate' || fieldName === 'endDate') && !moment(newContent).isValid()) {
+        throw new Error('The date that you want to update with is not a valid date.');
+    }
+
+    if (fieldName === 'startDate' || fieldName === 'endDate') {
+        newContent = moment(newContent).format('YYYY-MM-DD HH:mm:ss');
+    }
+    const query = `update TripPlan set ${fieldName}=${sqlstring.escape(newContent)} where tripID = ${sqlstring.escape(tripID)};`;
+    await DB.runQuery(query);
+}
+
 async function tripExists(userID, startDate, endDate, tripName) {
     if (_.isNil(userID) || _.isNil(startDate) || _.isNil(endDate) || _.isNil(tripName)) {
         throw new Error('Missing startDate, endDate, userID, or tripName.');
