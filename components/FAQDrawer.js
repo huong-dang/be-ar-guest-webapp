@@ -36,8 +36,7 @@ function FAQDrawer(props) {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Typography className={classes.answerText}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                        sit amet blandit leo lobortis eget.
+                        Disney World, Orlando, FL
                     </Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -50,8 +49,7 @@ function FAQDrawer(props) {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Typography className={classes.answerText}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                        sit amet blandit leo lobortis eget.
+                        Our mobile application is not ready for the public yet! Our mobile development team is hard at work to make this product ready for our users.
                     </Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -64,8 +62,7 @@ function FAQDrawer(props) {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Typography className={classes.answerText}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                        sit amet blandit leo lobortis eget.
+                        Only logged in users can submit reviews, ratings, and/or flag our items. An account with us is free! Once you're logged in, you're free to comment on items and save them to your account.
                     </Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -92,7 +89,7 @@ function FAQDrawer(props) {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Typography className={classes.answerText}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                        The menu information is also available on this website. Please look under our "MENUS" option.
                     </Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
