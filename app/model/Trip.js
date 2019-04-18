@@ -1,9 +1,10 @@
-var express   = require('express');
-var router    = express.Router();
-var DB        = require('../db');
-var _         = require('lodash');
-var sqlstring = require('sqlstring');
-var moment    = require('moment');
+var express      = require('express');
+var router       = express.Router();
+var DB           = require('../db');
+var _            = require('lodash');
+var sqlstring    = require('sqlstring');
+var moment       = require('moment');
+var errorHandler = require('../../misc/errors-handler.js');
 
 const updateableColumns = ['startDate', 'endDate', 'tripName'];
 
@@ -16,7 +17,7 @@ router.post('/getByUserID', async (req, res) => {
         }
         const getTripsQuery = `select * from TripPlan where userID=${sqlstring.escape(userID)} order by startDate desc;`;
         let userTrips       = await DB.runQuery(getTripsQuery);
-        const mealsByDay = await getMealPlansFromTrip(userTrips);
+        const mealsByDay    = await getMealPlansFromTrip(userTrips);
         _.forEach(mealsByDay, (meals) => {
             if (meals.length > 0) {
                 let userTrip = userTrips.find((trip) => {
@@ -35,7 +36,7 @@ router.post('/getByUserID', async (req, res) => {
         res.json(userTrips);
     } catch (e) {
         console.log(e);
-        res.send(e);
+        res.json({error: errorHandler.getErrorMessage(e)});
     }
 });
 
@@ -65,14 +66,25 @@ values (${sqlstring.escape(tripID)}, ${sqlstring.escape(restaurantID)}, ${sqlstr
 router.post('/delete', async (req, res) => {
     try {
         const {tripID} = req.body;
-        const query    = `delete from TripPlan where tripID=${sqlstring.escape(tripID)};`;
-        await DB.runQuery(query);
+        await deleteTripPlan(tripID);
         res.json({success: true});
     } catch (e) {
         console.log(e);
-        res.send(e);
+        res.json({success: false, error: e});
     }
 });
+
+async function deleteTripPlan(tripID) {
+    if (_.isNil(tripID)) {
+        throw new Error('Missing tripID.');
+    }
+
+    // Delete all meal plans with the tripID first and then delete the entire trip
+    const deleteMealPlans = `delete from MealPlan where tripID=${sqlstring.escape(tripID)};`;
+    await DB.runQuery(deleteMealPlans);
+    const deleteTripPlan = `delete from TripPlan where tripID=${sqlstring.escape(tripID)};`;
+    await DB.runQuery(deleteTripPlan);
+}
 
 router.post('/add', async (req, res) => {
     try {
@@ -85,9 +97,36 @@ router.post('/add', async (req, res) => {
         }
     } catch (e) {
         console.log(e);
-        res.send(e);
+        res.json({success: false, error: errorHandler.getErrorMessage(e)})
     }
 });
+
+router.post('/update', async (req, res) => {
+    try {
+        const {fieldName, newContent, tripID} = req.body;
+        await updateTripPlan(fieldName, newContent, tripID);
+        res.json({success: true});
+    } catch (e) {
+        console.log(e);
+        res.json({success: false, error: e})
+    }
+});
+
+async function updateTripPlan(fieldName, newContent, tripID) {
+    if (_.isNil(fieldName) || _.isNil(newContent) || _.isNil(tripID)) {
+        throw new Error('Missing fieldName, or tripID.');
+    } else if (updateableColumns.indexOf(fieldName) < 0) {
+        throw new Error(fieldName + ' is not a valid field to update for a review.');
+    } else if ((fieldName === 'startDate' || fieldName === 'endDate') && !moment(newContent).isValid()) {
+        throw new Error('The date that you want to update with is not a valid date.');
+    }
+
+    if (fieldName === 'startDate' || fieldName === 'endDate') {
+        newContent = moment(newContent).format('YYYY-MM-DD HH:mm:ss');
+    }
+    const query = `update TripPlan set ${fieldName}=${sqlstring.escape(newContent)} where tripID = ${sqlstring.escape(tripID)};`;
+    await DB.runQuery(query);
+}
 
 async function tripExists(userID, startDate, endDate, tripName) {
     if (_.isNil(userID) || _.isNil(startDate) || _.isNil(endDate) || _.isNil(tripName)) {

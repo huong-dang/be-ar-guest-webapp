@@ -57,7 +57,7 @@ router.post('/getRestaurantsByLand', async (req, res) => {
         res.status(401).send('Bad request');
     } else {
         try {
-            const query  = `select R.*, T.* from Restaurant as R, RestaurantType as T where R.landID = ${escape(landID)} and R.restaurantTypeID = T.restaurantTypeID;`;
+            const query  = `select R.*, T.* from Restaurant as R, RestaurantType as T where R.landID = ${escape(landID)} and R.restaurantTypeID = T.restaurantTypeID order by R.restaurantName asc;`;
             const result = await DB.runQuery(query);
             res.json(result);
         } catch (e) {
@@ -73,7 +73,7 @@ router.post('/getLandsByPark', async (req, res) => {
         res.status(401).send('Bad request');
     } else {
         try {
-            const query  = `select * from Land as L where L.parkID = ${escape(parkID)};`;
+            const query  = `select * from Land as L where L.parkID = ${escape(parkID)} order by L.landName asc;`;
             const result = await DB.runQuery(query);
             res.json(result);
         } catch (e) {

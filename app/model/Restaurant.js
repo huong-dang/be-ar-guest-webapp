@@ -47,7 +47,7 @@ router.post("/getAllItemsByRestaurantID", async (req, res) => {
         try {
             const query  = `select * from Item as I where I.restaurantID = ${sqlstring.escape(
                 restaurantID
-            )};`;
+            )} order by I.itemName asc;`;
             const result = await DB.runQuery(query);
             res.json(result);
         } catch (e) {
