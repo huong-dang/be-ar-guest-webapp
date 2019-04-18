@@ -16,6 +16,7 @@ var ITEMS_UPDATABALE_FIELDS = require("../../misc/FieldNames")
 //     }
 // });
 
+// Returns all items. Use this in the admin portal.
 router.post("/getAll", async (req, res) => {
     try {
         const query = `select I.*, R.restaurantName, P.parkName, L.landName  from Item I, Restaurant R, Park P, Land L where I.restaurantID = R.restaurantID and R.landID = L.landID and L.parkID = P.parkID order by I.itemName asc;`;
