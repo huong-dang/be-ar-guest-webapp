@@ -16,5 +16,18 @@ router.post('/insert', async(req, res) => {
     }
 });
 
+/**
+ * Returning all arFile from AR table (should only be one)
+ */
+router.get("/getImgdb", async (req, res) => {
+    try {
+        const query =  `select arFile from AR;`
+        const result = await DB.runQuery(query);
+        res.json(result);
+    } catch (e) {
+        console.log("Error getting arFile", e);
+        res.status(500).send("Check server logs for more info");
+    }
+});
 
 module.exports = router;

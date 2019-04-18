@@ -19,8 +19,8 @@ router.post('/getByUserID', async (req, res) => {
         let userTrips       = await DB.runQuery(getTripsQuery);
         const mealsByDay    = await getMealPlansFromTrip(userTrips);
         _.forEach(mealsByDay, (meals) => {
-            if (meals.length > 1) {
-                let userTrip        = userTrips.find((trip) => {
+            if (meals.length > 0) {
+                let userTrip = userTrips.find((trip) => {
                     return trip.tripID === meals[0].tripID;
                 });
                 userTrip.mealsByDay = meals;
