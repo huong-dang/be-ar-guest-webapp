@@ -70,6 +70,44 @@ const styles = theme => ({
 });
 
 class MyTrips extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            trips: this.props.trips
+        }
+    }
+
+    deleteRestaurant = (meal) => async event => {
+        try {
+            const result       = await axios.post('/mealPlan/deleteRestaurantFromTrip', meal);
+            // Remove the item from the view
+
+            let indexOfTrip, indexOfMeal;
+            const updatedTrip = this.state.trips.find((trip, index) => {
+                if (trip.tripID === meal.tripID) {
+                    indexOfTrip = index;
+                }
+                return trip.tripID === meal.tripID;
+            });
+
+            const updatedMeal = updatedTrip.mealsByDay.filter((m, index) => {
+                if (m.mealName === meal.mealName && m.day === meal.day && m.restaurantID === meal.restaurantID) {
+                    indexOfMeal = index;
+                }
+
+                return m.mealName !== meal.mealName || m.day !== meal.day || m.restaurantID !== meal.restaurantID;
+            });
+
+            let updatedTrips          = this.state.trips;
+            updatedTrips[indexOfTrip] = updatedTrip;
+            updatedTrip.mealsByDay    = updatedMeal;
+
+            this.setState({trips: updatedTrips});
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
     renderMealPlans(mealsByDay) {
         const {classes} = this.props;
         if (mealsByDay.length === 0) {
@@ -108,7 +146,14 @@ class MyTrips extends React.Component {
                                             </Typography>
                                             <Grid container justify="flex-end">
                                                 <Tooltip title="Remove from trip">
-                                                    <IconButton>
+                                                    <IconButton onClick={this.deleteRestaurant(
+                                                        {
+                                                            tripID:       m.tripID,
+                                                            mealName:     m.mealName,
+                                                            day:          m.day,
+                                                            restaurantID: m.restaurantID
+                                                        }
+                                                    )}>
                                                         <DeleteIcon/>
                                                     </IconButton>
                                                 </Tooltip>
@@ -146,7 +191,7 @@ class MyTrips extends React.Component {
             <div onClick={stopPropagation}>
                 {children}
             </div>;
-        const trips = this.props.trips.map((trip) => {
+        const trips = this.state.trips.map((trip) => {
             return (
                 <Grid item key={trip.tripID} xs={12} md={6}>
                     <ExpansionPanel>
