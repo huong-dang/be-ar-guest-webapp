@@ -1,9 +1,10 @@
-var express   = require('express');
-var router    = express.Router();
-var DB        = require('../db');
-var _         = require('lodash');
-var sqlstring = require('sqlstring');
-var moment    = require('moment');
+var express      = require('express');
+var router       = express.Router();
+var DB           = require('../db');
+var _            = require('lodash');
+var sqlstring    = require('sqlstring');
+var moment       = require('moment');
+var errorHandler = require('../../misc/errors-handler.js');
 
 const updateableColumns = ['startDate', 'endDate', 'tripName'];
 
@@ -16,10 +17,10 @@ router.post('/getByUserID', async (req, res) => {
         }
         const getTripsQuery = `select * from TripPlan where userID=${sqlstring.escape(userID)} order by startDate desc;`;
         let userTrips       = await DB.runQuery(getTripsQuery);
-        const mealsByDay = await getMealPlansFromTrip(userTrips);
+        const mealsByDay    = await getMealPlansFromTrip(userTrips);
         _.forEach(mealsByDay, (meals) => {
             if (meals.length > 1) {
-                let userTrip = userTrips.find((trip) => {
+                let userTrip        = userTrips.find((trip) => {
                     return trip.tripID === meals[0].tripID;
                 });
                 userTrip.mealsByDay = meals;
@@ -35,7 +36,7 @@ router.post('/getByUserID', async (req, res) => {
         res.json(userTrips);
     } catch (e) {
         console.log(e);
-        res.send(e);
+        res.json({error: errorHandler.getErrorMessage(e)});
     }
 });
 
@@ -96,7 +97,7 @@ router.post('/add', async (req, res) => {
         }
     } catch (e) {
         console.log(e);
-        res.send(e);
+        res.json({success: false, error: errorHandler.getErrorMessage(e)})
     }
 });
 
