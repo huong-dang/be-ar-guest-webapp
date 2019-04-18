@@ -67,7 +67,8 @@ router.post("/getAllItemsByRestaurantName", async (req, res) => {
                             WHERE replace(R.restaurantName, '''', '') = ${sqlstring.escape(
                 restaurantName
             )} 
-                            AND R.restaurantID = I.restaurantID`;
+                            AND R.restaurantID = I.restaurantID
+                            AND I.itemStatus = 'AVAILABLE';`;
             const result = await DB.runQuery(query);
             res.json(result);
         } catch (e) {
