@@ -100,6 +100,37 @@ const styles = theme => ({
         width: '89%',
     },
   },
+  keyFeaturesLayout: {
+    paddingTop: 20,
+    paddingBottom: 20,
+    [theme.breakpoints.between('xs','sm')]: {
+      paddingLeft: '16%',
+    },
+    [theme.breakpoints.up('sm')]: {
+      paddingLeft: '17%',
+  },
+  },
+  keyFeatureCard: {
+    width: 250,
+    height: 250,
+    borderRadius: 20,
+  },
+  keyFeatureTitle: {
+    fontFamily: 'Avenir',
+    fontSize: 20,
+    textAlign: 'center',
+    marginTop: 8,
+    fontWeight: 500,
+  },
+  keyFeatureText: {
+    fontFamily: "Avenir",
+    overflowWrap: "break-word",
+    fontSize: 14,
+    textAlign: 'center',
+    lineHeight: 1.5,
+    marginLeft: '6%',
+    marginRight: '6%',
+  },
 });
 
 class ProductPage extends React.Component {
@@ -154,13 +185,61 @@ class ProductPage extends React.Component {
         <Grid container direction="row" justify="flex-end" alignItems="flex-start">
           <Card elevation={0} className={classes.middleBackground}>
             <Typography className={classes.productHeader}>
+                Key Features
+            </Typography>
+          </Card>
+        </Grid>
+        <Grid container spacing={40} className={classes.keyFeaturesLayout}>
+          <Grid item>
+            <Card className={classes.keyFeatureCard}>
+              <Grid container direction="column" justify="center" alignItems="center">
+                <Typography className={classes.keyFeatureTitle}>
+                  Menu Scanner
+                </Typography>
+                <Typography className={classes.keyFeatureText}>
+                  Have a seamless dining experience by scanning a physical menu with your phone's camera and view real-time augmented reality overlays that will indicate which dishes are vegan and which dishes have substitutions that will make them vegan.
+                </Typography>
+              </Grid>
+            </Card>
+          </Grid>
+
+          <Grid item>
+            <Card className={classes.keyFeatureCard}>
+              <Grid container direction="column" justify="center" alignItems="center">
+                <Typography className={classes.keyFeatureTitle}>
+                  Review Items
+                </Typography>
+                <Typography className={classes.keyFeatureText}>
+                  View Disney World's restaurants and their vegan items online. <br/> Create a free account and rate and review items and view other users' comments. Favorite items to save and see for later and submit feedback to administrators.
+                </Typography>
+              </Grid>
+            </Card>
+          </Grid>
+
+          <Grid item>
+            <Card className={classes.keyFeatureCard}>
+              <Grid container direction="column" justify="center" alignItems="center">
+                <Typography className={classes.keyFeatureTitle}>
+                  Trip Planner
+                </Typography>
+                <Typography className={classes.keyFeatureText}>
+                  Have a meal planner for your stay at Disney World. Users who have an account can plan trips by assigning different restaurants to different days and meals. 
+                </Typography>
+              </Grid>
+            </Card>
+          </Grid>
+        </Grid>
+
+        {/* <Grid container direction="row" justify="flex-start" alignItems="flex-start">
+          <Card elevation={0} className={classes.headerBackground}>
+            <Typography className={classes.productHeader}>
               How It Works
             </Typography>
           </Card>
         </Grid>
         <Typography className={classes.text}>
         Vitae et leo duis ut diam quam nulla porttitor. Viverra justo nec ultrices dui sapien eget mi proin. Sed risus pretium quam vulputate dignissim suspendisse in est ante. Arcu bibendum at varius vel pharetra vel. Mattis nunc sed blandit libero volutpat. Volutpat diam ut venenatis tellus in metus vulputate. Est pellentesque elit ullamcorper dignissim cras tincidunt lobortis feugiat vivamus. Turpis in eu mi bibendum neque egestas. Duis convallis convallis tellus id interdum velit laoreet id donec. Lectus urna duis convallis convallis. Vel fringilla est ullamcorper eget nulla facilisi. Nec tincidunt praesent semper feugiat. Nunc lobortis mattis aliquam faucibus purus in massa tempor nec. Et netus et malesuada fames ac turpis egestas. Ut tellus elementum sagittis vitae et leo duis ut.
-        </Typography>
+        </Typography> */}
       </div>
     );
   }
