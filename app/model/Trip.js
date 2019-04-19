@@ -40,6 +40,21 @@ router.post('/getByUserID', async (req, res) => {
     }
 });
 
+router.post('/getDays', async (req, res) => {
+    try {
+        const {tripID} = tripID;
+        if (_.isNil(tripID)) {
+            throw new Error('Missing tripID.');
+        }
+        const query  = `select startDate, endDate from TripPlan where tripID=${tripID};`;
+        const result = await DB.runQuery(query);
+        res.json(result);
+    } catch (e) {
+        console.log(e);
+        res.json({error: errorHandler.getErrorMessage(e)});
+    }
+});
+
 async function getMealPlansFromTrip(trips) {
     // Go through each user's trips and get the mealsByDay for that trip
     return Promise.all(_.map(trips, async (trip) => {
@@ -59,7 +74,7 @@ values (${sqlstring.escape(tripID)}, ${sqlstring.escape(restaurantID)}, ${sqlstr
         res.json({success: true});
     } catch (e) {
         console.log(e);
-        res.send(e);
+        res.json({success: false, error: errorHandler.getErrorMessage(e)});
     }
 });
 
