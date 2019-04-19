@@ -160,7 +160,7 @@ async function tripExists(userID, startDate, endDate, tripName) {
 }
 
 async function addTrip(userID, startDate, endDate, tripName) {
-    if (_.isNil(startDate) || _.isNil(endDate) || _.isNil(userID) || _.isNil(tripName)) {
+    if (_.isNil(startDate) || _.isNil(endDate) || _.isNil(userID) || _.isNil(tripName) || tripName.length < 1) {
         throw new Error('Missing startDate, endDate, userID, or tripName.');
     } else {
         if (startAfterEnd(startDate, endDate)) {
