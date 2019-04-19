@@ -135,11 +135,11 @@ class Dashboard extends React.Component {
             case "Restaurant":
                 return <RestaurantManagement/>;
                 break;
-            case "User":
-                return <div>User!</div>;
-                break;
+            // case "User":
+            //     return <div>User!</div>;
+            //     break;
             default:
-                return <div>Something</div>;
+                return <MenuItemManagement/>;
         }
     };
 
@@ -253,15 +253,15 @@ class Dashboard extends React.Component {
                             </ListItemIcon>
                             <ListItemText primary="Restaurant"/>
                         </ListItem>
-                        <ListItem
-                            button
-                            onClick={this.handleListItemSelection("User")}
-                        >
-                            <ListItemIcon>
-                                <Group/>
-                            </ListItemIcon>
-                            <ListItemText primary="User Accounts"/>
-                        </ListItem>
+                        {/*<ListItem*/}
+                            {/*button*/}
+                            {/*onClick={this.handleListItemSelection("User")}*/}
+                        {/*>*/}
+                            {/*<ListItemIcon>*/}
+                                {/*<Group/>*/}
+                            {/*</ListItemIcon>*/}
+                            {/*<ListItemText primary="User Accounts"/>*/}
+                        {/*</ListItem>*/}
                     </List>
                     <Divider/>
                     <List>
