@@ -18,7 +18,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import classNames from 'classnames';
 import isNil from 'lodash/isNil';
 import Loading from '../components/Loading';
-import axios from "axios/index";
+import Link from 'next/link';
 
 const styles = theme => ({
     main:   {
@@ -66,7 +66,7 @@ class SignIn extends React.Component {
 
     authorizedUser = async () => {
         try {
-            const user  = await getCurrentUser();
+            const user = await getCurrentUser();
             return !isNil(localStorage.uid) && user && user.uid === localStorage.uid;
         } catch (e) {
             throw e;
@@ -169,6 +169,14 @@ class SignIn extends React.Component {
                                     }}
                                 />
                             </FormControl>
+                            <div style={{marginTop: '8px'}}>
+                                <Link href='/signUp'>
+                                    <a>
+                                        <Typography style={{color: 'blue'}}>Don't have an account? Sign up
+                                            here</Typography>
+                                    </a>
+                                </Link>
+                            </div>
                             <Button
                                 fullWidth
                                 variant="contained"
