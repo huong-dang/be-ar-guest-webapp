@@ -11,6 +11,8 @@ import StarRatingComponent from 'react-star-rating-component';
 import {getCurrentUser, resetPassword} from '../services/accounts';
 import isNil from "lodash/isNil";
 
+// THIS COMMENT IS GOING TO FIX THINGS 
+
 const styles = theme => ({
     comment: {
         fontSize:   12.5,
