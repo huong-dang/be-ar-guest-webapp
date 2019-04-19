@@ -176,7 +176,7 @@ class RestaurantPanel extends React.Component {
 
     handleAddRestaurant = async () => {
         try {
-            this.setState({saving: true});
+            this.setState({saving: true, errorMessage: '', successMessage: ''});
 
             const result = await
                 axios.post('/trip/addRestaurantToTrip', {
