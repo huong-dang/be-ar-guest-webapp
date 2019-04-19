@@ -11,22 +11,22 @@ import StarRatingComponent from 'react-star-rating-component';
 import {getCurrentUser, resetPassword} from '../services/accounts';
 import isNil from "lodash/isNil";
 
-// THIS COMMENT IS GOING TO FIX THINGS 
+// THIS COMMENT IS GOING TO FIX THINGS
 
 const styles = theme => ({
-    comment: {
+    comment:    {
         fontSize:   12.5,
         fontFamily: 'Avenir',
         textAlign:  'center',
         lineHeight: 1.4,
     },
     deleteIcon: {
-        width: '0.8em',
-        height: '0.9em',
-        paddingTop: 4,
+        width:         '0.8em',
+        height:        '0.9em',
+        paddingTop:    4,
         paddingBottom: 1,
-        paddingLeft: 0, 
-        paddingRight: 0,
+        paddingLeft:   0,
+        paddingRight:  0,
     },
 });
 
@@ -34,49 +34,47 @@ class ItemComment extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            firstName: "",
-            rating: '0',
-            itemID: this.props.itemID,
-            userID: this.props.userID,
+            firstName:   "",
+            rating:      '0',
+            itemID:      this.props.itemID,
+            userID:      this.props.userID,
             currentUser: '',
-            canDelete: false,
+            canDelete:   false,
         }
     }
 
     async componentDidMount() {
         try {
-            const result = await axios.post('/profile/getProfileById', {uid: this.props.userID});
+            const result    = await axios.post('/profile/getProfileById', {uid: this.props.userID});
             const [profile] = result.data;
-            this.setState({ firstName: profile.fName })
+            this.setState({firstName: profile.fName})
             // Determine if current user is logged in
             const currentUser = await getCurrentUser();
-            console.log('currentUser =>', currentUser);
             if (!isNil(localStorage.uid) && currentUser && currentUser.uid === localStorage.uid && currentUser.uid === this.props.userID) {
-                this.setState({ canDelete: true });
+                this.setState({canDelete: true});
             }
-            console.log('state of canDelete =>', this.state.canDelete);
         } catch (e) {
             console.log('Error ', e);
         }
     }
 
     renderDeleteButton() {
-        const { classes } = this.props;
+        const {classes} = this.props;
         return (
             <DeleteIcon className={classes.deleteIcon}/>
         );
     }
 
     render() {
-        const { classes, itemID, comment, rating, onDelete} = this.props;
+        const {classes, itemID, comment, rating, onDelete} = this.props;
         return (
-            <Card elevation={0} style={{ paddingBottom: '9%', }}>
+            <Card elevation={0} style={{paddingBottom: '9%',}}>
                 <Grid container direction="column" justify="flex-start">
                     <Grid container direction="row" justify="space-between" alignItems="flex-start">
                         <Typography variant="overline">
                             {this.state.firstName}
                         </Typography>
-                        <StarRatingComponent 
+                        <StarRatingComponent
                             name="userRating"
                             starCount={5}
                             value={rating}
@@ -84,11 +82,11 @@ class ItemComment extends React.Component {
                             emptyStarColor={'#DFDFDF'}
                             editing={false}
                         />
-                        <IconButton 
-                            style={{ padding: 0, }} 
+                        <IconButton
+                            style={{padding: 0,}}
                             onClick={onDelete}
                         >
-                            {this.state.canDelete ? this.renderDeleteButton() : <div></div> }
+                            {this.state.canDelete ? this.renderDeleteButton() : <div></div>}
                         </IconButton>
                     </Grid>
                     <Typography className={classes.comment}>
@@ -102,8 +100,8 @@ class ItemComment extends React.Component {
 
 ItemComment.propTypes = {
     classes: PropTypes.object.isRequired,
-    itemID: PropTypes.number.isRequired,
-    userID: PropTypes.string.isRequired,
+    itemID:  PropTypes.number.isRequired,
+    userID:  PropTypes.string.isRequired,
 }
 
 export default withStyles(styles)(ItemComment);

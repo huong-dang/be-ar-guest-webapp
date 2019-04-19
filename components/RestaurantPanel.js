@@ -93,14 +93,10 @@ class RestaurantPanel extends React.Component {
         return trips.map((trip) => {
             const {startDate, endDate} = trip;
             const daysBetween          = moment(endDate).diff(moment(startDate), 'days');
-            console.log(daysBetween);
             let options = [];
             for (let i = 0; i <= daysBetween; i++) {
                 options.push(moment(startDate).add(i, 'day').format('YYYY-MM-DD'));
             }
-
-            console.log('options', options);
-
             return options;
         });
     }
@@ -124,7 +120,7 @@ class RestaurantPanel extends React.Component {
         try {
             const result     = await axios.post('/restaurant/getAllItemsByRestaurantID', {restaurantID: this.state.restaurantID});
             const type       = await axios.post('/restaurantType/get', {restaurantTypeID: this.props.restaurantTypeID});
-            const myTrips    = isNil(this.state.user.userID) ? null : await axios.post('/trip/getByUserID', {userID: this.state.user.userID});
+            const myTrips    = isNil(this.state.user) ? null : await axios.post('/trip/getByUserID', {userID: this.state.user.userID});
             const dayOptions = isNil(myTrips) ? [] : this.getDayOptions(myTrips.data);
 
             this.setState({

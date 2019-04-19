@@ -171,9 +171,8 @@ class SignIn extends React.Component {
                             </FormControl>
                             <div style={{marginTop: '8px'}}>
                                 <Link href='/signUp'>
-                                    <a>
-                                        <Typography style={{color: 'blue'}}>Don't have an account? Sign up
-                                            here</Typography>
+                                    <a style={{textDecoration: 'none'}}>
+                                        <Typography style={{color: 'blue'}}>Don't have an account? Sign up here!</Typography>
                                     </a>
                                 </Link>
                             </div>
