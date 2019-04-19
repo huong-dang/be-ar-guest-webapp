@@ -5,6 +5,8 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import axios from 'axios';
+import DeleteIcon from '@material-ui/icons/Delete';
+import IconButton from '@material-ui/core/IconButton';
 import StarRatingComponent from 'react-star-rating-component';
 
 const styles = theme => ({
@@ -14,6 +16,14 @@ const styles = theme => ({
         textAlign:  'center',
         lineHeight: 1.4,
     },
+    deleteIcon: {
+        width: '0.8em',
+        height: '0.9em',
+        paddingTop: 4,
+        paddingBottom: 1,
+        paddingLeft: 0, 
+        paddingRight: 0,
+    },
 });
 
 class ItemComment extends React.Component {
@@ -22,6 +32,8 @@ class ItemComment extends React.Component {
         this.state = {
             firstName: "",
             rating: '0',
+            itemID: this.props.itemID,
+            userID: this.props.userID,
         }
     }
 
@@ -31,13 +43,12 @@ class ItemComment extends React.Component {
             const [profile] = result.data;
             this.setState({ firstName: profile.fName })
         } catch (e) {
-            console.log('Error', e);
+            console.log('Error ', e);
         }
     }
 
     render() {
-        const { classes, itemID, userID, comment, rating} = this.props;
-
+        const { classes, itemID, comment, rating, onDelete} = this.props;
         return (
             <Card elevation={0}>
                 <Grid container direction="column" justify="flex-start">
@@ -53,6 +64,12 @@ class ItemComment extends React.Component {
                             emptyStarColor={'#DFDFDF'}
                             editing={false}
                         />
+                        <IconButton 
+                            style={{ padding: 0, }} 
+                            onClick={onDelete}
+                        >
+                            <DeleteIcon className={classes.deleteIcon}/>
+                        </IconButton>
                     </Grid>
                     <Typography className={classes.comment}>
                         {comment}
