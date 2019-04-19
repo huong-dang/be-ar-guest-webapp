@@ -39,6 +39,7 @@ router.get("/getAllRestaurantsInfo", async (req, res) => {
     }
 });
 
+// Return only available items
 router.post("/getAllItemsByRestaurantID", async (req, res) => {
     const {restaurantID} = req.body;
     if (_.isNil(restaurantID)) {
@@ -47,7 +48,7 @@ router.post("/getAllItemsByRestaurantID", async (req, res) => {
         try {
             const query  = `select * from Item as I where I.restaurantID = ${sqlstring.escape(
                 restaurantID
-            )} order by I.itemName asc;`;
+            )} AND I.itemStatus = 'AVAILABLE' order by I.itemName asc;`;
             const result = await DB.runQuery(query);
             res.json(result);
         } catch (e) {
@@ -57,6 +58,7 @@ router.post("/getAllItemsByRestaurantID", async (req, res) => {
     }
 });
 
+// Return only available items
 router.post("/getAllItemsByRestaurantName", async (req, res) => {
     const {restaurantName} = req.body;
     if (_.isNil(restaurantName)) {
@@ -67,7 +69,8 @@ router.post("/getAllItemsByRestaurantName", async (req, res) => {
                             WHERE replace(R.restaurantName, '''', '') = ${sqlstring.escape(
                 restaurantName
             )} 
-                            AND R.restaurantID = I.restaurantID`;
+                            AND R.restaurantID = I.restaurantID
+                            AND I.itemStatus = 'AVAILABLE';`;
             const result = await DB.runQuery(query);
             res.json(result);
         } catch (e) {
