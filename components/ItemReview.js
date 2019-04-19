@@ -8,6 +8,8 @@ import axios from 'axios';
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
 import StarRatingComponent from 'react-star-rating-component';
+import {getCurrentUser, resetPassword} from '../services/accounts';
+import isNil from "lodash/isNil";
 
 const styles = theme => ({
     comment: {
@@ -34,6 +36,8 @@ class ItemComment extends React.Component {
             rating: '0',
             itemID: this.props.itemID,
             userID: this.props.userID,
+            currentUser: '',
+            canDelete: false,
         }
     }
 
@@ -42,9 +46,23 @@ class ItemComment extends React.Component {
             const result = await axios.post('/profile/getProfileById', {uid: this.props.userID});
             const [profile] = result.data;
             this.setState({ firstName: profile.fName })
+            // Determine if current user is logged in
+            const currentUser = await getCurrentUser();
+            console.log('currentUser =>', currentUser);
+            if (!isNil(localStorage.uid) && currentUser && currentUser.uid === localStorage.uid && currentUser.uid === this.props.userID) {
+                this.setState({ canDelete: true });
+            }
+            console.log('state of canDelete =>', this.state.canDelete);
         } catch (e) {
             console.log('Error ', e);
         }
+    }
+
+    renderDeleteButton() {
+        const { classes } = this.props;
+        return (
+            <DeleteIcon className={classes.deleteIcon}/>
+        );
     }
 
     render() {
@@ -68,7 +86,7 @@ class ItemComment extends React.Component {
                             style={{ padding: 0, }} 
                             onClick={onDelete}
                         >
-                            <DeleteIcon className={classes.deleteIcon}/>
+                            {this.state.canDelete ? this.renderDeleteButton() : <div></div> }
                         </IconButton>
                     </Grid>
                     <Typography className={classes.comment}>
