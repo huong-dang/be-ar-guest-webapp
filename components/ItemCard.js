@@ -94,7 +94,7 @@ const styles = theme => ({
             width: 300,
         },
         [theme.breakpoints.up('md')]: {
-            width: 520,
+            width: 425,
         },
     },
     starRating: {
@@ -184,7 +184,7 @@ class ItemCard extends React.Component {
                 this.setState({isFavorite: review && review.length === 1 && review[0].isFavorite});
 
                 // Check if user has a review associated with them for a flag
-                console.log('ItemCard: const review => ', review);
+                // console.log('ItemCard: const review => ', review);
                 // console.log('ItemCard: const review[0].comment =>', review[0].comment);
                 // For writing reviews in dialog
                 // const [userReview] = result.data;
@@ -409,6 +409,19 @@ class ItemCard extends React.Component {
         );
     }
 
+    async deleteReview() {
+        try {
+            const deleteComment = await axios.post('/review/deleteComment', {userID: this.state.user.userID, itemID: this.state.item.itemID});
+            const deleteRating = await axios.post('/review/deleteRating', {userID: this.state.user.userID, itemID: this.state.item.itemID});
+            this.getItemReviews();
+            this.setState({ canWriteReview: true });
+            this.setState({ newReview: "" });
+            this.setState({ reviewRating: 0 });
+        } catch (e) {
+            console.log('Error ', e);
+        }
+    }
+
     render() {
         const {classes}                                 = this.props;
         const {itemName, itemDescription, substitution} = this.props.item;
@@ -497,6 +510,7 @@ class ItemCard extends React.Component {
                                                 itemID={review.itemID}
                                                 comment={review.comment}
                                                 rating={review.rating}
+                                                onDelete={() => this.deleteReview()}
                                             />
                                         )
                                     })}

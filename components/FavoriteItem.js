@@ -17,6 +17,8 @@ const styles = theme => ({
         fontWeight: '500',
         lineHeight: 1.2,
         marginTop:  10,
+        marginLeft: 8,
+        marginRight: 8,
     },
     h2: {
         fontSize:   16,

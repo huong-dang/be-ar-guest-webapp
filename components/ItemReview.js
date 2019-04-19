@@ -5,7 +5,13 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import axios from 'axios';
+import DeleteIcon from '@material-ui/icons/Delete';
+import IconButton from '@material-ui/core/IconButton';
 import StarRatingComponent from 'react-star-rating-component';
+import {getCurrentUser, resetPassword} from '../services/accounts';
+import isNil from "lodash/isNil";
+
+// THIS COMMENT IS GOING TO FIX THINGS 
 
 const styles = theme => ({
     comment: {
@@ -13,6 +19,14 @@ const styles = theme => ({
         fontFamily: 'Avenir',
         textAlign:  'center',
         lineHeight: 1.4,
+    },
+    deleteIcon: {
+        width: '0.8em',
+        height: '0.9em',
+        paddingTop: 4,
+        paddingBottom: 1,
+        paddingLeft: 0, 
+        paddingRight: 0,
     },
 });
 
@@ -22,6 +36,10 @@ class ItemComment extends React.Component {
         this.state = {
             firstName: "",
             rating: '0',
+            itemID: this.props.itemID,
+            userID: this.props.userID,
+            currentUser: '',
+            canDelete: false,
         }
     }
 
@@ -30,16 +48,29 @@ class ItemComment extends React.Component {
             const result = await axios.post('/profile/getProfileById', {uid: this.props.userID});
             const [profile] = result.data;
             this.setState({ firstName: profile.fName })
+            // Determine if current user is logged in
+            const currentUser = await getCurrentUser();
+            console.log('currentUser =>', currentUser);
+            if (!isNil(localStorage.uid) && currentUser && currentUser.uid === localStorage.uid && currentUser.uid === this.props.userID) {
+                this.setState({ canDelete: true });
+            }
+            console.log('state of canDelete =>', this.state.canDelete);
         } catch (e) {
-            console.log('Error', e);
+            console.log('Error ', e);
         }
     }
 
-    render() {
-        const { classes, itemID, userID, comment, rating} = this.props;
-
+    renderDeleteButton() {
+        const { classes } = this.props;
         return (
-            <Card elevation={0}>
+            <DeleteIcon className={classes.deleteIcon}/>
+        );
+    }
+
+    render() {
+        const { classes, itemID, comment, rating, onDelete} = this.props;
+        return (
+            <Card elevation={0} style={{ paddingBottom: '9%', }}>
                 <Grid container direction="column" justify="flex-start">
                     <Grid container direction="row" justify="space-between" alignItems="flex-start">
                         <Typography variant="overline">
@@ -53,6 +84,12 @@ class ItemComment extends React.Component {
                             emptyStarColor={'#DFDFDF'}
                             editing={false}
                         />
+                        <IconButton 
+                            style={{ padding: 0, }} 
+                            onClick={onDelete}
+                        >
+                            {this.state.canDelete ? this.renderDeleteButton() : <div></div> }
+                        </IconButton>
                     </Grid>
                     <Typography className={classes.comment}>
                         {comment}

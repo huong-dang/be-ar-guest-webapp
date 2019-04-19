@@ -93,7 +93,7 @@ class Account extends React.Component {
     async componentDidMount() {
         try {
             const result = await axios.post('/review/getUserFavoritedItems', {userID: this.state.user.userID});
-            console.log("Account.js result =>", result.data);
+            // console.log("Account.js result =>", result.data);
             this.setState({
                               favorites: result.data,
                           });
