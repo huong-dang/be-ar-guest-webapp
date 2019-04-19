@@ -39,10 +39,19 @@ const styles = theme => ({
         fontSize:   18,
         fontFamily: "Avenir",
         fontWeight: 400,
+        [theme.breakpoints.down('xs')]: {
+            fontSize:   14,
+            fontFamily: "Avenir",
+            fontWeight: 300
+        }
     },
     text: {
         fontFamily: "Avenir",
-        fontSize: 12
+        fontSize: 14,
+        [theme.breakpoints.down('xs')]: {
+            fontSize:   12,
+            fontFamily: "Avenir",
+        }
     },
     mealName: {
         textDecoration: 'underline',
@@ -59,6 +68,11 @@ const styles = theme => ({
         fontSize: 18,
         paddingTop: theme.spacing.unit,
         fontFamily: "Avenir",
+        [theme.breakpoints.down('xs')]: {
+            fontSize:   14,
+            fontFamily: "Avenir",
+            fontWeight: 350
+        }
     },
     cardSpacing: {
         margin:theme.spacing.unit
@@ -66,6 +80,11 @@ const styles = theme => ({
     dateStyling: {
         fontSize: 18,
         fontFamily: "Avenir",
+        [theme.breakpoints.down('xs')]: {
+            fontSize:   14,
+            fontFamily: "Avenir",
+            fontWeight: 350
+        }
     }
 });
 
@@ -193,53 +212,53 @@ class MyTrips extends React.Component {
             </div>;
         const trips = this.state.trips.map((trip) => {
             return (
-                <Grid item key={trip.tripID} xs={12} md={6}>
-                    <ExpansionPanel>
-                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
-                            <Grid container direction="row" justify="space-between" alignItems="center">
-                                <Grid item>
-                                    <Typography className={classes.tripName}>
-                                        {trip.tripName}
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Grid container direction="row" justify="flex-start" alignItems="flex-start">
-                                        <InputWrapper>
-                                            <Tooltip title='Edit trip'>
-                                                <IconButton>
-                                                    <EditIcon/>
-                                                </IconButton>
-                                            </Tooltip>
-                                        </InputWrapper>
-                                    </Grid>
+                <ExpansionPanel key={trip.tripID}>
+                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
+                        <Grid container direction="row" justify="space-between" alignItems="center">
+                            <Grid item>
+                                <Typography className={classes.tripName}>
+                                    {trip.tripName}
+                                </Typography>
+                            </Grid>
+                            <Grid item>
+                                <Grid container direction="row" justify="flex-start" alignItems="flex-start">
+                                    <InputWrapper>
+                                        <Tooltip title='Edit trip'>
+                                            <IconButton>
+                                                <EditIcon/>
+                                            </IconButton>
+                                        </Tooltip>
+                                    </InputWrapper>
                                 </Grid>
                             </Grid>
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails>
-                            <Grid container direction="column" spacing={8}>
-                                <Grid item>
-                                    <Typography className={classes.dateStyling}>
-                                        <b>Start date:</b> {moment(trip.startDate).format('MM/DD/YYYY hh:mm A zz')}
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography className={classes.dateStyling}>
-                                        <b>End date:</b> {moment(trip.endDate).format('MM/DD/YYYY hh:mm A zz')}
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    {this.renderMealPlans(trip.mealsByDay)}
-                                </Grid>
+                        </Grid>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails>
+                        <Grid container direction="column" spacing={8}>
+                            <Grid item>
+                                <Typography className={classes.dateStyling}>
+                                    <b>Start date:</b> {moment(trip.startDate).format('MM/DD/YYYY hh:mm A zz')}
+                                </Typography>
                             </Grid>
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
-                </Grid>
+                            <Grid item>
+                                <Typography className={classes.dateStyling}>
+                                    <b>End date:</b> {moment(trip.endDate).format('MM/DD/YYYY hh:mm A zz')}
+                                </Typography>
+                            </Grid>
+                            <Grid item>
+                                {this.renderMealPlans(trip.mealsByDay)}
+                            </Grid>
+                        </Grid>
+                    </ExpansionPanelDetails>
+                </ExpansionPanel>
             )
         });
 
         return (
             <Grid container direction="row" justify="flex-start" spacing={24}>
-                {trips}
+                <Grid item xs={12}>
+                    {trips}
+                </Grid>
             </Grid>
         )
     }

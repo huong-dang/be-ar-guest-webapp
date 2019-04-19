@@ -47,7 +47,7 @@ const tripTemplate = {
     userID: null,
     startDate: null,
     endDate: null,
-    tripName: null
+    tripName: ''
 };
 
 const defaultStartDate = moment().startOf('day').format("YYYY-MM-DDTHH:mm");
