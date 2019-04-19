@@ -50,7 +50,7 @@ class ItemComment extends React.Component {
     render() {
         const { classes, itemID, comment, rating, onDelete} = this.props;
         return (
-            <Card elevation={0}>
+            <Card elevation={0} style={{ paddingBottom: '9%', }}>
                 <Grid container direction="column" justify="flex-start">
                     <Grid container direction="row" justify="space-between" alignItems="flex-start">
                         <Typography variant="overline">
