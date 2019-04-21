@@ -84,7 +84,7 @@ class RestaurantManagement extends React.Component {
     async componentDidMount() {
         try {
             const restaurants = await axios.get(
-                "/restaurant/getAllRestaurantsInfo"
+                "/restaurant/getAllRestaurantsInfoForAdmin"
             );
             const restaurantTypes = await axios.get("/restaurantType/getAll");
             const lands = await axios.post("/land/getAll");
@@ -105,7 +105,7 @@ class RestaurantManagement extends React.Component {
         if (this.state.refresh && this.state.refresh !== prevState.refresh) {
             this.setState({ loading: true });
             const restaurants = await axios.get(
-                "/restaurant/getAllRestaurantsInfo"
+                "/restaurant/getAllRestaurantsInfoForAdmin"
             );
             this.setState({
                 restaurants: restaurants.data,

@@ -28,9 +28,9 @@ router.get("/getAllRestaurants", async (req, res) => {
     }
 });
 
-router.get("/getAllRestaurantsInfo", async (req, res) => {
+router.get("/getAllRestaurantsInfoForAdmin", async (req, res) => {
     try {
-        const query  = `select Restaurant.*, RestaurantType.*, Land.*, Park.parkName from Restaurant, RestaurantType, Land, Park where Restaurant.restaurantTypeID = RestaurantType.restaurantTypeID and Restaurant.landID = Land.landID and Park.parkID = Land.landID;`;
+        const query  = `select Restaurant.*, RestaurantType.*, Land.*, Park.parkName from Restaurant, RestaurantType, Land, Park where Restaurant.restaurantTypeID = RestaurantType.restaurantTypeID and Restaurant.landID = Land.landID and Park.parkID = Land.parkID;`;
         const result = await DB.runQuery(query);
         res.json(result);
     } catch (e) {
