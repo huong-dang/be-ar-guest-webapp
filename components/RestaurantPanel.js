@@ -24,7 +24,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import isNil from 'lodash/isNil';
 import TextField from '@material-ui/core/TextField';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import errorHandler from '../misc/errors-handler';
 
 const styles = theme => ({
@@ -93,7 +93,7 @@ class RestaurantPanel extends React.Component {
         return trips.map((trip) => {
             const {startDate, endDate} = trip;
             const daysBetween          = moment(endDate).diff(moment(startDate), 'days');
-            let options = [];
+            let options                = [];
             for (let i = 0; i <= daysBetween; i++) {
                 options.push(moment(startDate).add(i, 'day').format('YYYY-MM-DD'));
             }

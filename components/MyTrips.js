@@ -238,12 +238,12 @@ class MyTrips extends React.Component {
                             <Grid container direction="column" spacing={8}>
                                 <Grid item>
                                     <Typography className={classes.dateStyling}>
-                                        <b>Start date:</b> {moment(trip.startDate).format('MM/DD/YYYY hh:mm A zz')}
+                                        <b>Start date:</b> {moment(trip.startDate).format('MM/DD/YYYY')}
                                     </Typography>
                                 </Grid>
                                 <Grid item>
                                     <Typography className={classes.dateStyling}>
-                                        <b>End date:</b> {moment(trip.endDate).format('MM/DD/YYYY hh:mm A zz')}
+                                        <b>End date:</b> {moment(trip.endDate).format('MM/DD/YYYY')}
                                     </Typography>
                                 </Grid>
                                 <Grid item>

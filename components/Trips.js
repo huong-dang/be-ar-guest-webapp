@@ -17,7 +17,7 @@ import Button from "@material-ui/core/Button";
 import CloseIcon from "@material-ui/icons/Close";
 import assign from "lodash/assign";
 import TextField from "@material-ui/core/TextField";
-import moment from 'moment';
+import moment from 'moment-timezone';
 import axios from 'axios';
 import errorHandler from '../misc/errors-handler';
 import Loading from './Loading';
@@ -50,8 +50,8 @@ const tripTemplate = {
     tripName: ''
 };
 
-const defaultStartDate = moment().startOf('day').format("YYYY-MM-DDTHH:mm");
-const defaultEndDate   = moment().endOf('day').format("YYYY-MM-DDTHH:mm");
+const defaultStartDate = moment.tz(new Date(), 'Etc/UTC').format("YYYY-MM-DD");
+const defaultEndDate   = moment.tz(new Date(), 'Etc/UTC').add(1, 'day').format("YYYY-MM-DD");
 
 class Trips extends React.Component {
     constructor(props) {
@@ -191,7 +191,7 @@ class Trips extends React.Component {
                     <TextField
                         id="startDate"
                         label="Start Date"
-                        type="datetime-local"
+                        type="date"
                         defaultValue={defaultStartDate}
                         className={classes.textField}
                         onChange={this.handleChange("startDate")}
@@ -200,7 +200,7 @@ class Trips extends React.Component {
                     <TextField
                         id="endDate"
                         label="End Date"
-                        type="datetime-local"
+                        type="date"
                         defaultValue={defaultEndDate}
                         className={classes.textField}
                         fullWidth
