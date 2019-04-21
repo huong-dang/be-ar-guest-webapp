@@ -150,6 +150,7 @@ router.post("/update", async (req, res) => {
             );
         }
 
+
         const query = `update Item set ${fieldName}=${sqlstring.escape(
             newContent
         )} where itemID = ${sqlstring.escape(itemID)};`;

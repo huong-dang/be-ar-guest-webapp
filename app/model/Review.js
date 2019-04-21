@@ -388,6 +388,21 @@ router.post('/deleteRating', async (req, res) => {
     }
 });
 
+router.post('/getAllUniqueFlaggedItems', async (req, res) => {
+    try {
+        const query       = `select * from Review where Review.flag = true;`;
+        const result      = await DB.runQuery(query);
+        const uniqueItems = _.uniqBy(result, (review) => review.itemID).map((review) => {
+            return review.itemID;
+        });
+
+        res.json(uniqueItems);
+    } catch (e) {
+        console.log('Error:', e);
+        res.send(e);
+    }
+});
+
 async function userHasReviewForItem(userID, itemID) {
     if (_.isNil(userID) || _.isNil(itemID)) {
         throw new Error('userID or itemID is missing.');
