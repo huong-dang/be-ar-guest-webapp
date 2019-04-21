@@ -163,14 +163,14 @@ class ProductPage extends React.Component {
             {/* <Card elevation={0} className={classes.mobileImageCard} style={{ backgroundImage: "url('../static/images/MobileImages/MobileHome.png')" }} /> */}
             <img src="../static/images/MobileImages/MobileMenu.png" alt="Mobile Menu" className={classes.mobileImage} />
             <Typography variant="overline" className={classes.mobileCaption}>
-              Browsing Parks
+              Menu Item
             </Typography>
           </Grid>
           <Grid item sm={3}>
             {/* <Card elevation={0} className={classes.mobileImageCard} style={{ backgroundImage: "url('../static/images/MobileImages/MobileHome.png')" }} /> */}
             <img src="../static/images/MobileImages/MobileScanner.png" alt="Mobile Scanner" className={classes.mobileImage} />
             <Typography variant="overline" className={classes.mobileCaption}>
-              Menu Scanner
+              Review Item
             </Typography>
           </Grid>
           <Grid item>

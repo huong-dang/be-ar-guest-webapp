@@ -75,8 +75,7 @@ function FAQDrawer(props) {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Typography className={classes.answerText}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                        sit amet blandit leo lobortis eget.
+                        You must have an ARCore compatible Android device. If you do, you just need to use your phone's camera and hover over a menu at Disney World for our app to recognize the menu and drop augmented reality menu pins onto the image.
                     </Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -90,6 +89,32 @@ function FAQDrawer(props) {
                 <ExpansionPanelDetails>
                     <Typography className={classes.answerText}>
                         The menu information is also available on this website. Please look under our "MENUS" option.
+                    </Typography>
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
+
+            <ExpansionPanel>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography className={classes.questionText}>
+                        What do I do if a restaurant no longer offers an item or it's no longer vegan?
+                    </Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                    <Typography className={classes.answerText}>
+                        If you encounter this issue, please flag that item! You must have an account with be AR guest to flag an item, but once you've created an account you may flag items. Our administrator will see items that are flagged. From there, our administrator will investigate and update our information.
+                    </Typography>
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
+
+            <ExpansionPanel>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography className={classes.questionText}>
+                        Who designed the be AR guest logo?
+                    </Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                    <Typography className={classes.answerText}>
+                        Our graphic designer Julia Thomas! <br /> View her portfolio at: www.jtgraphics.co <br /> View her linked in at: www.linkedin.com/in/jtgraphics/
                     </Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
