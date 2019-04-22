@@ -239,7 +239,7 @@ class Dashboard extends React.Component {
                             <ListItemIcon>
                                 <Landscape/>
                             </ListItemIcon>
-                            <ListItemText primary="Land"/>
+                            <ListItemText primary="Lands"/>
                         </ListItem>
                         <ListItem
                             button
@@ -257,7 +257,7 @@ class Dashboard extends React.Component {
                             <ListItemIcon>
                                 <Restaurant/>
                             </ListItemIcon>
-                            <ListItemText primary="Restaurant"/>
+                            <ListItemText primary="Restaurants"/>
                         </ListItem>
                         <ListItem
                             button
