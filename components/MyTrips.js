@@ -352,9 +352,7 @@ class MyTrips extends React.Component {
 
     render() {
         const {classes} = this.props;
-
-        console.log('this.state.trips', this.state.trips);
-
+        
         const trips = this.state.trips.map((trip) => {
             return (
                 <Grid item xs={12} md={6} key={trip.tripID}>
