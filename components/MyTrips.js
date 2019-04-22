@@ -1,37 +1,20 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import PropTypes from "prop-types";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Tooltip from "@material-ui/core/Tooltip";
-import AddIcon from "@material-ui/icons/Add";
 import IconButton from "@material-ui/core/IconButton";
-import Divider from "@material-ui/core/Divider";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import MuiDialogTitle from "@material-ui/core/DialogTitle";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Button from "@material-ui/core/Button";
-import CloseIcon from "@material-ui/icons/Close";
-import assign from "lodash/assign";
-import TextField from "@material-ui/core/TextField";
-import moment from 'moment';
+import moment from 'moment-timezone';
 import axios from 'axios';
-import errorHandler from '../misc/errors-handler';
-import Loading from './Loading';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import EditIcon from '@material-ui/icons/Edit';
 import groupBy from 'lodash/groupBy';
 import forEach from 'lodash/forEach';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardContent';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 const styles = theme => ({
@@ -238,12 +221,12 @@ class MyTrips extends React.Component {
                             <Grid container direction="column" spacing={8}>
                                 <Grid item>
                                     <Typography className={classes.dateStyling}>
-                                        <b>Start date:</b> {moment(trip.startDate).format('MM/DD/YYYY')}
+                                        <b>Start date:</b> {moment.tz(trip.startDate, 'Etc/UTC').format('MM/DD/YYYY')}
                                     </Typography>
                                 </Grid>
                                 <Grid item>
                                     <Typography className={classes.dateStyling}>
-                                        <b>End date:</b> {moment(trip.endDate).format('MM/DD/YYYY')}
+                                        <b>End date:</b> {moment.tz(trip.endDate, 'Etc/UTC').format('MM/DD/YYYY')}
                                     </Typography>
                                 </Grid>
                                 <Grid item>

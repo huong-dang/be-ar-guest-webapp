@@ -26,6 +26,7 @@ class MyApp extends App {
             <Container>
                 <Head>
                     <title>be AR guest</title>
+                    <link rel="icon" href="../static/images/logo-link.png"/>
                 </Head>
                 {/* Wrap every page in Jss and Theme providers */}
                 <JssProvider
