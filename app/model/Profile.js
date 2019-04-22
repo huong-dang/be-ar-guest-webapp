@@ -124,7 +124,7 @@ router.post('/updateRole', async (req, res) => {
 
 router.post('/getAllProfiles', async (req, res) => {
     try {
-        const query  = `SELECT * FROM Profile;`;
+        const query  = `SELECT * FROM Profile order by dateCreated desc;`;
         const result = await DB.runQuery(query);
         res.json(result);
     } catch (e) {

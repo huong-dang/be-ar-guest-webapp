@@ -23,6 +23,8 @@ import Restaurant from "@material-ui/icons/Restaurant";
 import Link from 'next/link';
 import MenuItemManagement from "./MenuItemManagement";
 import RestaurantManagement from "./RestaurantManagement";
+import UserManagement from "./UserManagement";
+import Group from "@material-ui/icons/Group";
 
 const drawerWidth = 240;
 
@@ -108,7 +110,7 @@ class Dashboard extends React.Component {
         super(props);
         this.state = {
             open:             false,
-            selectedMenuItem: "Item"
+            selectedMenuItem: "User"
         };
     }
 
@@ -135,9 +137,9 @@ class Dashboard extends React.Component {
             case "Restaurant":
                 return <RestaurantManagement/>;
                 break;
-            // case "User":
-            //     return <div>User!</div>;
-            //     break;
+            case "User":
+                return <UserManagement/>;
+                break;
             default:
                 return <MenuItemManagement/>;
         }
@@ -257,15 +259,15 @@ class Dashboard extends React.Component {
                             </ListItemIcon>
                             <ListItemText primary="Restaurant"/>
                         </ListItem>
-                        {/*<ListItem*/}
-                            {/*button*/}
-                            {/*onClick={this.handleListItemSelection("User")}*/}
-                        {/*>*/}
-                            {/*<ListItemIcon>*/}
-                                {/*<Group/>*/}
-                            {/*</ListItemIcon>*/}
-                            {/*<ListItemText primary="User Accounts"/>*/}
-                        {/*</ListItem>*/}
+                        <ListItem
+                            button
+                            onClick={this.handleListItemSelection("User")}
+                        >
+                            <ListItemIcon>
+                                <Group/>
+                            </ListItemIcon>
+                            <ListItemText primary="User Accounts"/>
+                        </ListItem>
                     </List>
                     <Divider/>
                     <List>
