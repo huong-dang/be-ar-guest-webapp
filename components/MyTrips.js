@@ -173,7 +173,7 @@ class MyTrips extends React.Component {
                 <Grid container direction="column" key={showMealsByDay.length + 1}>
                     <Card className={classes.cardSpacing} raised>
                         <Typography align="center" className={classes.day}>
-                            {moment(day).format('MM-DD-YYYY')}
+                            {moment.tz(day, 'Etc/UTC').format('MM-DD-YYYY')}
                         </Typography>
                         <CardContent>
                             {showMealsGroupedByName}
