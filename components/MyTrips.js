@@ -16,6 +16,9 @@ import forEach from 'lodash/forEach';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import SaveIcon from '@material-ui/icons/Check';
+import filter from 'lodash/filter';
 
 const styles = theme => ({
     tripName:    {
@@ -75,7 +78,10 @@ class MyTrips extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            trips: this.props.trips
+            trips: this.props.trips.map((trip) => {
+                trip.editTrip = false;
+                return trip;
+            })
         }
     }
 
@@ -108,6 +114,29 @@ class MyTrips extends React.Component {
         } catch (e) {
             console.log(e);
         }
+    };
+
+    handleDeleteTrip = (tripID) => async event => {
+        try {
+            const result = await axios.post('/trip/delete', {tripID: tripID});
+            if (result.data.success) {
+                const newTrips = filter(this.state.trips, (trip) => {
+                    return trip.tripID !== tripID
+                });
+                this.setState({trips: newTrips});
+            } else {
+                throw result.data.error;
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    replace = (trip, tripIndex) => {
+        trip.editTrip       = !trip.editTrip;
+        let newTrips        = this.state.trips;
+        newTrips[tripIndex] = trip;
+        return newTrips;
     };
 
     renderMealPlans(mealsByDay) {
@@ -189,36 +218,79 @@ class MyTrips extends React.Component {
         return showMealsByDay;
     }
 
-    render() {
-        const {classes} = this.props;
+    renderTripEdit(trip) {
+        const {classes}       = this.props;
         const stopPropagation = (e) => e.stopPropagation();
         const InputWrapper    = ({children}) =>
             <div onClick={stopPropagation}>
                 {children}
             </div>;
+
+        let currTripIndex     = this.state.trips.findIndex((t) => t.tripID === trip.tripID);
+
+        if (!trip.editTrip) {
+            return (
+                <InputWrapper>
+                    <Grid container direction="row" justify="space-between" alignItems="center">
+                        <Grid item>
+                            <Typography className={classes.tripName}>
+                                {trip.tripName}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Grid container direction="row" justify="flex-end" alignItems="flex-start">
+                                <Tooltip title='Edit trip'>
+                                    <IconButton onClick={() => this.setState({trips: this.replace(trip, currTripIndex)})}>
+                                        <EditIcon/>
+                                    </IconButton>
+                                </Tooltip>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </InputWrapper>
+            );
+        } else {
+            return (
+                <InputWrapper>
+                    <Grid container direction="row" justify="space-between" alignItems="center">
+                        <Grid item>
+                            <Typography className={classes.tripName}>
+                                {trip.tripName}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Grid container direction="row" spacing={0}>
+                                <Grid item>
+                                    <Tooltip title='Save changes'>
+                                        <IconButton onClick={() => this.setState({trips: this.replace(trip, currTripIndex)})}>
+                                            <SaveIcon/>
+                                        </IconButton>
+                                    </Tooltip>
+                                </Grid>
+                                <Grid item>
+                                    <Tooltip title='Delete trip'>
+                                        <IconButton onClick={this.handleDeleteTrip(trip.tripID)}>
+                                            <DeleteIcon/>
+                                        </IconButton>
+                                    </Tooltip>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </InputWrapper>
+            )
+        }
+    }
+
+    render() {
+        const {classes} = this.props;
+
         const trips = this.state.trips.map((trip) => {
             return (
                 <Grid item xs={12} md={6} key={trip.tripID}>
                     <ExpansionPanel key={trip.tripID}>
                         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
-                            <Grid container direction="row" justify="space-between" alignItems="center">
-                                <Grid item>
-                                    <Typography className={classes.tripName}>
-                                        {trip.tripName}
-                                    </Typography>
-                                </Grid>
-                                {/*<Grid item>*/}
-                                {/*<Grid container direction="row" justify="flex-start" alignItems="flex-start">*/}
-                                {/*<InputWrapper>*/}
-                                {/*<Tooltip title='Edit trip'>*/}
-                                {/*<IconButton>*/}
-                                {/*<EditIcon/>*/}
-                                {/*</IconButton>*/}
-                                {/*</Tooltip>*/}
-                                {/*</InputWrapper>*/}
-                                {/*</Grid>*/}
-                                {/*</Grid>*/}
-                            </Grid>
+                            {this.renderTripEdit(trip)}
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails>
                             <Grid container direction="column" spacing={8}>
