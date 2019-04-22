@@ -19,6 +19,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Check';
 import filter from 'lodash/filter';
+import CancelIcon from '@material-ui/icons/Close';
+import TextField from '@material-ui/core/TextField';
+import assign from 'lodash/assign';
 
 const styles = theme => ({
     tripName:    {
@@ -78,11 +81,16 @@ class MyTrips extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            trips: this.props.trips.map((trip) => {
+            trips:        props.trips.map((trip) => {
                 trip.editTrip = false;
                 return trip;
-            })
-        }
+            }),
+            selectedTrip: null
+        };
+    }
+
+    componentDidMount() {
+
     }
 
     deleteRestaurant = (meal) => async event => {
@@ -132,11 +140,60 @@ class MyTrips extends React.Component {
         }
     };
 
-    replace = (trip, tripIndex) => {
+    replace = (trip, tripIndex) => event => {
+        // console.log('hello');
+        // trip.editTrip       = !trip.editTrip;
+        // let newTrips        = this.state.trips;
+        // newTrips[tripIndex] = trip;
+        // console.log('newTrips', newTrips);
+        // return newTrips;
+        return this.state.trips;
+    };
+
+    handleCancelTrip = trip => event => {
+        const tripIndex     = this.state.trips.findIndex((t) => t.tripID === trip.tripID);
         trip.editTrip       = !trip.editTrip;
         let newTrips        = this.state.trips;
         newTrips[tripIndex] = trip;
-        return newTrips;
+        this.setState({trips: this.state.trips, selectedTrip: null});
+    };
+
+    handleSaveTrip = async event => {
+        try {
+            if (!this.state.selectedTrip.tripName || this.state.selectedTrip.tripName.length < 1) {
+                throw new Error('You must provide a trip name.');
+            }
+            const result = await axios.post('/trip/update', {
+                tripID:     this.state.selectedTrip.tripID,
+                fieldName:  'tripName',
+                newContent: this.state.selectedTrip.tripName
+            });
+
+            if (result.data.success) {
+                const tripIndex     = this.state.trips.findIndex((t) => t.tripID === this.state.selectedTrip.tripID);
+                const newTrip       = this.state.selectedTrip;
+                newTrip.editTrip    = !newTrip.editTrip;
+                let newTrips        = this.state.trips;
+                newTrips[tripIndex] = newTrip;
+                this.setState({trips: this.state.trips, selectedTrip: null});
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    handleEditClick = trip => event => {
+        trip.editTrip       = !trip.editTrip;
+        const tripIndex     = this.state.trips.findIndex((t) => t.tripID === trip.tripID);
+        let newTrips        = this.state.trips;
+        newTrips[tripIndex] = trip;
+        this.setState({trips: newTrips, selectedTrip: assign({}, trip)});
+    };
+
+    modifyTripName = event => {
+        let trip      = this.state.selectedTrip;
+        trip.tripName = event.target.value;
+        this.setState({selectedTrip: trip});
     };
 
     renderMealPlans(mealsByDay) {
@@ -226,7 +283,7 @@ class MyTrips extends React.Component {
                 {children}
             </div>;
 
-        let currTripIndex     = this.state.trips.findIndex((t) => t.tripID === trip.tripID);
+        let currTripIndex = this.state.trips.findIndex((t) => t.tripID === trip.tripID);
 
         if (!trip.editTrip) {
             return (
@@ -240,7 +297,7 @@ class MyTrips extends React.Component {
                         <Grid item>
                             <Grid container direction="row" justify="flex-end" alignItems="flex-start">
                                 <Tooltip title='Edit trip'>
-                                    <IconButton onClick={() => this.setState({trips: this.replace(trip, currTripIndex)})}>
+                                    <IconButton onClick={this.handleEditClick(trip)}>
                                         <EditIcon/>
                                     </IconButton>
                                 </Tooltip>
@@ -254,16 +311,27 @@ class MyTrips extends React.Component {
                 <InputWrapper>
                     <Grid container direction="row" justify="space-between" alignItems="center">
                         <Grid item>
-                            <Typography className={classes.tripName}>
-                                {trip.tripName}
-                            </Typography>
+                            <TextField
+                                autoFocus
+                                label="Trip Name"
+                                type="text"
+                                value={this.state.selectedTrip.tripName}
+                                onChange={this.modifyTripName}
+                            />
                         </Grid>
                         <Grid item>
                             <Grid container direction="row" spacing={0}>
                                 <Grid item>
                                     <Tooltip title='Save changes'>
-                                        <IconButton onClick={() => this.setState({trips: this.replace(trip, currTripIndex)})}>
+                                        <IconButton onClick={this.handleSaveTrip}>
                                             <SaveIcon/>
+                                        </IconButton>
+                                    </Tooltip>
+                                </Grid>
+                                <Grid item>
+                                    <Tooltip title='Cancel'>
+                                        <IconButton onClick={this.handleCancelTrip(trip)}>
+                                            <CancelIcon/>
                                         </IconButton>
                                     </Tooltip>
                                 </Grid>
@@ -284,6 +352,8 @@ class MyTrips extends React.Component {
 
     render() {
         const {classes} = this.props;
+
+        console.log('this.state.trips', this.state.trips);
 
         const trips = this.state.trips.map((trip) => {
             return (
