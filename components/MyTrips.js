@@ -146,6 +146,9 @@ class MyTrips extends React.Component {
                                             <Typography className={classes.restaurantInfo}>
                                                 {m.restaurantName} | <em>{m.restaurantTypeName}</em>
                                             </Typography>
+                                            <Typography className={classes.restaurantInfo}>
+                                                {m.parkName} — {m.landName}
+                                            </Typography>
                                             <Grid container justify="flex-end">
                                                 <Tooltip title="Remove from trip">
                                                     <IconButton onClick={this.deleteRestaurant(
@@ -195,7 +198,7 @@ class MyTrips extends React.Component {
             </div>;
         const trips = this.state.trips.map((trip) => {
             return (
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={6} key={trip.tripID}>
                     <ExpansionPanel key={trip.tripID}>
                         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
                             <Grid container direction="row" justify="space-between" alignItems="center">
