@@ -168,7 +168,7 @@ class ItemCard extends React.Component {
             flagged: false,
         }
     }
-    
+
     async componentDidMount() {
         try {
             const {user, item} = this.state;
@@ -179,9 +179,12 @@ class ItemCard extends React.Component {
                     itemID: item.itemID,
                     userID: user.userID,
                 });
-                
+
                 const review = result.data;
-                this.setState({isFavorite: review && review.length === 1 && review[0].isFavorite});
+                this.setState({
+                                  isFavorite: review && review.length === 1 && review[0].isFavorite,
+                                  flagged:    review && review.length === 1 && review[0].flag
+                              });
 
                 // Check if user has a review associated with them for a flag
                 // console.log('ItemCard: const review => ', review);
@@ -195,9 +198,9 @@ class ItemCard extends React.Component {
                     this.setState({ canWriteReview: true });
                 } else {
                     this.setState({ canWriteReview: false });
-                    
+
                 }
-            } 
+            }
         } catch (e) {
             console.log('Error:', e);
         }
@@ -252,7 +255,7 @@ class ItemCard extends React.Component {
             console.log('Error:', e);
         }
     };
-    
+
     handleFlag = async () => {
         try {
             const {user, item} = this.state;
@@ -261,7 +264,7 @@ class ItemCard extends React.Component {
                 const flagged = await axios.post('/review/flag', {
                     itemID:   item.itemID,
                     userID:   user.userID,
-                    flag: !this.state.flagged,
+                    flag:     !this.state.flagged,
                 });
 
                 if (flagged.data.success) {
@@ -272,7 +275,6 @@ class ItemCard extends React.Component {
                     });
 
                     const review = newFlagged.data;
-                    console.log('handleFlag => ', review[0].flag);
                     this.setState({flagged: review && review[0].flag});
                 } else {
                     throw Error('Unable to flag item' + flagged.data.error);
@@ -293,7 +295,7 @@ class ItemCard extends React.Component {
             </IconButton>
         );
     }
-    
+
     renderFlagButton() {
         const { classes } = this.props;
         return (
@@ -324,7 +326,7 @@ class ItemCard extends React.Component {
     setReviewTextField(value) {
         this.setState({ showReviewTextField: value });
     }
-    
+
     onStarClick(nextValue,prevValue, name) {
         this.setState({ reviewRating: nextValue });
     }
@@ -347,7 +349,7 @@ class ItemCard extends React.Component {
                 });
                 this.setState({ canWriteReview: false });
                 this.getItemReviews();
-            }   
+            }
         } catch (e) {
             console.log('Error: ', e);
         }
@@ -363,7 +365,7 @@ class ItemCard extends React.Component {
                     </Typography>
                     <div>
                         <Grid container direction="row" justify="center" className={classes.reviewRequired}>
-                        <StarRatingComponent 
+                        <StarRatingComponent
                             name="ratingInput"
                             starCount={5}
                             editing={true}
@@ -389,21 +391,21 @@ class ItemCard extends React.Component {
                             />
                         </FormControl>
                     </form>
-                    <Button 
-                        variant="outlined" 
-                        className={classes.writeReviewButton} 
+                    <Button
+                        variant="outlined"
+                        className={classes.writeReviewButton}
                         onClick={this.handleSubmit}
                     >
-                        <Typography 
-                            variant="overline" 
+                        <Typography
+                            variant="overline"
                             style={{
-                                textAlign: 'center', 
+                                textAlign: 'center',
                                 marginTop: -5,
                             }}
                         >
                             Enter
                         </Typography>
-                    </Button>  
+                    </Button>
                 </Grid>
             </div>
         );
@@ -454,9 +456,9 @@ class ItemCard extends React.Component {
                                 {substitution}
                             </Typography>
                         </Grid>
-                        <Button 
-                            variant="outlined" 
-                            className={classes.expandButton} 
+                        <Button
+                            variant="outlined"
+                            className={classes.expandButton}
                             onClick={() => {
                                 this.handleOpen();
                                 // this.getItemReviews();
@@ -478,7 +480,7 @@ class ItemCard extends React.Component {
                             {this.renderFavoriteButton()}
                         </div>
                     </DialogTitle>
-                    
+
                     <StarRatingComponent
                         name="itemAverageReview"
                         editing={false}
