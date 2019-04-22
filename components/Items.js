@@ -266,7 +266,20 @@ class Items extends React.Component {
             "Land",
             "Restaurant",
             "Name",
-            "Flag",
+            {
+                name:    "Flag",
+                options: {
+                    customBodyRender: (value, tableMeta, updateValue) => {
+                        if (value) {
+                            return <FlagFilledIcon style={{color: '#CC0000'}}/>;
+                        } else {
+                            return (
+                                <FlagOutlinedIcon/>
+                            );
+                        }
+                    }
+                }
+            },
             {
                 name: "Description",
                 options: {
@@ -297,7 +310,7 @@ class Items extends React.Component {
                 item.landName,
                 item.restaurantName,
                 item.itemName,
-                this.state.flaggedItems.indexOf(item.itemID) > -1 ? <FlagFilledIcon style={{ color: '#CC0000' }} /> : <FlagOutlinedIcon/>,
+                this.state.flaggedItems.indexOf(item.itemID) > -1,
                 item.itemDescription ? item.itemDescription : "",
                 item.substitution ? item.substitution : "",
                 item.itemStatus,
