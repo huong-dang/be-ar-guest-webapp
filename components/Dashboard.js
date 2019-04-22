@@ -20,7 +20,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Food from "@material-ui/icons/Fastfood";
 import Restaurant from "@material-ui/icons/Restaurant";
-import Group from "@material-ui/icons/Group";
+import Link from 'next/link';
 import MenuItemManagement from "./MenuItemManagement";
 import RestaurantManagement from "./RestaurantManagement";
 
@@ -203,24 +203,28 @@ class Dashboard extends React.Component {
                     open={this.state.open}
                 >
                     <div className={classes.toolbarIcon}>
-                        <div>
-                            <img
-                                src={"../static/images/logo.png"}
-                                alt="Logo"
-                                width={52}
-                            />
-                        </div>
-                        <div>
-                            <Typography
-                                component="h3"
-                                variant="h6"
-                                color="inherit"
-                                noWrap
-                                className={classes.title}
-                            >
-                                be AR guest
-                            </Typography>
-                        </div>
+                        <Link href='/'>
+                            <a style={{textDecoration: 'none'}}>
+                                <img
+                                    src={"../static/images/logo.png"}
+                                    alt="Logo"
+                                    width={52}
+                                />
+                            </a>
+                        </Link>
+                        <Link href='/'>
+                            <a style={{textDecoration: 'none', color: '#000'}}>
+                                <Typography
+                                    component="h3"
+                                    variant="h6"
+                                    color="inherit"
+                                    noWrap
+                                    className={classes.title}
+                                >
+                                    be AR guest
+                                </Typography>
+                            </a>
+                        </Link>
                         <IconButton onClick={this.handleDrawerClose}>
                             <ChevronLeftIcon/>
                         </IconButton>
