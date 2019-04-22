@@ -58,7 +58,8 @@ router.post('/getDays', async (req, res) => {
 async function getMealPlansFromTrip(trips) {
     // Go through each user's trips and get the mealsByDay for that trip
     return Promise.all(_.map(trips, async (trip) => {
-        const mealsByDayQuery = `select MealPlan.*, RestaurantType.restaurantTypeName, Restaurant.restaurantName from MealPlan, RestaurantType, Restaurant where tripID=${sqlstring.escape(trip.tripID)} and MealPlan.restaurantID=Restaurant.restaurantID and RestaurantType.restaurantTypeID=Restaurant.restaurantTypeID order by day;`;
+        const mealsByDayQuery = `select MealPlan.*, RestaurantType.restaurantTypeName, Restaurant.restaurantName,
+        Land.landName, Park.parkName from MealPlan, RestaurantType, Restaurant, Land, Park where tripID=${sqlstring.escape(trip.tripID)} and MealPlan.restaurantID=Restaurant.restaurantID and RestaurantType.restaurantTypeID=Restaurant.restaurantTypeID and Restaurant.landID = Land.landID and Land.parkID = Park.parkID order by day;`;
         return DB.runQuery(mealsByDayQuery);
     }));
 }
