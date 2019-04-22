@@ -242,7 +242,7 @@ class IndexPage extends React.Component {
 
     handleSignOut = async () => {
         try {
-            this.setState({loading: true});
+            this.setState({loading: true, tab: "HOME"});
             localStorage.clear();
             await signOut();
             this.setState({loading: false, user: null});
@@ -620,13 +620,13 @@ class IndexPage extends React.Component {
                             <Grid container direction="column" justify="flex-start" alignItems="center" className={classes.headerGridLayout}>
                                 <Grid container direction="column" justify="space-between" alignItems="center">
                                     <Grid container direction="column" justify="flex-start" alignItems="center">
-                                        <img 
-                                            src="../static/images/logo.png" 
-                                            alt="Logo" 
-                                            className={classes.headerLogoImage} 
+                                        <img
+                                            src="../static/images/logo.png"
+                                            alt="Logo"
+                                            className={classes.headerLogoImage}
                                             onClick={this.handleNavigationChange("HOME")}
                                         />
-                                        <p 
+                                        <p
                                             className={classes.headerLogoText}
                                             onClick={this.handleNavigationChange("HOME")}
                                         >
