@@ -29,6 +29,26 @@ const signIn = async (email, password) => {
         });
 };
 
+async function resetPassword(emailAddress) {
+    // try {
+    //     var user = fire.auth().currentUser;
+    //     if (user === null || user === undefined) {
+    //         throw new Error('No user is currently logged in.');
+    //     } else {
+    //         await user.updatePassword(newPassword);
+    //         return {success: true}
+    //     }
+    // } catch (e) {
+    //     return {success: false, error: e};
+    // }
+    var auth = fire.auth();
+    auth.sendPasswordResetEmail(emailAddress).then(function() {
+        return {success: true}
+    }).catch(function(error) {
+        return {success: false, error: e}
+    });
+}
+
 const getCurrentUser = () => {
     return new Promise((resolve) => {
         fire.auth().onAuthStateChanged(function (user) {
@@ -55,4 +75,4 @@ const deleteUser = async callback => {
     }
 };
 
-export {signUp, signIn, signOut, getCurrentUser, deleteUser};
+export {signUp, signIn, signOut, getCurrentUser, resetPassword, deleteUser};

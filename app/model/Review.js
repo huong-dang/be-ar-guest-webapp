@@ -4,6 +4,10 @@ var DB             = require('../db');
 var _              = require('lodash');
 var sqlstring      = require('sqlstring');
 const errorHandler = require('../../misc/errors-handler');
+var moment         = require('moment');
+
+// Column property names that can be updated
+const updateableColumns = ['comment', 'rating', 'isFavorite', 'flag'];
 
 // General format of defining a post request
 // router.post('/', async (req, res) => {
@@ -49,11 +53,35 @@ router.post('/getAll', async (req, res) => {
 router.post('/add', async (req, res) => {
     try {
         const {userID, itemID, comment, rating, isFavorite, flag} = req.body;
-        if (!_.isNil(rating) && Number.isInteger(rating) && (rating < 1 || rating > 5)) {
-            throw new Error('Rating must be between 1 and 5.');
+        const reviewExists                                        = await userHasReviewForItem(userID, itemID);
+
+        if (reviewExists) {
+            // Update the review
+            _.forEach(updateableColumns, async (columnName) => {
+                if (!_.isNil(req.body[columnName])) {
+                    await updateReviewForUser(columnName, req.body[columnName], userID, itemID);
+                }
+            });
+        } else {
+            // Add a brand new review
+            await addNewReview(userID, itemID, comment, rating, isFavorite, flag);
         }
 
-        const query = `insert into Review (userID, itemID, comment, rating, isFavorite, flag, dateOfComment)
+        res.json({success: true});
+    } catch (e) {
+        console.log('Error adding a review', e);
+        res.status(500).send(e);
+    }
+});
+
+async function addNewReview(userID, itemID, comment, rating, isFavorite, flag) {
+    if (_.isNil(userID) || _.isNil(itemID)) {
+        throw new Error('userID or itemID is missing.');
+    } else if (!_.isNil(rating) && Number.isInteger(rating) && (rating < 1 || rating > 5)) {
+        throw new Error('Rating must be between 1 and 5.');
+    }
+
+    const query = `insert into Review (userID, itemID, comment, rating, isFavorite, flag, dateOfComment)
                         values (${sqlstring.escape(userID)}, 
                         ${sqlstring.escape(itemID)}, 
                         ${sqlstring.escape(comment)}, 
@@ -62,13 +90,8 @@ router.post('/add', async (req, res) => {
                         ${sqlstring.escape((_.isNil(flag) ? false : isFavorite))},
                         ${sqlstring.escape(new Date().toISOString().slice(0, 19).replace('T', ' '))});`;
 
-        const result = await DB.runQuery(query);
-        res.json({success: true});
-    } catch (e) {
-        console.log('Error adding a review', e);
-        res.status(500).send(e);
-    }
-});
+    const result = await DB.runQuery(query);
+}
 
 /**
  * Get all reviews by userID sorted by rating in descending order
@@ -204,7 +227,7 @@ router.post('/getAllByItemID', async (req, res) => {
             throw new Error('Missing itemID.');
         }
         const query  = `select R.*, I.*, P.fName, P.lName, P.imageURL from Review R, Item I, Profile P where I.itemID = ${sqlstring.escape(itemID)} and 
-R.itemID = I.itemID and P.userID = R.userID order by R.rating desc;`;
+R.itemID = I.itemID and P.userID = R.userID order by R.dateOfComment desc;`;
         const result = await DB.runQuery(query);
         res.json(result);
     } catch (e) {
@@ -225,13 +248,7 @@ R.itemID = I.itemID and P.userID = R.userID order by R.rating desc;`;
 router.post('/get', async (req, res) => {
     try {
         const {itemID, userID} = req.body;
-        if (_.isNil(itemID) || _.isNil(userID)) {
-            throw new Error('Missing itemID or userID.');
-        }
-
-        const query  = `select * from Review R, Item I, Profile P where P.userID = ${sqlstring.escape(userID)} and 
-I.itemID = ${sqlstring.escape(itemID)} and R.userID = P.userID and R.itemID = I.itemID;`;
-        const result = await DB.runQuery(query);
+        const result           = await getReviewForUserAndItem(itemID, userID);
         res.json(result);
     } catch (e) {
         console.log('Error getting review for user', e);
@@ -239,8 +256,17 @@ I.itemID = ${sqlstring.escape(itemID)} and R.userID = P.userID and R.itemID = I.
     }
 });
 
-// Column property names that can be updated
-const updateableColumns = ['comment', 'rating', 'isFavorite', 'flag'];
+async function getReviewForUserAndItem(itemID, userID) {
+    if (_.isNil(itemID) || _.isNil(userID)) {
+        throw new Error('Missing itemID or userID.');
+    }
+
+    const query  = `select * from Review R, Item I, Profile P where P.userID = ${sqlstring.escape(userID)} and 
+I.itemID = ${sqlstring.escape(itemID)} and R.userID = P.userID and R.itemID = I.itemID;`;
+    const result = await DB.runQuery(query);
+
+    return result;
+}
 
 /**
  * Update a review for a user and item
@@ -255,19 +281,10 @@ const updateableColumns = ['comment', 'rating', 'isFavorite', 'flag'];
 router.post('/update', async (req, res) => {
     try {
         const {fieldName, newContent, userID, itemID} = req.body;
-        if (_.isNil(fieldName) || _.isNil(newContent) || _.isNil(userID) || _.isNil(itemID)) {
-            throw new Error('Missing fieldName, newContent, userID, or itemID.');
-        } else if (updateableColumns.indexOf(fieldName) < 0) {
-            throw new Error(fieldName + ' is not a valid field to update for a review.');
-        } else if (fieldName === 'rating' && Number.isInteger(newContent) && (newContent < 1 || newContent > 5)) {
-            throw new Error('Rating must be between 1 and 5');
-        }
-
-        const query  = `update Review set ${fieldName}=${sqlstring.escape(newContent)} where userID = ${sqlstring.escape(userID)} and itemID = ${sqlstring.escape(itemID)};`;
-        const result = await DB.runQuery(query);
+        await updateReviewForUser(fieldName, newContent, userID, itemID);
         res.json({success: true});
     } catch (e) {
-        console.log('', e);
+        console.log(e);
         res.status(500).send(e);
     }
 });
@@ -275,39 +292,158 @@ router.post('/update', async (req, res) => {
 
 router.post('/favorite', async (req, res) => {
     try {
-        const {userID, itemID} = req.body;
-        if (_.isNil(userID) || _.isNil(itemID)) {
-            throw new Error('Missing userID, itemID.');
-        }
+        const {userID, itemID, favorite} = req.body;
+        const reviewExists               = await userHasReviewForItem(userID, itemID);
 
-        // Check if a review is currently existing
-        const getReviewQuery = `select * from Review R, Item I, Profile P where P.userID = ${sqlstring.escape(userID)} and 
-I.itemID = ${sqlstring.escape(itemID)} and R.userID = P.userID and R.itemID = I.itemID;`;
-        const review         = await DB.runQuery(getReviewQuery);
-
-        if (review.length > 0) {
-            const favoriteVal   = review[0] && review[0].isFavorite;
-            const favoriteQuery = `update Review set isFavorite=${!favoriteVal} where userID = ${sqlstring.escape(userID)} and itemID = ${sqlstring.escape(itemID)};`;
-            const result        = await DB.runQuery(favoriteQuery);
-            res.json({success: true})
+        if (reviewExists) {
+            await updateReviewForUser('isFavorite', favorite, userID, itemID);
         } else {
-            // Create a review
-            const query = `insert into Review (userID, itemID, comment, rating, isFavorite, flag, dateOfComment)
-                        values (${sqlstring.escape(userID)}, 
-                        ${sqlstring.escape(itemID)}, 
-                        ${null}, 
-                        ${null}, 
-                        ${true /*It's the user's first time favoriting the item*/}, 
-                        ${false},
-                        ${sqlstring.escape(new Date().toISOString().slice(0, 19).replace('T', ' '))});`;
-
-            const result = await DB.runQuery(query);
-            res.json({success: true})
+            await addNewReview(userID, itemID, null, null, favorite, null);
         }
+
+        res.json({success: true})
     } catch (e) {
         console.log(e);
         res.json({success: false, error: errorHandler.getErrorMessage(e)});
     }
 });
+
+router.post('/flag', async (req, res) => {
+    try {
+        const {userID, itemID, flag} = req.body;
+        const reviewExists               = await userHasReviewForItem(userID, itemID);
+
+        if (reviewExists) {
+            await updateReviewForUser('flag', flag, userID, itemID);
+        } else {
+            await addNewReview(userID, itemID, null, null, null, flag);
+        }
+
+        res.json({success: true})
+    } catch (e) {
+        console.log(e);
+        res.json({success: false, error: errorHandler.getErrorMessage(e)});
+    }
+});
+
+router.post('/userHasReviewForItem', async (req, res) => {
+    try {
+        const {userID, itemID} = req.body;
+        const userHasReview    = await userHasReviewForItem(userID, itemID);
+        res.json({reviewExists: userHasReview})
+    } catch (e) {
+        console.log('Error:', e);
+        res.status(500).send(e);
+    }
+});
+
+router.post('/getUserFavoritedItems', async (req, res) => {
+    try {
+        const {userID} = req.body;
+        if (_.isNil(userID)) {
+            throw new Error('userID is missing.');
+        }
+        const query  = `select Item.itemID, Item.itemName, Restaurant.restaurantName, Restaurant.restaurantID, Land.landID, Park.parkID from Review, Restaurant, Park, Land, Item where Review.userID=${sqlstring.escape(userID)} 
+and Review.itemID=Item.itemID and Review.isFavorite=true and Item.restaurantID=Restaurant.restaurantID and Restaurant.landID=Land.landID and Land.parkID=Park.parkID;`;
+        const result = await DB.runQuery(query);
+        res.json(result);
+    } catch (e) {
+        console.log('Error:', e);
+        res.status(500).send(e);
+    }
+});
+
+router.post('/delete', async (req, res) => {
+    try {
+        const {userID, itemID} = req.body;
+        await deleteReview(userID, itemID);
+        res.json({success: true})
+    } catch (e) {
+        console.log('Error:', e);
+        res.status(500).send(e);
+    }
+});
+
+// Add route for deleting a comment
+router.post('/deleteComment', async (req, res) => {
+    try {
+        const {userID, itemID} = req.body;
+        await updateReviewForUser('comment', null, userID, itemID);
+        res.json({success: true})
+    } catch (e) {
+        console.log('Error:', e);
+        res.status(500).send(e);
+    }
+});
+
+// Add route for deleting a rating
+router.post('/deleteRating', async (req, res) => {
+    try {
+        const {userID, itemID} = req.body;
+        await updateReviewForUser('rating', null, userID, itemID);
+        res.json({success: true})
+    } catch (e) {
+        console.log('Error:', e);
+        res.status(500).send(e);
+    }
+});
+
+router.post('/getAllUniqueFlaggedItems', async (req, res) => {
+    try {
+        const query       = `select * from Review where Review.flag = true;`;
+        const result      = await DB.runQuery(query);
+        const uniqueItems = _.uniqBy(result, (review) => review.itemID).map((review) => {
+            return review.itemID;
+        });
+
+        res.json(uniqueItems);
+    } catch (e) {
+        console.log('Error:', e);
+        res.send(e);
+    }
+});
+
+async function userHasReviewForItem(userID, itemID) {
+    if (_.isNil(userID) || _.isNil(itemID)) {
+        throw new Error('userID or itemID is missing.');
+    } else {
+        const query  = `select * from Review R, Item I, Profile P where P.userID = ${sqlstring.escape(userID)} and 
+I.itemID = ${sqlstring.escape(itemID)} and R.userID = P.userID and R.itemID = I.itemID;`;
+        const result = await DB.runQuery(query);
+
+        // If review found for the user and this item, then return false, else return true
+        return result.length > 0;
+    }
+}
+
+async function updateReviewForUser(fieldName, newContent, userID, itemID) {
+    if (_.isNil(fieldName) || _.isNil(userID) || _.isNil(itemID)) {
+        throw new Error('Missing fieldName, userID, or itemID.');
+    } else if (updateableColumns.indexOf(fieldName) < 0) {
+        throw new Error(fieldName + ' is not a valid field to update for a review.');
+    } else if (fieldName === 'rating' && Number.isInteger(newContent) && (newContent < 1 || newContent > 5)) {
+        throw new Error('Rating must be between 1 and 5');
+    }
+
+    const query = `update Review set ${fieldName}=${sqlstring.escape(newContent)} where userID = ${sqlstring.escape(userID)} and itemID = ${sqlstring.escape(itemID)};`;
+    await DB.runQuery(query);
+
+    if (fieldName === 'comment') {
+        // Update the date of the comment if the field updated was comment
+        const updatedDate              = moment().format('YYYY-MM-DD HH:mm:ss');
+        const updateDateOfCommentQuery = `update Review set dateOfComment=${sqlstring.escape(updatedDate)} where userID = ${sqlstring.escape(userID)} and itemID = ${sqlstring.escape(itemID)};`;
+        await DB.runQuery(updateDateOfCommentQuery);
+    }
+}
+
+// Delete the entire review row for a user and item
+async function deleteReview(userID, itemID) {
+    if (_.isNil(userID) || _.isNil(itemID)) {
+        throw new Error('Missing userID or itemID.');
+    } else {
+        const query = `delete from Review where userID=${sqlstring.escape(userID)} and itemID=${sqlstring.escape(itemID)};`;
+        await DB.runQuery(query);
+    }
+}
 
 module.exports = router;

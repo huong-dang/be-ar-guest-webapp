@@ -26,6 +26,8 @@ import errorHandler from "../misc/errors-handler";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
+import FlagOutlinedIcon from '@material-ui/icons/OutlinedFlag';
+import FlagFilledIcon from '@material-ui/icons/Flag';
 
 const styles = theme => ({
     selector: {
@@ -52,15 +54,16 @@ const styles = theme => ({
     }
 });
 const newItemTemplate = {
-    restaurantID: null,
-    itemName: "",
+    restaurantID:    undefined,
+    itemName:        "",
     itemDescription: "",
-    secret: false,
-    vegan: true,
-    substitution: "",
-    itemStatus: "AVAILABLE",
-    x: null,
-    z: null
+    secret:          false,
+    vegan:           true,
+    substitution:    "",
+    itemStatus:      "AVAILABLE",
+    x:               undefined,
+    z:               undefined,
+    pageNum:         undefined
 };
 
 class Items extends React.Component {
@@ -78,7 +81,8 @@ class Items extends React.Component {
             restaurants: [],
             addNewItem: false,
             newItem: newItemTemplate,
-            addNewItemMessage: ""
+            addNewItemMessage: "",
+            flaggedItems: []
         };
     }
 
@@ -88,10 +92,12 @@ class Items extends React.Component {
             const restaurants = await axios.get(
                 "/restaurant/getAllRestaurants"
             );
+            const flaggedItemIDs = await axios.post('/review/getAllUniqueFlaggedItems');
             this.setState({
                 items: items.data,
                 loading: false,
-                restaurants: restaurants.data
+                restaurants: restaurants.data,
+                flaggedItems: flaggedItemIDs.data
             });
         } catch (e) {
             this.setState({ loading: false });
@@ -116,9 +122,6 @@ class Items extends React.Component {
         switch (prop) {
             case "addOne":
                 this.setState({ addNewItem: true });
-                break;
-            case "addMultiple":
-                console.log("add multiple items!!!!");
                 break;
             case "refresh":
                 this.setState({ refresh: true });
@@ -263,6 +266,7 @@ class Items extends React.Component {
             "Land",
             "Restaurant",
             "Name",
+            "Flag",
             {
                 name: "Description",
                 options: {
@@ -281,7 +285,10 @@ class Items extends React.Component {
             "Substitution",
             "Status",
             "Secret",
-            "Vegan"
+            "Vegan",
+            "X-coordinate",
+            "Z-coordinate",
+            "Page Number"
         ];
         const data = this.state.items.map(item => {
             return [
@@ -290,11 +297,15 @@ class Items extends React.Component {
                 item.landName,
                 item.restaurantName,
                 item.itemName,
+                this.state.flaggedItems.indexOf(item.itemID) > -1 ? <FlagFilledIcon style={{ color: '#CC0000' }} /> : <FlagOutlinedIcon/>,
                 item.itemDescription ? item.itemDescription : "",
                 item.substitution ? item.substitution : "",
                 item.itemStatus,
                 item.secret ? "Yes" : "No",
-                item.vegan ? "Yes" : "No"
+                item.vegan ? "Yes" : "No",
+                item.x ? item.x : "N/A",
+                item.z ? item.z : "N/A",
+                item.pageNum ? item.pageNum : "N/A",
             ];
         });
         const options = {
@@ -387,7 +398,7 @@ class Items extends React.Component {
                         label="Name"
                         type="text"
                         fullWidth
-                        value={this.state.selectedItem.itemName}
+                        value={this.state.selectedItem.itemName ? this.state.selectedItem.itemName : ""}
                         onChange={this.handleEdit("itemName")}
                     />
                     <TextField
@@ -396,7 +407,7 @@ class Items extends React.Component {
                         type="text"
                         multiline
                         fullWidth
-                        value={this.state.selectedItem.itemDescription}
+                        value={this.state.selectedItem.itemDescription ? this.state.selectedItem.itemDescription : ""}
                         onChange={this.handleEdit("itemDescription")}
                     />
                     <TextField
@@ -405,9 +416,44 @@ class Items extends React.Component {
                         type="text"
                         fullWidth
                         multiline
-                        value={this.state.selectedItem.substitution}
+                        value={this.state.selectedItem.substitution ? this.state.selectedItem.substitution : ""}
                         onChange={this.handleEdit("substitution")}
                     />
+                    <div className={classes.selectorsContainer}>
+                        <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="X-coordinate"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.selectedItem.x ? this.state.selectedItem.x : undefined}
+                                onChange={this.handleEdit("x")}
+                            />
+                        </div>
+                        <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="Z-coordinate"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.selectedItem.z ? this.state.selectedItem.z : undefined}
+                                onChange={this.handleEdit("z")}
+                            />
+                        </div>
+                        <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="Page Number"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.selectedItem.pageNum ? this.state.selectedItem.pageNum : undefined}
+                                onChange={this.handleEdit("pageNum")}
+                            />
+                        </div>
+                    </div>
                     <div className={classes.selectorsContainer}>
                         <div className={classes.selector}>
                             <InputLabel htmlFor="status">Status</InputLabel>
@@ -544,7 +590,7 @@ class Items extends React.Component {
                         label="Name"
                         type="text"
                         fullWidth
-                        value={this.state.newItem.itemName}
+                        value={this.state.newItem.itemName ? this.state.newItem.itemName : ""}
                         onChange={this.handleAdd("itemName")}
                     />
                     <TextField
@@ -553,7 +599,7 @@ class Items extends React.Component {
                         type="text"
                         multiline
                         fullWidth
-                        value={this.state.newItem.itemDescription}
+                        value={this.state.newItem.itemDescription ? this.state.newItem.itemDescription : ""}
                         onChange={this.handleAdd("itemDescription")}
                     />
                     <TextField
@@ -562,9 +608,44 @@ class Items extends React.Component {
                         type="text"
                         fullWidth
                         multiline
-                        value={this.state.newItem.substitution}
+                        value={this.state.newItem.substitution ? this.state.newItem.substitution : ""}
                         onChange={this.handleAdd("substitution")}
                     />
+                    <div className={classes.selectorsContainer}>
+                        <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="X-coordinate"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.newItem.x}
+                                onChange={this.handleAdd("x")}
+                            />
+                        </div>
+                        <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="Z-coordinate"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.newItem.z}
+                                onChange={this.handleAdd("z")}
+                            />
+                        </div>
+                        <div className={classes.selector}>
+                            <TextField
+                                margin="dense"
+                                label="Page Number"
+                                type="number"
+                                fullWidth
+                                multiline
+                                value={this.state.newItem.pageNum}
+                                onChange={this.handleAdd("pageNum")}
+                            />
+                        </div>
+                    </div>
                     <div className={classes.selectorsContainer}>
                         <div className={classes.selector}>
                             <InputLabel htmlFor="status">Status</InputLabel>

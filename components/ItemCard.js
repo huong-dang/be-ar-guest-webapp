@@ -13,11 +13,15 @@ import FavoriteIconFilled from '@material-ui/icons/Favorite';
 import axios from 'axios';
 import isNil from 'lodash/isNil';
 import Router from 'next/router';
-import TripIcon from '@material-ui/icons/DateRangeOutlined';
-import FlagIcon from '@material-ui/icons/OutlinedFlag';
+import FlagOutlinedIcon from '@material-ui/icons/OutlinedFlag';
+import FlagFilledIcon from '@material-ui/icons/Flag';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
+import ItemReview from './ItemReview';
+import StarRatingComponent from 'react-star-rating-component';
+import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
 
 const styles = theme => ({
     card:                   {
@@ -40,6 +44,9 @@ const styles = theme => ({
         textAlign:  'center',
         lineHeight: 1.4,
         marginTop:  5,
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
     },
     alterations:            {
         fontSize:   12.5,
@@ -81,13 +88,35 @@ const styles = theme => ({
         textAlign:                               'left',
         fontFamily:                              'Avenir',
         textTransform:                           'uppercase',
-        [theme.breakpoints.between('xs', 'md')]: {
+        overflowWrap: "break-word",
+        [theme.breakpoints.between('xs', 'sm')]: {
             paddingTop: 20,
+            width: 300,
+        },
+        [theme.breakpoints.up('md')]: {
+            width: 425,
+        },
+    },
+    starRating: {
+        right: 120,
+        // marginTop: -40,
+        [theme.breakpoints.between('xs', 'sm')]: {
+            marginTop: -18,
+        },
+        [theme.breakpoints.up('sm')]: {
+            marginTop: -40,
         },
     },
     dialogFavoriteButton:   {
         position: 'absolute',
         right:    15,
+        marginTop: -32,
+        [theme.breakpoints.between('xs', 'sm')]: {
+            marginTop: -10,
+        },
+        [theme.breakpoints.up('sm')]: {
+            marginTop: -32,
+        },
     },
     addToTripButton:        {
         position: 'absolute',
@@ -95,9 +124,7 @@ const styles = theme => ({
         right:    45,
     },
     flagButton:             {
-        position: 'absolute',
-        // top: 15,
-        right:    75,
+        // paddingLeft: 0,
     },
     dialogDescription:      {
         fontSize:   12.5,
@@ -110,6 +137,18 @@ const styles = theme => ({
         outlineWidth: 'thin',
         borderRadius: 20,
     },
+    writeReviewButton: {
+        top: 12,
+        height: 30,
+    },
+    reviewTextField: {
+        top: 5,
+    },
+    reviewRequired: {
+        [theme.breakpoints.up('sm')]: {
+            paddingLeft: 3,
+        },
+    },
 });
 
 class ItemCard extends React.Component {
@@ -120,12 +159,20 @@ class ItemCard extends React.Component {
             item:       props.item,
             isFavorite: false,
             open:       false,
+            reviews: [],
+            canWriteReview: false,
+            showReviewTextField: false,
+            reviewRating: 0,
+            newReview: '',
+            averageReview: 0,
+            flagged: false,
         }
     }
 
     async componentDidMount() {
         try {
             const {user, item} = this.state;
+            this.getItemReviews();
             // Load the user's favorite icons for this item if the user is logged in
             if (!isNil(user)) {
                 const result = await axios.post('/review/get', {
@@ -134,10 +181,47 @@ class ItemCard extends React.Component {
                 });
 
                 const review = result.data;
-                this.setState({isFavorite: review && review.length === 1 && review[0].isFavorite});
+                this.setState({
+                                  isFavorite: review && review.length === 1 && review[0].isFavorite,
+                                  flagged:    review && review.length === 1 && review[0].flag
+                              });
+
+                // Check if user has a review associated with them for a flag
+                // console.log('ItemCard: const review => ', review);
+                // console.log('ItemCard: const review[0].comment =>', review[0].comment);
+                // For writing reviews in dialog
+                // const [userReview] = result.data;
+                // console.log('result is =>', result);
+                // console.log('userReview', userReview);
+                // this.getItemReviews();
+                if(review.length === 0 || isNil(review[0].comment)) {
+                    this.setState({ canWriteReview: true });
+                } else {
+                    this.setState({ canWriteReview: false });
+
+                }
             }
         } catch (e) {
             console.log('Error:', e);
+        }
+    }
+
+    async getItemReviews() {
+        try {
+            const result = await axios.post('/review/getAllByItemID', {itemID: this.props.item.itemID});
+            this.setState({ reviews: [] });
+            for (var i = 0; i < result.data.length; i++)
+            {
+                if (!isNil(result.data[i].comment) && !isNil(result.data[i].rating))
+                {
+                    var newArray=this.state.reviews.slice();
+                    newArray.push(result.data[i]);
+                    this.setState({ reviews: newArray });
+                }
+            }
+            this.calculateAverageRating();
+        } catch (e) {
+            console.log('Error', e);
         }
     }
 
@@ -147,8 +231,9 @@ class ItemCard extends React.Component {
             // Load the user's favorite icons for this item if the user is logged in
             if (!isNil(user)) {
                 const favorited = await axios.post('/review/favorite', {
-                    itemID: item.itemID,
-                    userID: user.userID,
+                    itemID:   item.itemID,
+                    userID:   user.userID,
+                    favorite: !this.state.isFavorite
                 });
 
                 if (favorited.data.success) {
@@ -171,6 +256,37 @@ class ItemCard extends React.Component {
         }
     };
 
+    handleFlag = async () => {
+        try {
+            const {user, item} = this.state;
+            // Load the user's favorite icons for this item if the user is logged in
+            if (!isNil(user)) {
+                const flagged = await axios.post('/review/flag', {
+                    itemID:   item.itemID,
+                    userID:   user.userID,
+                    flag:     !this.state.flagged,
+                });
+
+                if (flagged.data.success) {
+                    // Update the favorite button
+                    const newFlagged = await axios.post('/review/get', {
+                        itemID: item.itemID,
+                        userID: user.userID,
+                    });
+
+                    const review = newFlagged.data;
+                    this.setState({flagged: review && review[0].flag});
+                } else {
+                    throw Error('Unable to flag item' + flagged.data.error);
+                }
+            } else {
+                Router.push('/signIn');
+            }
+        } catch (e) {
+            console.log('Error:', e);
+        }
+    };
+
     renderFavoriteButton() {
         const {classes} = this.props;
         return (
@@ -180,6 +296,16 @@ class ItemCard extends React.Component {
         );
     }
 
+    renderFlagButton() {
+        const { classes } = this.props;
+        return (
+            <IconButton aria-label="Flag Item" onClick={this.handleFlag} className={classes.flagButton}>
+                {this.state.flagged ? <FlagFilledIcon style={{ color: '#CC0000' }} /> : <FlagOutlinedIcon />}
+            </IconButton>
+        )
+    }
+
+    // For Dialog rendering
     handleOpen = () => {
         this.setState({open: true});
     };
@@ -188,9 +314,120 @@ class ItemCard extends React.Component {
         this.setState({open: false});
     };
 
+    calculateAverageRating() {
+        var average = 0;
+        for (var i = 0; i < this.state.reviews.length; i++) {
+            average = average + this.state.reviews[i].rating;
+        }
+        average = average / this.state.reviews.length;
+        this.setState({ averageReview: average });
+    }
+
+    setReviewTextField(value) {
+        this.setState({ showReviewTextField: value });
+    }
+
+    onStarClick(nextValue,prevValue, name) {
+        this.setState({ reviewRating: nextValue });
+    }
+
+    handleChange = prop => event => {
+        this.setState({[prop]: event.target.value });
+    };
+
+    handleSubmit = async () => {
+        try {
+            const {user, item, newReview, reviewRating} = this.state;
+            if (reviewRating === 0) {
+                console.log('Must rate item.');
+            } else {
+                const reviewSubmitted = await axios.post('/review/add', {
+                    userID: user.userID,
+                    itemID: item.itemID,
+                    comment: newReview,
+                    rating: reviewRating,
+                });
+                this.setState({ canWriteReview: false });
+                this.getItemReviews();
+            }
+        } catch (e) {
+            console.log('Error: ', e);
+        }
+    }
+
+    renderWriteReviewArea() {
+        const { classes } = this.props;
+        return (
+            <div>
+                <Grid container direction="column" justify="flex-start" alignItems="center">
+                    <Typography variant="overline">
+                        Write a Review
+                    </Typography>
+                    <div>
+                        <Grid container direction="row" justify="center" className={classes.reviewRequired}>
+                        <StarRatingComponent
+                            name="ratingInput"
+                            starCount={5}
+                            editing={true}
+                            value={this.state.reviewRating}
+                            starColor={'#9993B2'}
+                            emptyStarColor={'#DFDFDF'}
+                            onStarClick={this.onStarClick.bind(this)}
+                        />
+                        <p style={{ marginTop: 2, marginBottom: 5, color: 'red',}}>*</p>
+                        </Grid>
+                    </div>
+                    <form>
+                        <FormControl required>
+                            <TextField
+                                id="newReview"
+                                variant="outlined"
+                                required
+                                multiline
+                                className={classes.reviewTextField}
+                                autoFocus={false}
+                                value={this.state.newReview}
+                                onChange={this.handleChange('newReview')}
+                            />
+                        </FormControl>
+                    </form>
+                    <Button
+                        variant="outlined"
+                        className={classes.writeReviewButton}
+                        onClick={this.handleSubmit}
+                    >
+                        <Typography
+                            variant="overline"
+                            style={{
+                                textAlign: 'center',
+                                marginTop: -5,
+                            }}
+                        >
+                            Enter
+                        </Typography>
+                    </Button>
+                </Grid>
+            </div>
+        );
+    }
+
+    async deleteReview() {
+        try {
+            const deleteComment = await axios.post('/review/deleteComment', {userID: this.state.user.userID, itemID: this.state.item.itemID});
+            const deleteRating = await axios.post('/review/deleteRating', {userID: this.state.user.userID, itemID: this.state.item.itemID});
+            this.getItemReviews();
+            this.setState({ canWriteReview: true });
+            this.setState({ newReview: "" });
+            this.setState({ reviewRating: 0 });
+        } catch (e) {
+            console.log('Error ', e);
+        }
+    }
+
     render() {
         const {classes}                                 = this.props;
         const {itemName, itemDescription, substitution} = this.props.item;
+        // this.calculateAverageRating().bind(this);
         return (
             <div>
                 <Card className={classes.card}>
@@ -219,7 +456,14 @@ class ItemCard extends React.Component {
                                 {substitution}
                             </Typography>
                         </Grid>
-                        <Button variant="outlined" className={classes.expandButton} onClick={this.handleOpen}>
+                        <Button
+                            variant="outlined"
+                            className={classes.expandButton}
+                            onClick={() => {
+                                this.handleOpen();
+                                // this.getItemReviews();
+                            }}
+                        >
                             <Typography className={classes.expandButtonText}>View More</Typography>
                         </Button>
                     </CardContent>
@@ -231,16 +475,21 @@ class ItemCard extends React.Component {
                 >
                     <DialogTitle className={classes.dialogItemTitle}>
                         {itemName}
-                        <IconButton className={classes.dialogFavoriteButton}>
-                            <FavoriteIconEmpty/>
-                        </IconButton>
-                        <IconButton className={classes.addToTripButton}>
-                            <TripIcon/>
-                        </IconButton>
-                        <IconButton className={classes.flagButton}>
-                            <FlagIcon/>
-                        </IconButton>
+                        <div className={classes.dialogFavoriteButton}>
+                            {this.renderFlagButton()}
+                            {this.renderFavoriteButton()}
+                        </div>
                     </DialogTitle>
+
+                    <StarRatingComponent
+                        name="itemAverageReview"
+                        editing={false}
+                        starCount={5}
+                        value={this.state.averageReview}
+                        starColor={'#9993B2'}
+                        emptyStarColor={'#DFDFDF'}
+                        className={classes.starRating}
+                    />
                     <DialogContent>
                         <Grid container spacing={24}>
                             <Grid item xs={12} md={6}>
@@ -254,10 +503,20 @@ class ItemCard extends React.Component {
                                 </DialogContent>
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <DialogContent>
-                                    <Card elevation={0} className={classes.commentsSection}>
-                                        COMMENTS
-                                    </Card>
+                                <DialogContent style={{overflowY: 'auto'}}>
+                                    {this.state.reviews.map((review, index) => {
+                                        return (
+                                            <ItemReview
+                                                key={index}
+                                                userID={review.userID}
+                                                itemID={review.itemID}
+                                                comment={review.comment}
+                                                rating={review.rating}
+                                                onDelete={() => this.deleteReview()}
+                                            />
+                                        )
+                                    })}
+                                    {this.state.canWriteReview ? this.renderWriteReviewArea() : <div></div> }
                                 </DialogContent>
                             </Grid>
                         </Grid>

@@ -10,13 +10,6 @@ VALUES ('123456789', 'admin', 'admin', 'admin@admin.com', '18-11-01', 'admin', '
        ('333333333', 'user5', 'admin', 'user5@user.com', '18-11-01', 'user', '#', 'DELETED');
 
 INSERT INTO
-`Category` (`categoryName`)
-VALUES ('Daiya'),
-       ('Impossible'),
-       ('Sorbet'),
-       ('Beyond');
-
-INSERT INTO
 `Park` (`parkName`)
 VALUES ('Magic Kingdom Park'),
        ('Epcot'),
@@ -33,15 +26,6 @@ VALUES ('Main Street, USA', (SELECT `parkID` FROM `Park` where `parkName` = 'Mag
        ('Frontierland', (SELECT `parkID` FROM `Park` where `parkName` = 'Magic Kingdom Park')),
        ('Liberty Square', (SELECT `parkID` FROM `Park` where `parkName` = 'Magic Kingdom Park')),
        ('Tomorrowland', (SELECT `parkID` FROM `Park` where `parkName` = 'Magic Kingdom Park'));
-
-INSERT INTO
-`MealType` (`mealTypeName`)
-VALUES ('Breakfast'),
-       ('Lunch'),
-       ('Brunch'),
-       ('Dinner'),
-       ('Snack'),
-       ('Anything');
 
 INSERT INTO
 `RestaurantType` (`restaurantTypeName`)

@@ -18,7 +18,8 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import classNames from 'classnames';
 import isNil from 'lodash/isNil';
 import Loading from '../components/Loading';
-import axios from "axios/index";
+import Link from 'next/link';
+import errorHandler from '../misc/errors-handler';
 
 const styles = theme => ({
     main:   {
@@ -50,23 +51,29 @@ const styles = theme => ({
     submit: {
         marginTop: theme.spacing.unit * 3,
     },
+    error:  {
+        marginTop:    theme.spacing.unit,
+        marginBottom: theme.spacing.unit,
+        color:        'red',
+        minHeight: theme.spacing.unit*3
+    }
 });
 
 class SignIn extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            email:        '',
-            password:     '',
-            error:        '',
-            showPassword: false,
-            loading:      true
+            email:          '',
+            password:       '',
+            error:          '',
+            showPassword:   false,
+            loading:        true,
         }
     }
 
     authorizedUser = async () => {
         try {
-            const user  = await getCurrentUser();
+            const user = await getCurrentUser();
             return !isNil(localStorage.uid) && user && user.uid === localStorage.uid;
         } catch (e) {
             throw e;
@@ -95,10 +102,12 @@ class SignIn extends React.Component {
 
     handleSubmit = async () => {
         try {
+            this.setState({error: ''})
             const result = await signIn(this.state.email, this.state.password);
             localStorage.setItem('uid', result.user.uid);
             Router.push('/');
         } catch (err) {
+            console.log('err', err);
             if (err.code === 'auth/user-not-found') {
                 this.setState({
                                   error: `${
@@ -107,14 +116,23 @@ class SignIn extends React.Component {
                               });
             } else {
                 this.setState({
-                                  error: `${err.message}`,
+                                  error: errorHandler.getErrorMessage(err),
                               });
             }
         }
-    }
+    };
 
     handleClickShowPassword = () => {
         this.setState(state => ({showPassword: !state.showPassword}));
+    };
+
+    renderErrorMessage = () => {
+        const {classes} = this.props;
+        return (
+            <Typography className={classes.error}>
+                {this.state.error}
+            </Typography>
+        )
     };
 
     renderSignIn() {
@@ -169,6 +187,14 @@ class SignIn extends React.Component {
                                     }}
                                 />
                             </FormControl>
+                            <div style={{marginTop: '8px'}}>
+                                <Link href='/signUp'>
+                                    <a style={{textDecoration: 'none'}}>
+                                        <Typography style={{color: 'blue'}}>Don't have an account? Sign up here!</Typography>
+                                    </a>
+                                </Link>
+                            </div>
+                            {this.renderErrorMessage()}
                             <Button
                                 fullWidth
                                 variant="contained"

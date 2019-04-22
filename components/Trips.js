@@ -15,9 +15,15 @@ import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Button from "@material-ui/core/Button";
 import CloseIcon from "@material-ui/icons/Close";
-import moment from "moment";
 import assign from "lodash/assign";
 import TextField from "@material-ui/core/TextField";
+import moment from 'moment-timezone';
+import axios from 'axios';
+import errorHandler from '../misc/errors-handler';
+import Loading from './Loading';
+import MyTrips from './MyTrips';
+import RefreshIcon from '@material-ui/icons/RefreshRounded'
+
 
 const styles = theme => ({
     root: {
@@ -41,27 +47,61 @@ const tripTemplate = {
     userID: null,
     startDate: null,
     endDate: null,
-    tripName: null
+    tripName: ''
 };
 
-const defaultStartDate = moment().format("YYYY-MM-DD");
-const defaultEndDate = moment()
-    .add(1, "day")
-    .format("YYYY-MM-DD");
+const defaultStartDate = moment.tz(new Date(), 'Etc/UTC').format("YYYY-MM-DD");
+const defaultEndDate   = moment.tz(new Date(), 'Etc/UTC').add(1, 'day').format("YYYY-MM-DD");
 
 class Trips extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: props.user,
-            newTrip: tripTemplate,
-            addNewTrip: true,
-            saving: false
+            user:         props.user,
+            newTrip:      this.initializeNewTrip(props),
+            addNewTrip:   false,
+            saving:       false,
+            errorMessage: '',
+            myTrips:      [],
+            loading:      true
         };
     }
 
+    async componentDidMount() {
+        try {
+            const myTrips = await axios.post('/trip/getByUserID', {userID: this.state.user.userID});
+            this.setState({myTrips: myTrips.data, loading: false});
+        } catch (e) {
+            console.log(e);
+            this.setState({loading: false});
+        }
+    }
+
+    async componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.state.refresh && this.state.refresh !== prevState.refresh) {
+            try {
+                this.setState({loading: true});
+                const myTrips = await axios.post('/trip/getByUserID', {userID: this.state.user.userID});
+                this.setState({myTrips: myTrips.data, loading: false, refresh: false});
+            } catch (e) {
+                console.log(e);
+                this.setState({loading: false});
+            }
+        }
+    }
+
+    initializeNewTrip(props) {
+        return assign({},
+                      tripTemplate,
+                      {
+                          userID:    props.user.userID,
+                          startDate: defaultStartDate,
+                          endDate:   defaultEndDate
+                      });
+    }
+
     handleTripClose = () => {
-        this.setState({ addNewTrip: false });
+        this.setState({ addNewTrip: false, errorMessage: '', successMessage: ''});
     };
 
     handleChange = prop => event => {
@@ -71,22 +111,59 @@ class Trips extends React.Component {
         });
     };
 
-    handleTripSave = () => {
+    datesAreValid(startDate, endDate) {
+        return moment(startDate).isBefore(moment(endDate));
+    }
+
+    handleTripSave = async () => {
         try {
-            this.setState({ saving: true });
-            const result = axios.post("/trips/add", {
-                newTrip: this.state.newTrip
+            this.setState({saving: true, errorMessage: '', successMessage: ''});
+            if (!this.datesAreValid(this.state.newTrip.startDate, this.state.newTrip.endDate)) {
+                throw new Error('Start date must come before end date.');
+            }
+            const result = await axios.post("/trip/add", {
+                ...this.state.newTrip
             });
-            this.setState({ saving: false });
+
+            if (result.data.success) {
+                this.setState({saving: false, successMessage: 'Trip successfully created!'});
+            } else {
+                throw result.data.error;
+            }
         } catch (e) {
-            console.log("Error:", e);
+            this.setState({saving: false, errorMessage: errorHandler.getErrorMessage(e)});
         }
     };
+
+    renderErrorMessage() {
+        if (this.state.errorMessage && this.state.errorMessage.length > 0) {
+            return (
+                <Typography style={{color: 'red'}}>
+                    {this.state.errorMessage}
+                </Typography>
+            )
+        } else {
+            return null;
+        }
+    }
+
+    renderSuccessMessage() {
+        if (this.state.successMessage && this.state.successMessage.length > 0) {
+            return (
+                <Typography style={{color: 'green'}}>
+                    {this.state.successMessage}
+                </Typography>
+            )
+        } else {
+            return null;
+        }
+    }
 
     renderAddNewTrip() {
         if (!this.state.addNewTrip) {
             return null;
         }
+
         const { classes } = this.props;
         return (
             <Dialog
@@ -129,15 +206,19 @@ class Trips extends React.Component {
                         fullWidth
                         onChange={this.handleChange("endDate")}
                     />
+                    <div style={{height: '20px', marginTop: '10px'}}>
+                        {this.renderErrorMessage()}
+                        {this.renderSuccessMessage()}
+                    </div>
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        onClose={this.handleTripSave}
+                        onClick={this.handleTripSave}
                         color="primary"
                         disabled={this.state.saving}
                     >
                         {this.state.saving ? (
-                            <CircularProgress size={24} />
+                            <CircularProgress size={16} />
                         ) : (
                             "Save"
                         )}
@@ -154,9 +235,18 @@ class Trips extends React.Component {
         );
     }
 
+    renderMyTrips() {
+        return (
+            <MyTrips user={this.state.user} trips={this.state.myTrips} />
+        )
+    }
+
     render() {
-        const { classes } = this.props;
-        console.log(this.state.newTrip);
+        const {classes} = this.props;
+        if (this.state.loading) {
+            return <Loading/>
+        }
+
         return (
             <Paper className={classes.root}>
                 <Grid
@@ -164,7 +254,19 @@ class Trips extends React.Component {
                     direction="row"
                     justify="flex-end"
                     alignItems="center"
+                    spacing={16}
                 >
+                    <Grid item>
+                        <Tooltip title={"Refresh trips"}>
+                            <IconButton
+                                onClick={() =>
+                                    this.setState({refresh: true})
+                                }
+                            >
+                                <RefreshIcon/>
+                            </IconButton>
+                        </Tooltip>
+                    </Grid>
                     <Grid item>
                         <Tooltip title={"New trip"}>
                             <IconButton
@@ -194,6 +296,8 @@ class Trips extends React.Component {
                     </Grid>
                 </Grid>
                 <Divider variant="middle" />
+                <div style={{height: '20px'}}/>
+                {this.renderMyTrips()}
                 {this.renderAddNewTrip()}
             </Paper>
         );

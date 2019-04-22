@@ -16,9 +16,10 @@ var ITEMS_UPDATABALE_FIELDS = require("../../misc/FieldNames")
 //     }
 // });
 
+// Returns all items. Use this in the admin portal.
 router.post("/getAll", async (req, res) => {
     try {
-        const query = `select I.*, R.restaurantName, P.parkName, L.landName  from Item I, Restaurant R, Park P, Land L where I.restaurantID = R.restaurantID and R.landID = L.landID and L.parkID = P.parkID;`;
+        const query = `select I.*, R.restaurantName, P.parkName, L.landName  from Item I, Restaurant R, Park P, Land L where I.restaurantID = R.restaurantID and R.landID = L.landID and L.parkID = P.parkID order by I.itemName asc;`;
         const result = await DB.runQuery(query);
         res.json(result);
     } catch (e) {
@@ -87,7 +88,8 @@ router.post("/add", async (req, res) => {
             substitution,
             itemStatus,
             x,
-            z
+            z,
+            pageNum
         } = req.body;
 
         // Non required fields are x, z, itemDescription, and substitution
@@ -106,7 +108,7 @@ router.post("/add", async (req, res) => {
             throw new Error(itemName + " already exists for restaurant.");
         }
 
-        const query = `insert into Item (restaurantID, itemName, itemDescription, secret, vegan, substitution, itemStatus, x, z)
+        const query = `insert into Item (restaurantID, itemName, itemDescription, secret, vegan, substitution, itemStatus, x, z, pageNum)
                        values(${sqlstring.escape(restaurantID)}, 
                               ${sqlstring.escape(itemName)}, 
                               ${sqlstring.escape(itemDescription)}, 
@@ -115,12 +117,13 @@ router.post("/add", async (req, res) => {
                               ${sqlstring.escape(substitution)},
                               ${sqlstring.escape(itemStatus)},
                               ${sqlstring.escape(x)},
-                              ${sqlstring.escape(z)});`;
+                              ${sqlstring.escape(z)},
+                              ${sqlstring.escape(pageNum)});`;
 
         const result = await DB.runQuery(query);
         res.json({ success: true });
     } catch (e) {
-        console.log("Error adding a review", e);
+        console.log("Error adding an item", e);
         res.json({ success: false, error: errorHandler.getErrorMessage(e) });
     }
 });
@@ -146,6 +149,7 @@ router.post("/update", async (req, res) => {
                 fieldName + " is not a valid field to update for a item."
             );
         }
+
 
         const query = `update Item set ${fieldName}=${sqlstring.escape(
             newContent

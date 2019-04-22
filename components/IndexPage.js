@@ -50,6 +50,21 @@ const styles = theme => ({
         fontFamily:   "Avenir",
         overflowWrap: "break-word",
     },
+    headerGridLayout:   {
+        width: 'auto',
+    },
+    headerLogoImage:    {
+        width: "15%",
+        height: "15%",
+        cursor: 'pointer',
+    },
+    headerLogoText: {
+        fontFamily: "Avenir",
+        fontSize: 30,
+        margin: 0,
+        padding: 0,
+        cursor: 'pointer',
+    },
     homeBodyText:       {
         fontFamily:                     "Avenir",
         overflowWrap:                   "break-word",
@@ -145,7 +160,12 @@ class IndexPage extends React.Component {
             alertMessage: '',
             alertTitle:   '',
             dialogOpen:   false,
+            cardHover: false,
         }
+    }
+
+    setHover(value) {
+        this.setState({ hover: value });
     }
 
     renderAlertDialog() {
@@ -239,12 +259,6 @@ class IndexPage extends React.Component {
     handleNavigationChange = prop => event => {
         this.setState({tab: prop});
     };
-
-    changeOpacity() {
-        this.state = {
-            opacity: 0.7
-        }
-    }
 
     renderNavigationBar() {
         const {classes}      = this.props;
@@ -341,7 +355,7 @@ class IndexPage extends React.Component {
                                 Bailey Brooks
                             </Typography>
                             <Typography className={classes.positionText}>
-                                Computer Vision
+                                Augmented Reality
                             </Typography>
                         </Grid>
                     </Grid>
@@ -432,7 +446,7 @@ class IndexPage extends React.Component {
                                     color:      'rgb(252,252,252)',
                                     marginTop:  85,
                                 }}>
-                                    Download Our App
+                                    Download Our App (Coming Soon)
                                 </Typography>
                                 <PhoneIcon style={{
                                     marginTop: 85,
@@ -452,14 +466,16 @@ class IndexPage extends React.Component {
                     <Grid item xs={12} sm={6}>
                         <Card
                             onClick={this.handleNavigationChange("MENUS")}
-                            onMouseOver={this.changeOpacity()}
+                            onMouseEnter={() => this.setHover(true)}
+                            onMouseLeave={() => this.setHover(false)}
                             className={classes.homeCardComponents}
                             style=
                                 {{
                                     backgroundImage: "url('../static/images/HomePageImages/restaurantstock.jpg')",
                                     backgroundColor: 'rgba(0,0,0,0.5)',
                                     backgroundSize:  'cover',
-                                    opacity:         1.0,
+                                    opacity:         this.state.hover ? 0.7 : 1,
+                                    cursor: 'pointer',
                                 }}
                         >
                             <Grid container direction="row" justify="center" alignItems="center">
@@ -592,6 +608,7 @@ class IndexPage extends React.Component {
     };
 
     render() {
+        const { classes } = this.props;
         if (this.state.loading) {
             return <Loading/>
         } else {
@@ -599,7 +616,26 @@ class IndexPage extends React.Component {
                 <div>
                     {this.renderAccountsButtons()}
                     <Grid container direction="column" justify="center" alignItems="center">
-                        <Header/>
+                        <div style={{marginTop: '-2%',}}>
+                            <Grid container direction="column" justify="flex-start" alignItems="center" className={classes.headerGridLayout}>
+                                <Grid container direction="column" justify="space-between" alignItems="center">
+                                    <Grid container direction="column" justify="flex-start" alignItems="center">
+                                        <img 
+                                            src="../static/images/logo.png" 
+                                            alt="Logo" 
+                                            className={classes.headerLogoImage} 
+                                            onClick={this.handleNavigationChange("HOME")}
+                                        />
+                                        <p 
+                                            className={classes.headerLogoText}
+                                            onClick={this.handleNavigationChange("HOME")}
+                                        >
+                                            be AR guest
+                                        </p>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </div>
                         {this.renderNavigationBar()}
                         {this.renderBodyContent()}
                         <Footer/>

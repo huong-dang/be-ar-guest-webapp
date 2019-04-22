@@ -205,14 +205,17 @@ class MenuStepper extends React.Component {
         const {classes, user} = this.props;
 
         const restaurantsInfo = this.state.restaurants.map((restaurant, index) => {
-                                                               return (
-                                                                   <RestaurantPanel key={index}
-                                                                                    user={user}
-                                                                                    restaurantID={restaurant.restaurantID}
-                                                                                    restaurantName={restaurant.restaurantName}
-                                                                                    landID={restaurant.landID}/>
-                                                               )
-                                                           }
+                return (
+                    <RestaurantPanel
+                        key={index}
+                        user={user}
+                        restaurantID={restaurant.restaurantID}
+                        restaurantTypeID={restaurant.restaurantTypeID}
+                        restaurantName={restaurant.restaurantName}
+                        landID={restaurant.landID}
+                    />
+                )
+            }
         );
 
         return (

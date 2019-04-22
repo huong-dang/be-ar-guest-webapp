@@ -16,6 +16,7 @@ import TextField from '@material-ui/core/TextField';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import axios from 'axios';
+import errorHandler from '../misc/errors-handler';
 
 const styles = theme => ({
     main:   {
@@ -47,6 +48,12 @@ const styles = theme => ({
     submit: {
         marginTop: theme.spacing.unit * 3,
     },
+    error:  {
+        marginTop:    theme.spacing.unit,
+        marginBottom: theme.spacing.unit,
+        color:        'red',
+        minHeight:    theme.spacing.unit * 3
+    }
 });
 
 class SignUp extends React.Component {
@@ -55,10 +62,10 @@ class SignUp extends React.Component {
         this.state = {
             email:        '',
             password:     '',
-            error:        '',
             showPassword: false,
             firstName:    '',
             lastName:     '',
+            error:        ''
         }
     }
 
@@ -92,9 +99,18 @@ class SignUp extends React.Component {
             if (user) {
                 await deleteUser((res) => console.log('User successfully deleted!'));
             }
-            this.setState({error: err.message})
+            this.setState({error: errorHandler.getErrorMessage(err)});
         }
-    }
+    };
+
+    renderErrorMessage = () => {
+        const {classes} = this.props;
+        return (
+            <Typography className={classes.error}>
+                {this.state.error}
+            </Typography>
+        )
+    };
 
     handleClickShowPassword = () => {
         this.setState(state => ({showPassword: !state.showPassword}));
@@ -168,6 +184,7 @@ class SignUp extends React.Component {
                                 }}
                             />
                         </FormControl>
+                        {this.renderErrorMessage()}
                         <Button
                             fullWidth
                             variant="contained"

@@ -14,22 +14,10 @@ CREATE TABLE `Profile` (
   PRIMARY KEY (`userID`)
 );
 
-CREATE TABLE `Category` (
-  `categoryID` INT NOT NULL AUTO_INCREMENT,
-  `categoryName` VARCHAR(100) NOT NULL UNIQUE,
-  PRIMARY KEY (`categoryID`)
-);
-
 CREATE TABLE `Park` (
   `parkID` INT NOT NULL AUTO_INCREMENT,
   `parkName` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`parkID`)
-);
-
-CREATE TABLE `MealType` (
-  `mealTypeID` INT NOT NULL AUTO_INCREMENT,
-  `mealTypeName` VARCHAR(100) NOT NULL UNIQUE,
-  PRIMARY KEY (`mealTypeID`)
 );
 
 CREATE TABLE `Day` (
@@ -91,16 +79,6 @@ CREATE TABLE `Item` (
   FOREIGN KEY (`restaurantID`) REFERENCES `Restaurant` (`restaurantID`)
 );
 
-CREATE TABLE `ItemInfo` (
-  `itemID` INT NOT NULL,
-  `categoryID` INT NOT NULL,
-  `mealTypeID` INT NOT NULL,
-  PRIMARY KEY (`itemID`, `categoryID`, `mealTypeID`),
-  FOREIGN KEY (`itemID`) REFERENCES `Item` (`itemID`),
-  FOREIGN KEY (`categoryID`) REFERENCES `Category` (`categoryID`),
-  FOREIGN KEY (`mealTypeID`) REFERENCES `MealType` (`mealTypeID`)
-);
-
 CREATE TABLE `Review` (
   `userID` VARCHAR(100) NOT NULL,
   `itemID` INT NOT NULL,
@@ -123,14 +101,12 @@ CREATE TABLE `Bookmark` (
   FOREIGN KEY (`restaurantID`) REFERENCES `Restaurant` (`restaurantID`)
 );
 
-CREATE TABLE `MealPlan` (
-  `tripID` INT NOT NULL,
-  `restaurantID` INT NOT NULL,
-  `dayID` INT NOT NULL,
-  `mealTypeID` INT NOT NULL,
-  PRIMARY KEY (`tripID`, `restaurantID`, `dayID`, `mealTypeID`),
-  FOREIGN KEY (`tripID`) REFERENCES `TripPlan` (`tripID`),
-  FOREIGN KEY (`restaurantID`) REFERENCES `Restaurant` (`restaurantID`),
-  FOREIGN KEY (`dayID`) REFERENCES `Day` (`dayID`),
-  FOREIGN KEY (`mealTypeID`) REFERENCES `MealType` (`mealTypeID`)
+create table MealPlan (
+	tripID int not null,
+	restaurantID int not null,
+	day date not null,
+	mealName varchar(200) not null,
+	foreign key (tripID) references TripPlan(tripID),
+	foreign key (restaurantID) references Restaurant(restaurantID),
+	primary key (tripID, restaurantID, day, mealName)
 );

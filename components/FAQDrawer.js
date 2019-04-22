@@ -36,8 +36,7 @@ function FAQDrawer(props) {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Typography className={classes.answerText}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                        sit amet blandit leo lobortis eget.
+                        Disney World, Orlando, FL
                     </Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -50,8 +49,7 @@ function FAQDrawer(props) {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Typography className={classes.answerText}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                        sit amet blandit leo lobortis eget.
+                        Our mobile application is not ready for the public yet! Our mobile development team is hard at work to make this product ready for our users.
                     </Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -64,8 +62,7 @@ function FAQDrawer(props) {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Typography className={classes.answerText}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                        sit amet blandit leo lobortis eget.
+                        Only logged in users can submit reviews, ratings, and/or flag our items. An account with us is free! Once you're logged in, you're free to comment on items and save them to your account.
                     </Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -78,8 +75,7 @@ function FAQDrawer(props) {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Typography className={classes.answerText}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                        sit amet blandit leo lobortis eget.
+                        You must have an ARCore compatible Android device. If you do, you just need to use your phone's camera and hover over a menu at Disney World for our app to recognize the menu and drop augmented reality menu pins onto the image.
                     </Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -92,7 +88,33 @@ function FAQDrawer(props) {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <Typography className={classes.answerText}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                        The menu information is also available on this website. Please look under our "MENUS" option.
+                    </Typography>
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
+
+            <ExpansionPanel>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography className={classes.questionText}>
+                        What do I do if a restaurant no longer offers an item or it's no longer vegan?
+                    </Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                    <Typography className={classes.answerText}>
+                        If you encounter this issue, please flag that item! You must have an account with be AR guest to flag an item, but once you've created an account you may flag items. Our administrator will see items that are flagged. From there, our administrator will investigate and update our information.
+                    </Typography>
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
+
+            <ExpansionPanel>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography className={classes.questionText}>
+                        Who designed the be AR guest logo?
+                    </Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                    <Typography className={classes.answerText}>
+                        Our graphic designer Julia Thomas! <br /> View her portfolio at: www.jtgraphics.co <br /> View her linked in at: www.linkedin.com/in/jtgraphics/
                     </Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
