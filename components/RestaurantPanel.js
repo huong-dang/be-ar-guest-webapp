@@ -92,10 +92,10 @@ class RestaurantPanel extends React.Component {
     getDayOptions(trips) {
         return trips.map((trip) => {
             const {startDate, endDate} = trip;
-            const daysBetween          = moment(endDate).diff(moment(startDate), 'days');
+            const daysBetween          = moment.tz(endDate, 'Etc/UTC').diff(moment.tz(startDate, 'Etc/UTC'), 'days');
             let options                = [];
             for (let i = 0; i <= daysBetween; i++) {
-                options.push(moment(startDate).add(i, 'day').format('YYYY-MM-DD'));
+                options.push(moment.tz(startDate, 'Etc/UTC').add(i, 'day').format('YYYY-MM-DD'));
             }
             return options;
         });
