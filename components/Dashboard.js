@@ -110,7 +110,7 @@ class Dashboard extends React.Component {
         super(props);
         this.state = {
             open:             false,
-            selectedMenuItem: "User"
+            selectedMenuItem: "Item"
         };
     }
 
