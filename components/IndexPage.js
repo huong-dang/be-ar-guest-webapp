@@ -54,8 +54,7 @@ const styles = theme => ({
         width: 'auto',
     },
     headerLogoImage:    {
-        width: "15%",
-        height: "15%",
+        height: '10vh',
         cursor: 'pointer',
     },
     headerLogoText: {
